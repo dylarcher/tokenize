@@ -1,25 +1,20 @@
 export default {
-    compileOutDir: "./dist",
-    componentPatterns: [
-        /\.component\.s?css$/i,
-        /\.module\.s?css$/i,
-        /_component\.s?css$/i,
-        /components\/.*\.s?css$/i,
-    ],
+    compileOutDir: "./dist", // json token files
+    componentPatterns: [/(\.s?[ac]ss)$/i],
     exclude: [
-        "../capitalrx-components-2.0/lib/components",
         "../capitalrx-components",
-    ],
-    ignore: [
+        "../capitalrx-components-2.0/lib/**/*.ts",
         "../capitalrx-components-2.0/lib/components",
-        "../tokenize/node_modules",
-        "../capitalrx-components",
-        "./dist",
-        "./bin",
-        "./docs",
+        "../capitalrx-components-2.0/lib/constants",
+        "../capitalrx-components-2.0/lib/hooks",
+        "../capitalrx-components-2.0/lib/temp",
+        "../capitalrx-components-2.0/lib/testing",
+        "../capitalrx-components-2.0/lib/tokens",
+        "../capitalrx-components-2.0/lib/utilities",
     ],
-    outDir: "./dist",
-    outputFormats: ["json", "jsonc", "scss", "sass", "css"],
-    scanDir: "../capitalrx-components-2.0",
+    ignore: ["node_modules", "dist", "bin", "docs"],
+    outDir: "./dist", // compiled css files
+    outputFormats: ["json", "css"],
+    scanDir: "../capitalrx-components-2.0", // source of truth
     spacingBase: 4,
 };
