@@ -1,0 +1,229 @@
+@use "sass:color";
+@use "sass:math";
+@use "sass:map";
+@use "sass:list";
+@use "sass:string";
+
+// ============================================
+// Color Primitives
+// ============================================
+
+$color-white: #ffffff;
+$color-black: #000000;
+
+// Brand Colors
+$color-primary-hue: 220;
+$color-primary-base: hsl($color-primary-hue, 90%, 56%);
+$color-primary-50: color.scale($color-primary-base, $lightness: 95%);
+$color-primary-100: color.scale($color-primary-base, $lightness: 80%);
+$color-primary-200: color.scale($color-primary-base, $lightness: 60%);
+$color-primary-300: color.scale($color-primary-base, $lightness: 40%);
+$color-primary-400: color.scale($color-primary-base, $lightness: 20%);
+$color-primary-500: $color-primary-base;
+$color-primary-600: color.scale($color-primary-base, $lightness: -20%);
+$color-primary-700: color.scale($color-primary-base, $lightness: -40%);
+$color-primary-800: color.scale($color-primary-base, $lightness: -60%);
+$color-primary-900: color.scale($color-primary-base, $lightness: -80%);
+
+// Secondary Colors (using color.adjust for hue shifting)
+$color-secondary-base: color.adjust($color-primary-base, $hue: 180deg);
+$color-secondary-light: color.mix($color-secondary-base, $color-white, 30%);
+$color-secondary-dark: color.mix($color-secondary-base, $color-black, 30%);
+
+// Semantic Colors
+$color-success: #22c55e;
+$color-warning: #f59e0b;
+$color-error: #ef4444;
+$color-info: #3b82f6;
+
+// Neutral Palette (using color.change for precise control)
+$color-neutral-base: #64748b;
+$color-neutral-50: color.change($color-neutral-base, $lightness: 98%);
+$color-neutral-100: color.change($color-neutral-base, $lightness: 96%);
+$color-neutral-200: color.change($color-neutral-base, $lightness: 90%);
+$color-neutral-300: color.change($color-neutral-base, $lightness: 80%);
+$color-neutral-400: color.change($color-neutral-base, $lightness: 65%);
+$color-neutral-500: $color-neutral-base;
+$color-neutral-600: color.change($color-neutral-base, $lightness: 35%);
+$color-neutral-700: color.change($color-neutral-base, $lightness: 25%);
+$color-neutral-800: color.change($color-neutral-base, $lightness: 15%);
+$color-neutral-900: color.change($color-neutral-base, $lightness: 8%);
+$color-neutral-950: color.change($color-neutral-base, $lightness: 4%);
+
+// Color Maps
+$colors: (
+	"primary": (
+		"50": $color-primary-50,
+		"100": $color-primary-100,
+		"200": $color-primary-200,
+		"300": $color-primary-300,
+		"400": $color-primary-400,
+		"500": $color-primary-500,
+		"600": $color-primary-600,
+		"700": $color-primary-700,
+		"800": $color-primary-800,
+		"900": $color-primary-900,
+	),
+	"neutral": (
+		"50": $color-neutral-50,
+		"100": $color-neutral-100,
+		"200": $color-neutral-200,
+		"300": $color-neutral-300,
+		"400": $color-neutral-400,
+		"500": $color-neutral-500,
+		"600": $color-neutral-600,
+		"700": $color-neutral-700,
+		"800": $color-neutral-800,
+		"900": $color-neutral-900,
+		"950": $color-neutral-950,
+	),
+);
+
+// ============================================
+// Typography
+// ============================================
+
+$font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$font-family-serif: "Merriweather", Georgia, "Times New Roman", serif;
+$font-family-mono: "JetBrains Mono", "Fira Code", Consolas, monospace;
+
+$font-size-base: 16px;
+$font-size-scale: 1.25;
+
+$font-sizes: (
+	"xs": math.div($font-size-base, math.pow($font-size-scale, 2)),
+	"sm": math.div($font-size-base, $font-size-scale),
+	"base": $font-size-base,
+	"lg": $font-size-base * $font-size-scale,
+	"xl": $font-size-base * math.pow($font-size-scale, 2),
+	"2xl": $font-size-base * math.pow($font-size-scale, 3),
+	"3xl": $font-size-base * math.pow($font-size-scale, 4),
+	"4xl": $font-size-base * math.pow($font-size-scale, 5),
+	"5xl": $font-size-base * math.pow($font-size-scale, 6),
+);
+
+$font-weights: (
+	"thin": 100,
+	"light": 300,
+	"normal": 400,
+	"medium": 500,
+	"semibold": 600,
+	"bold": 700,
+	"black": 900,
+);
+
+$line-heights: (
+	"none": 1,
+	"tight": 1.25,
+	"snug": 1.375,
+	"normal": 1.5,
+	"relaxed": 1.625,
+	"loose": 2,
+);
+
+$letter-spacings: (
+	"tighter": -0.05em,
+	"tight": -0.025em,
+	"normal": 0,
+	"wide": 0.025em,
+	"wider": 0.05em,
+	"widest": 0.1em,
+);
+
+// ============================================
+// Spacing
+// ============================================
+
+$spacing-base: 4px;
+$spacing-scale: (0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96);
+
+$spacing: ();
+@each $step in $spacing-scale {
+	$spacing: map.set($spacing, $step, $spacing-base * $step);
+}
+
+// ============================================
+// Breakpoints
+// ============================================
+
+$breakpoints: (
+	"xs": 0,
+	"sm": 640px,
+	"md": 768px,
+	"lg": 1024px,
+	"xl": 1280px,
+	"2xl": 1536px,
+);
+
+// ============================================
+// Shadows
+// ============================================
+
+$shadow-color: color.change($color-black, $alpha: 0.1);
+$shadow-color-dark: color.change($color-black, $alpha: 0.25);
+
+$shadows: (
+	"sm": 0 1px 2px 0 $shadow-color,
+	"base": (0 1px 3px 0 $shadow-color, 0 1px 2px -1px $shadow-color),
+	"md": (0 4px 6px -1px $shadow-color, 0 2px 4px -2px $shadow-color),
+	"lg": (0 10px 15px -3px $shadow-color, 0 4px 6px -4px $shadow-color),
+	"xl": (0 20px 25px -5px $shadow-color, 0 8px 10px -6px $shadow-color),
+	"2xl": 0 25px 50px -12px $shadow-color-dark,
+	"inner": inset 0 2px 4px 0 $shadow-color,
+	"none": none,
+);
+
+// ============================================
+// Border Radius
+// ============================================
+
+$radii: (
+	"none": 0,
+	"sm": 2px,
+	"base": 4px,
+	"md": 6px,
+	"lg": 8px,
+	"xl": 12px,
+	"2xl": 16px,
+	"3xl": 24px,
+	"full": 9999px,
+);
+
+// ============================================
+// Transitions
+// ============================================
+
+$transition-durations: (
+	"fastest": 75ms,
+	"fast": 150ms,
+	"normal": 200ms,
+	"slow": 300ms,
+	"slower": 500ms,
+	"slowest": 700ms,
+);
+
+$transition-easings: (
+	"linear": linear,
+	"ease": ease,
+	"ease-in": cubic-bezier(0.4, 0, 1, 1),
+	"ease-out": cubic-bezier(0, 0, 0.2, 1),
+	"ease-in-out": cubic-bezier(0.4, 0, 0.2, 1),
+	"bounce": cubic-bezier(0.68, -0.55, 0.265, 1.55),
+);
+
+// ============================================
+// Z-Index Scale
+// ============================================
+
+$z-indices: (
+	"hide": -1,
+	"base": 0,
+	"dropdown": 1000,
+	"sticky": 1100,
+	"fixed": 1200,
+	"modal-backdrop": 1300,
+	"modal": 1400,
+	"popover": 1500,
+	"tooltip": 1600,
+	"toast": 1700,
+);

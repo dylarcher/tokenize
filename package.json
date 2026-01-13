@@ -1,0 +1,45 @@
+{
+    "bin": {
+        "tokenize": "bin/tokenize.js"
+    },
+    "bundleDependencies": true,
+    "dependencies": {
+        "sass": "1.97.2"
+    },
+    "description": "Extract and generate design tokens from SCSS/CSS",
+    "displayName": "Tokenize CLI",
+    "engines": {
+        "bun": ">=1.3.6",
+        "node": ">=25.2.1"
+    },
+    "exports": {
+        ".": "./src",
+        "./lib": "./src/cli.js",
+        "./utils": "./src"
+    },
+    "main": "src",
+    "name": "tokenize",
+    "private": true,
+    "scripts": {
+        "audit": "bun src/commands/scan.js",
+        "build": "bun src/commands/compile.js",
+        "bump": "npm version --sign-git-tag",
+        "clean": "bunx rimraf --glob *.lockb node_modules ~/.bun/install/cache",
+        "cli": "bun src/cli.js",
+        "docs": "bun src/commands/docs.js",
+        "dts": "bunx tsc && bun src/commands/types.js",
+        "postinstall": "bun link --ignore-scripts",
+        "postpack": "bun install --ignore-scripts --only-missing",
+        "postversion": "bun update --global --latest --ignore-scripts",
+        "prepack": "bun install --linker=isolated --ignore-scripts",
+        "prepare": "bun run clean && bun install --ignore-scripts",
+        "preuninstall": "bun unlink --ignore-scripts",
+        "reload": "bun run clean && bun install --exact --ignore-scripts",
+        "check": "bunx biome --config biome.json src",
+        "test": "bun test --verbose",
+        "tokens": "bun src/commands/tokens.js --all",
+        "types": "bunx tsc --noEmit"
+    },
+    "type": "module",
+    "version": "0.2.0"
+}

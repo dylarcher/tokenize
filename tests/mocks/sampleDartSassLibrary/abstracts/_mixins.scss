@@ -1,0 +1,567 @@
+@use "sass:map";
+@use "sass:list";
+@use "sass:math";
+@use "sass:string";
+@use "sass:meta";
+@use "variables" as *;
+@use "functions" as *;
+
+// ============================================
+// Media Query Mixins
+// ============================================
+
+/// Breakpoint mixin - mobile-first (min-width)
+/// @param {String} $breakpoint - The breakpoint name
+/// @content Styles for the breakpoint
+@mixin mq($breakpoint) {
+	$value: breakpoint($breakpoint);
+
+	@if $value == 0 {
+		@content;
+	} @else {
+		@media (min-width: $value) {
+			@content;
+		}
+	}
+}
+
+/// Breakpoint mixin - desktop-first (max-width)
+/// @param {String} $breakpoint - The breakpoint name
+/// @content Styles for the breakpoint
+@mixin mq-down($breakpoint) {
+	$value: breakpoint($breakpoint);
+	$max: $value - 0.02px;
+
+	@media (max-width: $max) {
+		@content;
+	}
+}
+
+/// Breakpoint mixin - between two breakpoints
+/// @param {String} $min - The minimum breakpoint
+/// @param {String} $max - The maximum breakpoint
+/// @content Styles for the range
+@mixin mq-between($min, $max) {
+	$min-value: breakpoint($min);
+	$max-value: breakpoint($max) - 0.02px;
+
+	@media (min-width: $min-value) and (max-width: $max-value) {
+		@content;
+	}
+}
+
+/// Breakpoint mixin - only (exact breakpoint range)
+/// @param {String} $breakpoint - The breakpoint name
+/// @content Styles for only this breakpoint
+@mixin mq-only($breakpoint) {
+	$keys: map.keys($breakpoints);
+	$index: list.index($keys, $breakpoint);
+
+	@if $index == list.length($keys) {
+		@include mq($breakpoint) {
+			@content;
+		}
+	} @else {
+		$next: list.nth($keys, $index + 1);
+
+		@include mq-between($breakpoint, $next) {
+			@content;
+		}
+	}
+}
+
+/// Container query mixin
+/// @param {String} $size - The minimum container size
+/// @param {String} $name - Optional container name
+/// @content Styles for the container query
+@mixin container($size, $name: null) {
+	@if $name {
+		@container #{$name} (min-width: #{$size}) {
+			@content;
+		}
+	} @else {
+		@container (min-width: #{$size}) {
+			@content;
+		}
+	}
+}
+
+// ============================================
+// User Preference Mixins
+// ============================================
+
+/// Dark mode preference
+/// @content Styles for dark mode
+@mixin dark-mode {
+	@media (prefers-color-scheme: dark) {
+		@content;
+	}
+}
+
+/// Light mode preference
+/// @content Styles for light mode
+@mixin light-mode {
+	@media (prefers-color-scheme: light) {
+		@content;
+	}
+}
+
+/// Reduced motion preference
+/// @content Styles for reduced motion
+@mixin reduced-motion {
+	@media (prefers-reduced-motion: reduce) {
+		@content;
+	}
+}
+
+/// High contrast preference
+/// @content Styles for high contrast
+@mixin high-contrast {
+	@media (prefers-contrast: more) {
+		@content;
+	}
+}
+
+/// Print styles
+/// @content Styles for print
+@mixin print {
+	@media print {
+		@content;
+	}
+}
+
+// ============================================
+// Layout Mixins
+// ============================================
+
+/// Flexbox container
+/// @param {String} $direction - Flex direction (row, column)
+/// @param {String} $justify - Justify content
+/// @param {String} $align - Align items
+/// @param {String} $wrap - Flex wrap
+@mixin flex(
+	$direction: row,
+	$justify: flex-start,
+	$align: stretch,
+	$wrap: nowrap,
+	$gap: null
+) {
+	display: flex;
+	flex-direction: $direction;
+	justify-content: $justify;
+	align-items: $align;
+	flex-wrap: $wrap;
+
+	@if $gap {
+		gap: $gap;
+	}
+}
+
+/// Flexbox center
+@mixin flex-center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/// Grid container
+/// @param {Number|String} $columns - Number of columns or grid-template-columns value
+/// @param {Length} $gap - Gap between items
+@mixin grid($columns: 1, $gap: null) {
+	display: grid;
+
+	@if meta.type-of($columns) == "number" {
+		grid-template-columns: repeat($columns, 1fr);
+	} @else {
+		grid-template-columns: $columns;
+	}
+
+	@if $gap {
+		gap: $gap;
+	}
+}
+
+/// Auto-fit grid
+/// @param {Length} $min-width - Minimum column width
+/// @param {Length} $gap - Gap between items
+@mixin grid-auto-fit($min-width: 250px, $gap: null) {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+
+	@if $gap {
+		gap: $gap;
+	}
+}
+
+/// Auto-fill grid
+/// @param {Length} $min-width - Minimum column width
+/// @param {Length} $gap - Gap between items
+@mixin grid-auto-fill($min-width: 250px, $gap: null) {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax($min-width, 1fr));
+
+	@if $gap {
+		gap: $gap;
+	}
+}
+
+/// Absolute positioning shorthand
+/// @param {Length} $top - Top position
+/// @param {Length} $right - Right position
+/// @param {Length} $bottom - Bottom position
+/// @param {Length} $left - Left position
+@mixin absolute($top: null, $right: null, $bottom: null, $left: null) {
+	position: absolute;
+
+	@if $top != null {
+		top: $top;
+	}
+
+	@if $right != null {
+		right: $right;
+	}
+
+	@if $bottom != null {
+		bottom: $bottom;
+	}
+
+	@if $left != null {
+		left: $left;
+	}
+}
+
+/// Fixed positioning shorthand
+@mixin fixed($top: null, $right: null, $bottom: null, $left: null) {
+	position: fixed;
+
+	@if $top != null {
+		top: $top;
+	}
+
+	@if $right != null {
+		right: $right;
+	}
+
+	@if $bottom != null {
+		bottom: $bottom;
+	}
+
+	@if $left != null {
+		left: $left;
+	}
+}
+
+/// Full-bleed absolute positioning
+@mixin absolute-fill {
+	position: absolute;
+	inset: 0;
+}
+
+/// Aspect ratio container
+/// @param {Number} $width - Aspect ratio width
+/// @param {Number} $height - Aspect ratio height
+@mixin aspect-ratio($width: 16, $height: 9) {
+	aspect-ratio: math.div($width, $height);
+}
+
+// ============================================
+// Typography Mixins
+// ============================================
+
+/// Text truncation with ellipsis
+@mixin truncate {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/// Multi-line text truncation
+/// @param {Number} $lines - Number of lines to show
+@mixin line-clamp($lines: 2) {
+	display: -webkit-box;
+	-webkit-line-clamp: $lines;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+/// Typography preset
+/// @param {String} $size - Font size name
+/// @param {String} $weight - Font weight name
+/// @param {String} $height - Line height name
+@mixin typography($size: "base", $weight: "normal", $height: "normal") {
+	font-size: font-size($size);
+	font-weight: font-weight($weight);
+	line-height: line-height($height);
+}
+
+/// Heading styles
+/// @param {Number} $level - Heading level (1-6)
+@mixin heading($level: 1) {
+	$sizes: ("5xl", "4xl", "3xl", "2xl", "xl", "lg");
+	$size: list.nth($sizes, math.clamp($level, 1, 6));
+
+	font-family: $font-family-sans;
+	font-size: font-size($size);
+	font-weight: font-weight("bold");
+	line-height: line-height("tight");
+	letter-spacing: map.get($letter-spacings, "tight");
+}
+
+/// Body text styles
+/// @param {String} $size - Font size name
+@mixin body-text($size: "base") {
+	font-family: $font-family-sans;
+	font-size: font-size($size);
+	font-weight: font-weight("normal");
+	line-height: line-height("relaxed");
+}
+
+/// Monospace text styles
+@mixin monospace {
+	font-family: $font-family-mono;
+	font-size: 0.875em;
+	font-feature-settings: "liga" 0;
+}
+
+// ============================================
+// Visual Effect Mixins
+// ============================================
+
+/// Box shadow with transition
+/// @param {String} $size - Shadow size name
+/// @param {String} $hover-size - Shadow size on hover
+@mixin shadow-interactive($size: "base", $hover-size: "lg") {
+	box-shadow: shadow($size);
+	transition: box-shadow map.get($transition-durations, "fast") map.get($transition-easings, "ease-out");
+
+	&:hover {
+		box-shadow: shadow($hover-size);
+	}
+}
+
+/// Glass morphism effect
+/// @param {Number} $blur - Blur amount
+/// @param {Number} $opacity - Background opacity
+@mixin glassmorphism($blur: 10px, $opacity: 0.7) {
+	background: alpha($color-white, $opacity);
+	backdrop-filter: blur($blur);
+	-webkit-backdrop-filter: blur($blur);
+}
+
+/// Gradient text
+/// @param {Color} $start - Start color
+/// @param {Color} $end - End color
+/// @param {String} $direction - Gradient direction
+@mixin gradient-text($start, $end, $direction: to right) {
+	background: linear-gradient($direction, $start, $end);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+/// Overlay
+/// @param {Color} $color - Overlay color
+/// @param {Number} $opacity - Overlay opacity
+@mixin overlay($color: $color-black, $opacity: 0.5) {
+	&::before {
+		content: "";
+
+		@include absolute-fill;
+
+		background-color: alpha($color, $opacity);
+		pointer-events: none;
+	}
+}
+
+// ============================================
+// Interaction Mixins
+// ============================================
+
+/// Focus ring
+/// @param {Color} $color - Focus ring color
+/// @param {Length} $width - Focus ring width
+/// @param {Length} $offset - Focus ring offset
+@mixin focus-ring($color: $color-primary-500, $width: 2px, $offset: 2px) {
+	&:focus-visible {
+		outline: $width solid $color;
+		outline-offset: $offset;
+	}
+}
+
+/// Hover lift effect
+/// @param {Length} $distance - Lift distance
+@mixin hover-lift($distance: -2px) {
+	transition: transform map.get($transition-durations, "fast") map.get($transition-easings, "ease-out");
+
+	&:hover {
+		transform: translateY($distance);
+	}
+}
+
+/// Hover scale effect
+/// @param {Number} $scale - Scale factor
+@mixin hover-scale($scale: 1.05) {
+	transition: transform map.get($transition-durations, "fast") map.get($transition-easings, "ease-out");
+
+	&:hover {
+		transform: scale($scale);
+	}
+}
+
+/// Button reset
+@mixin button-reset {
+	appearance: none;
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+/// Link reset
+@mixin link-reset {
+	color: inherit;
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		text-decoration: none;
+	}
+}
+
+// ============================================
+// Utility Mixins
+// ============================================
+
+/// Screen reader only
+@mixin sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/// Un-sr-only (make visible again)
+@mixin not-sr-only {
+	position: static;
+	width: auto;
+	height: auto;
+	padding: 0;
+	margin: 0;
+	overflow: visible;
+	clip: auto;
+	white-space: normal;
+}
+
+/// Hide scrollbar
+@mixin hide-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+/// Custom scrollbar
+/// @param {Length} $width - Scrollbar width
+/// @param {Color} $track - Track color
+/// @param {Color} $thumb - Thumb color
+@mixin custom-scrollbar($width: 8px, $track: $color-neutral-100, $thumb: $color-neutral-400) {
+	scrollbar-width: thin;
+	scrollbar-color: $thumb $track;
+
+	&::-webkit-scrollbar {
+		width: $width;
+		height: $width;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: $track;
+		border-radius: $width;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: $thumb;
+		border-radius: $width;
+
+		&:hover {
+			background: shade($thumb, 20%);
+		}
+	}
+}
+
+/// Selection styles
+/// @param {Color} $bg - Selection background
+/// @param {Color} $color - Selection text color
+@mixin selection($bg: $color-primary-500, $color: $color-white) {
+	&::selection {
+		background-color: $bg;
+		color: $color;
+	}
+}
+
+/// Clearfix
+@mixin clearfix {
+	&::after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+}
+
+// ============================================
+// Animation Mixins
+// ============================================
+
+/// Keyframe animation helper
+/// @param {String} $name - Animation name
+/// @param {String} $duration - Animation duration
+/// @param {String} $easing - Animation easing
+/// @param {Number} $delay - Animation delay
+/// @param {Number|String} $iterations - Iteration count
+/// @param {String} $direction - Animation direction
+/// @param {String} $fill-mode - Animation fill mode
+@mixin animate(
+	$name,
+	$duration: map.get($transition-durations, "normal"),
+	$easing: map.get($transition-easings, "ease-out"),
+	$delay: 0s,
+	$iterations: 1,
+	$direction: normal,
+	$fill-mode: forwards
+) {
+	animation: $name $duration $easing $delay $iterations $direction $fill-mode;
+}
+
+/// Transition helper
+/// @param {List} $properties - Properties to transition
+/// @param {String} $duration - Transition duration
+/// @param {String} $easing - Transition easing
+@mixin transition($properties: all, $duration: "fast", $easing: "ease-out") {
+	$dur: map.get($transition-durations, $duration);
+	$ease: map.get($transition-easings, $easing);
+
+	@if list.length($properties) == 1 {
+		transition: $properties $dur $ease;
+	} @else {
+		$transitions: ();
+
+		@each $prop in $properties {
+			$transitions: list.append($transitions, $prop $dur $ease, comma);
+		}
+
+		transition: $transitions;
+	}
+}

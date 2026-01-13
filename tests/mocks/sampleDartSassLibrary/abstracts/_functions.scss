@@ -1,0 +1,372 @@
+@use "sass:color";
+@use "sass:math";
+@use "sass:map";
+@use "sass:list";
+@use "sass:string";
+@use "sass:meta";
+@use "variables" as *;
+
+// ============================================
+// Color Functions
+// ============================================
+
+/// Get a color from the color map
+/// @param {String} $palette - The palette name (primary, neutral, etc.)
+/// @param {String} $shade - The shade value (50-900)
+/// @return {Color} The color value
+@function get-color($palette, $shade: "500") {
+	$palette-map: map.get($colors, $palette);
+
+	@if not $palette-map {
+		@error "Palette '#{$palette}' not found in $colors map.";
+	}
+
+	$color: map.get($palette-map, $shade);
+
+	@if not $color {
+		@error "Shade '#{$shade}' not found in '#{$palette}' palette.";
+	}
+
+	@return $color;
+}
+
+/// Generate a color with adjusted alpha
+/// @param {Color} $color - The base color
+/// @param {Number} $alpha - The alpha value (0-1)
+/// @return {Color} The color with alpha
+@function alpha($color, $alpha) {
+	@return color.change($color, $alpha: $alpha);
+}
+
+/// Mix two colors with a weight
+/// @param {Color} $color1 - First color
+/// @param {Color} $color2 - Second color
+/// @param {Number} $weight - Weight of first color (0-100)
+/// @return {Color} The mixed color
+@function tint($color, $weight: 50%) {
+	@return color.mix($color-white, $color, $weight);
+}
+
+@function shade($color, $weight: 50%) {
+	@return color.mix($color-black, $color, $weight);
+}
+
+/// Calculate relative luminance for contrast ratios
+/// @param {Color} $color - The color to analyze
+/// @return {Number} The relative luminance
+@function luminance($color) {
+	$red: math.div(color.red($color), 255);
+	$green: math.div(color.green($color), 255);
+	$blue: math.div(color.blue($color), 255);
+
+	$red: if($red <= 0.03928, math.div($red, 12.92), math.pow(math.div($red + 0.055, 1.055), 2.4));
+	$green: if(
+		$green <= 0.03928,
+		math.div($green, 12.92),
+		math.pow(math.div($green + 0.055, 1.055), 2.4)
+	);
+	$blue: if(
+		$blue <= 0.03928,
+		math.div($blue, 12.92),
+		math.pow(math.div($blue + 0.055, 1.055), 2.4)
+	);
+
+	@return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+}
+
+/// Calculate contrast ratio between two colors
+/// @param {Color} $color1 - First color
+/// @param {Color} $color2 - Second color
+/// @return {Number} The contrast ratio
+@function contrast-ratio($color1, $color2) {
+	$l1: luminance($color1);
+	$l2: luminance($color2);
+	$lighter: math.max($l1, $l2);
+	$darker: math.min($l1, $l2);
+
+	@return math.div($lighter + 0.05, $darker + 0.05);
+}
+
+/// Choose the best contrast color (black or white)
+/// @param {Color} $background - The background color
+/// @return {Color} Black or white for best contrast
+@function contrast-color($background) {
+	$white-contrast: contrast-ratio($background, $color-white);
+	$black-contrast: contrast-ratio($background, $color-black);
+
+	@return if($white-contrast > $black-contrast, $color-white, $color-black);
+}
+
+// ============================================
+// Spacing Functions
+// ============================================
+
+/// Get spacing value from scale
+/// @param {Number} $step - The spacing step
+/// @return {Length} The spacing value
+@function space($step) {
+	$value: map.get($spacing, $step);
+
+	@if not $value {
+		@error "Spacing step '#{$step}' not found in $spacing map.";
+	}
+
+	@return $value;
+}
+
+/// Convert pixels to rem
+/// @param {Length} $px - The pixel value
+/// @param {Length} $base - The base font size (default: 16px)
+/// @return {Length} The rem value
+@function to-rem($px, $base: $font-size-base) {
+	@if math.unit($px) != "px" {
+		@error "to-rem() requires a pixel value.";
+	}
+
+	@return math.div($px, $base) * 1rem;
+}
+
+/// Convert rem to pixels
+/// @param {Length} $rem - The rem value
+/// @param {Length} $base - The base font size (default: 16px)
+/// @return {Length} The pixel value
+@function to-px($rem, $base: $font-size-base) {
+	@if math.unit($rem) != "rem" {
+		@error "to-px() requires a rem value.";
+	}
+
+	@return math.div($rem, 1rem) * $base;
+}
+
+/// Convert pixels to em
+/// @param {Length} $px - The pixel value
+/// @param {Length} $context - The context font size
+/// @return {Length} The em value
+@function to-em($px, $context: $font-size-base) {
+	@if math.unit($px) != "px" {
+		@error "to-em() requires a pixel value.";
+	}
+
+	@return math.div($px, $context) * 1em;
+}
+
+// ============================================
+// Typography Functions
+// ============================================
+
+/// Get font size from scale
+/// @param {String} $size - The size name
+/// @return {Length} The font size
+@function font-size($size) {
+	$value: map.get($font-sizes, $size);
+
+	@if not $value {
+		@error "Font size '#{$size}' not found in $font-sizes map.";
+	}
+
+	@return $value;
+}
+
+/// Get font weight from scale
+/// @param {String} $weight - The weight name
+/// @return {Number} The font weight
+@function font-weight($weight) {
+	$value: map.get($font-weights, $weight);
+
+	@if not $value {
+		@error "Font weight '#{$weight}' not found in $font-weights map.";
+	}
+
+	@return $value;
+}
+
+/// Get line height from scale
+/// @param {String} $height - The height name
+/// @return {Number} The line height
+@function line-height($height) {
+	$value: map.get($line-heights, $height);
+
+	@if not $value {
+		@error "Line height '#{$height}' not found in $line-heights map.";
+	}
+
+	@return $value;
+}
+
+// ============================================
+// Shadow Functions
+// ============================================
+
+/// Get shadow from scale
+/// @param {String} $size - The shadow size
+/// @return {List} The shadow value
+@function shadow($size) {
+	$value: map.get($shadows, $size);
+
+	@if not $value {
+		@error "Shadow '#{$size}' not found in $shadows map.";
+	}
+
+	@return $value;
+}
+
+// ============================================
+// Border Radius Functions
+// ============================================
+
+/// Get border radius from scale
+/// @param {String} $size - The radius size
+/// @return {Length} The radius value
+@function radius($size) {
+	$value: map.get($radii, $size);
+
+	@if not $value {
+		@error "Radius '#{$size}' not found in $radii map.";
+	}
+
+	@return $value;
+}
+
+// ============================================
+// Breakpoint Functions
+// ============================================
+
+/// Get breakpoint value
+/// @param {String} $name - The breakpoint name
+/// @return {Length} The breakpoint value
+@function breakpoint($name) {
+	$value: map.get($breakpoints, $name);
+
+	@if not $value {
+		@error "Breakpoint '#{$name}' not found in $breakpoints map.";
+	}
+
+	@return $value;
+}
+
+// ============================================
+// Z-Index Functions
+// ============================================
+
+/// Get z-index from scale
+/// @param {String} $layer - The layer name
+/// @return {Number} The z-index value
+@function z($layer) {
+	$value: map.get($z-indices, $layer);
+
+	@if not $value {
+		@error "Z-index '#{$layer}' not found in $z-indices map.";
+	}
+
+	@return $value;
+}
+
+// ============================================
+// String Functions
+// ============================================
+
+/// Replace a substring in a string
+/// @param {String} $string - The original string
+/// @param {String} $search - The substring to replace
+/// @param {String} $replace - The replacement string
+/// @return {String} The modified string
+@function str-replace($string, $search, $replace: "") {
+	$index: string.index($string, $search);
+
+	@if $index {
+		@return string.slice($string, 1, $index - 1) + $replace +
+			str-replace(string.slice($string, $index + string.length($search)), $search, $replace);
+	}
+
+	@return $string;
+}
+
+/// Convert string to kebab-case
+/// @param {String} $string - The original string
+/// @return {String} The kebab-case string
+@function to-kebab-case($string) {
+	$result: "";
+
+	@for $i from 1 through string.length($string) {
+		$char: string.slice($string, $i, $i);
+		$code: string.to-upper-case($char);
+
+		@if $char == $code and $i > 1 {
+			$result: $result + "-" + string.to-lower-case($char);
+		} @else {
+			$result: $result + string.to-lower-case($char);
+		}
+	}
+
+	@return $result;
+}
+
+// ============================================
+// List Functions
+// ============================================
+
+/// Get the first item of a list
+/// @param {List} $list - The list
+/// @return {*} The first item
+@function first($list) {
+	@return list.nth($list, 1);
+}
+
+/// Get the last item of a list
+/// @param {List} $list - The list
+/// @return {*} The last item
+@function last($list) {
+	@return list.nth($list, list.length($list));
+}
+
+/// Check if a list contains a value
+/// @param {List} $list - The list to search
+/// @param {*} $value - The value to find
+/// @return {Boolean} Whether the value exists
+@function contains($list, $value) {
+	@return list.index($list, $value) != null;
+}
+
+// ============================================
+// Map Functions
+// ============================================
+
+/// Deep get a value from a nested map
+/// @param {Map} $map - The map
+/// @param {List} $keys - The keys path
+/// @return {*} The value
+@function map-deep-get($map, $keys...) {
+	@each $key in $keys {
+		@if meta.type-of($map) != "map" {
+			@return null;
+		}
+
+		$map: map.get($map, $key);
+	}
+
+	@return $map;
+}
+
+/// Deep set a value in a nested map
+/// @param {Map} $map - The map
+/// @param {List} $keys - The keys path
+/// @param {*} $value - The value to set
+/// @return {Map} The modified map
+@function map-deep-set($map, $keys, $value) {
+	$length: list.length($keys);
+	$result: ();
+
+	@if $length == 1 {
+		@return map.set($map, first($keys), $value);
+	}
+
+	$nested-map: map.get($map, first($keys));
+
+	@if not $nested-map {
+		$nested-map: ();
+	}
+
+	$result: map-deep-set($nested-map, list.slice($keys, 2), $value);
+
+	@return map.set($map, first($keys), $result);
+}

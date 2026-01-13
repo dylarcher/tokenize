@@ -1,0 +1,478 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// ============================================
+// Container Component
+// Responsive container with max-width constraints
+// ============================================
+
+.container {
+	width: 100%;
+	margin-inline: auto;
+	padding-inline: space(4);
+
+	@include mq("sm") {
+		max-width: map.get($breakpoints, "sm");
+	}
+
+	@include mq("md") {
+		max-width: map.get($breakpoints, "md");
+		padding-inline: space(6);
+	}
+
+	@include mq("lg") {
+		max-width: map.get($breakpoints, "lg");
+		padding-inline: space(8);
+	}
+
+	@include mq("xl") {
+		max-width: map.get($breakpoints, "xl");
+	}
+
+	@include mq("2xl") {
+		max-width: map.get($breakpoints, "2xl");
+	}
+
+	// Fluid container (no max-width)
+	&--fluid {
+		max-width: none;
+	}
+
+	// Narrow container for text content
+	&--narrow {
+		max-width: 720px;
+	}
+
+	// Wide container
+	&--wide {
+		max-width: 1600px;
+	}
+
+	// Prose container (optimal reading width)
+	&--prose {
+		max-width: 65ch;
+	}
+}
+
+// ============================================
+// Section Component
+// Vertical spacing for page sections
+// ============================================
+
+.section {
+	padding-block: space(16);
+
+	@include mq("md") {
+		padding-block: space(20);
+	}
+
+	@include mq("lg") {
+		padding-block: space(24);
+	}
+
+	// Size variants
+	&--sm {
+		padding-block: space(8);
+
+		@include mq("md") {
+			padding-block: space(12);
+		}
+	}
+
+	&--lg {
+		padding-block: space(24);
+
+		@include mq("md") {
+			padding-block: space(32);
+		}
+
+		@include mq("lg") {
+			padding-block: space(40);
+		}
+	}
+
+	&--xl {
+		padding-block: space(32);
+
+		@include mq("md") {
+			padding-block: space(48);
+		}
+
+		@include mq("lg") {
+			padding-block: space(64);
+		}
+	}
+
+	// No top padding
+	&--flush-top {
+		padding-top: 0;
+	}
+
+	// No bottom padding
+	&--flush-bottom {
+		padding-bottom: 0;
+	}
+}
+
+// ============================================
+// Stack Component
+// Vertical spacing between children
+// ============================================
+
+.stack {
+	display: flex;
+	flex-direction: column;
+	gap: space(4);
+
+	// Size variants
+	&--xs {
+		gap: space(1);
+	}
+
+	&--sm {
+		gap: space(2);
+	}
+
+	&--md {
+		gap: space(4);
+	}
+
+	&--lg {
+		gap: space(6);
+	}
+
+	&--xl {
+		gap: space(8);
+	}
+
+	&--2xl {
+		gap: space(12);
+	}
+}
+
+// ============================================
+// Cluster Component
+// Horizontal wrapping with consistent gaps
+// ============================================
+
+.cluster {
+	display: flex;
+	flex-wrap: wrap;
+	gap: space(3);
+	align-items: center;
+
+	// Size variants
+	&--xs {
+		gap: space(1);
+	}
+
+	&--sm {
+		gap: space(2);
+	}
+
+	&--lg {
+		gap: space(4);
+	}
+
+	&--xl {
+		gap: space(6);
+	}
+
+	// Alignment
+	&--start {
+		justify-content: flex-start;
+	}
+
+	&--center {
+		justify-content: center;
+	}
+
+	&--end {
+		justify-content: flex-end;
+	}
+
+	&--between {
+		justify-content: space-between;
+	}
+}
+
+// ============================================
+// Sidebar Layout
+// Content with fixed-width sidebar
+// ============================================
+
+.with-sidebar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: space(6);
+
+	// Sidebar (first child)
+	> :first-child {
+		flex-basis: 280px;
+		flex-grow: 1;
+	}
+
+	// Main content (second child)
+	> :last-child {
+		flex-basis: 0;
+		flex-grow: 999;
+		min-width: 60%;
+	}
+
+	// Reverse (sidebar on right)
+	&--reverse {
+		> :first-child {
+			order: 2;
+		}
+
+		> :last-child {
+			order: 1;
+		}
+	}
+
+	// Narrow sidebar
+	&--narrow {
+		> :first-child {
+			flex-basis: 200px;
+		}
+	}
+
+	// Wide sidebar
+	&--wide {
+		> :first-child {
+			flex-basis: 360px;
+		}
+	}
+}
+
+// ============================================
+// Switcher Component
+// Switches between horizontal and vertical at breakpoint
+// ============================================
+
+.switcher {
+	display: flex;
+	flex-wrap: wrap;
+	gap: space(4);
+
+	> * {
+		flex-grow: 1;
+		flex-basis: calc((40rem - 100%) * 999);
+	}
+
+	// Size variants
+	&--sm {
+		> * {
+			flex-basis: calc((30rem - 100%) * 999);
+		}
+	}
+
+	&--lg {
+		> * {
+			flex-basis: calc((50rem - 100%) * 999);
+		}
+	}
+
+	// Limit children per row
+	&--limit-2 > * {
+		max-width: calc(50% - space(2));
+	}
+
+	&--limit-3 > * {
+		max-width: calc(33.333% - space(3));
+	}
+
+	&--limit-4 > * {
+		max-width: calc(25% - space(3));
+	}
+}
+
+// ============================================
+// Cover Component
+// Vertically centered content with header/footer
+// ============================================
+
+.cover {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	min-height: 100dvh;
+	padding: space(4);
+
+	> * {
+		margin-block: space(4);
+	}
+
+	// Center the main content
+	> :nth-child(2) {
+		margin-block: auto;
+	}
+
+	// First and last children stick to edges
+	> :first-child:not(:nth-child(2)) {
+		margin-top: 0;
+	}
+
+	> :last-child:not(:nth-child(2)) {
+		margin-bottom: 0;
+	}
+}
+
+// ============================================
+// Center Component
+// Horizontally and/or vertically centered content
+// ============================================
+
+.center {
+	@include flex-center;
+
+	// Text centered
+	&--text {
+		text-align: center;
+	}
+
+	// Intrinsic sizing (shrink to content)
+	&--intrinsic {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+// ============================================
+// Frame Component
+// Aspect ratio container
+// ============================================
+
+.frame {
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+
+	> img,
+	> video,
+	> iframe {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	// Ratio variants
+	&--square {
+		aspect-ratio: 1;
+	}
+
+	&--4-3 {
+		aspect-ratio: 4 / 3;
+	}
+
+	&--3-2 {
+		aspect-ratio: 3 / 2;
+	}
+
+	&--21-9 {
+		aspect-ratio: 21 / 9;
+	}
+
+	// Object fit variants
+	&--contain {
+		> img,
+		> video,
+		> iframe {
+			object-fit: contain;
+		}
+	}
+}
+
+// ============================================
+// Reel Component
+// Horizontal scrolling container
+// ============================================
+
+.reel {
+	display: flex;
+	gap: space(4);
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scroll-padding: space(4);
+	padding: space(4);
+	margin: calc(-1 * space(4));
+
+	@include hide-scrollbar;
+
+	> * {
+		flex-shrink: 0;
+		scroll-snap-align: start;
+	}
+
+	// Show scrollbar
+	&--show-scrollbar {
+		@include custom-scrollbar;
+
+		scrollbar-width: thin;
+		-ms-overflow-style: auto;
+
+		&::-webkit-scrollbar {
+			display: block;
+		}
+	}
+}
+
+// ============================================
+// Imposter Component
+// Overlay/modal positioning
+// ============================================
+
+.imposter {
+	position: fixed;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	transform: translate(-50%, -50%);
+
+	// Full viewport
+	&--full {
+		inset: 0;
+		transform: none;
+	}
+
+	// Contained within parent
+	&--contained {
+		position: absolute;
+		overflow: auto;
+		max-width: calc(100% - space(8));
+		max-height: calc(100% - space(8));
+	}
+}
+
+// ============================================
+// Layer Component
+// Stacking context management
+// ============================================
+
+.layer {
+	position: relative;
+	isolation: isolate;
+
+	&--dropdown {
+		z-index: z("dropdown");
+	}
+
+	&--sticky {
+		z-index: z("sticky");
+	}
+
+	&--fixed {
+		z-index: z("fixed");
+	}
+
+	&--modal {
+		z-index: z("modal");
+	}
+
+	&--popover {
+		z-index: z("popover");
+	}
+
+	&--tooltip {
+		z-index: z("tooltip");
+	}
+}

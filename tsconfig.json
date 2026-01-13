@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"baseUrl": ".",
+		"declaration": true,
+		"declarationDir": "dist",
+		"declarationMap": false,
+		"emitDeclarationOnly": true,
+		"isolatedModules": false,
+		"noEmit": false,
+		"paths": {
+			"./*": ["./*"]
+		},
+		"rootDirs": ["bin", "docs", "lib"],
+		"verbatimModuleSyntax": false
+	},
+	"exclude": [".tmp", ".claude", "dist", "node_modules", ".vscode"],
+	"extends": "../../tsconfig.json",
+	"include": ["**/*", "!**/*.test.*", "!**/*.spec.*"]
+}

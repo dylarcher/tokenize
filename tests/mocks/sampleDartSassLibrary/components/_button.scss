@@ -1,0 +1,356 @@
+@use "sass:map";
+@use "sass:color";
+@use "../abstracts" as *;
+
+// ============================================
+// Button Component
+// ============================================
+
+// Button base
+.btn {
+	@extend %interactive;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: space(2);
+	padding: space(2) space(4);
+	font-family: $font-family-sans;
+	font-size: font-size("base");
+	font-weight: font-weight("medium");
+	line-height: line-height("normal");
+	text-align: center;
+	text-decoration: none;
+	white-space: nowrap;
+	vertical-align: middle;
+	border: 1px solid transparent;
+	border-radius: radius("md");
+	cursor: pointer;
+	user-select: none;
+
+	// Icon sizing within buttons
+	svg,
+	[class*="icon"] {
+		width: 1.25em;
+		height: 1.25em;
+		flex-shrink: 0;
+	}
+
+	// Loading state
+	&.is-loading {
+		position: relative;
+		color: transparent;
+		pointer-events: none;
+
+		&::after {
+			content: "";
+			position: absolute;
+			width: 1em;
+			height: 1em;
+			border: 2px solid currentcolor;
+			border-right-color: transparent;
+			border-radius: 50%;
+			animation: spin 0.6s linear infinite;
+		}
+	}
+
+	// Disabled state
+	&:disabled,
+	&.is-disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+		pointer-events: none;
+	}
+}
+
+// ============================================
+// Button Variants
+// ============================================
+
+// Primary button
+.btn-primary {
+	color: contrast-color($color-primary-600);
+	background-color: $color-primary-600;
+	border-color: $color-primary-600;
+
+	&:hover:not(:disabled) {
+		background-color: $color-primary-700;
+		border-color: $color-primary-700;
+	}
+
+	&:active:not(:disabled) {
+		background-color: $color-primary-800;
+		border-color: $color-primary-800;
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 3px alpha($color-primary-500, 0.4);
+	}
+}
+
+// Secondary button
+.btn-secondary {
+	color: $color-neutral-700;
+	background-color: $color-neutral-100;
+	border-color: $color-neutral-200;
+
+	&:hover:not(:disabled) {
+		background-color: $color-neutral-200;
+		border-color: $color-neutral-300;
+	}
+
+	&:active:not(:disabled) {
+		background-color: $color-neutral-300;
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 3px alpha($color-neutral-500, 0.3);
+	}
+}
+
+// Outline button
+.btn-outline {
+	color: $color-primary-600;
+	background-color: transparent;
+	border-color: $color-primary-600;
+
+	&:hover:not(:disabled) {
+		color: contrast-color($color-primary-600);
+		background-color: $color-primary-600;
+	}
+
+	&:active:not(:disabled) {
+		background-color: $color-primary-700;
+		border-color: $color-primary-700;
+	}
+}
+
+// Ghost button
+.btn-ghost {
+	color: $color-neutral-700;
+	background-color: transparent;
+	border-color: transparent;
+
+	&:hover:not(:disabled) {
+		background-color: $color-neutral-100;
+	}
+
+	&:active:not(:disabled) {
+		background-color: $color-neutral-200;
+	}
+}
+
+// Link button
+.btn-link {
+	color: $color-primary-600;
+	background-color: transparent;
+	border-color: transparent;
+	padding-inline: 0;
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+
+	&:hover:not(:disabled) {
+		color: $color-primary-700;
+	}
+}
+
+// Danger button
+.btn-danger {
+	color: $color-white;
+	background-color: $color-error;
+	border-color: $color-error;
+
+	&:hover:not(:disabled) {
+		background-color: color.scale($color-error, $lightness: -15%);
+		border-color: color.scale($color-error, $lightness: -15%);
+	}
+
+	&:active:not(:disabled) {
+		background-color: color.scale($color-error, $lightness: -25%);
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 3px alpha($color-error, 0.4);
+	}
+}
+
+// Success button
+.btn-success {
+	color: $color-white;
+	background-color: $color-success;
+	border-color: $color-success;
+
+	&:hover:not(:disabled) {
+		background-color: color.scale($color-success, $lightness: -15%);
+		border-color: color.scale($color-success, $lightness: -15%);
+	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 3px alpha($color-success, 0.4);
+	}
+}
+
+// ============================================
+// Button Sizes
+// ============================================
+
+.btn-xs {
+	padding: space(1) space(2);
+	font-size: font-size("xs");
+	border-radius: radius("sm");
+}
+
+.btn-sm {
+	padding: space(1) space(3);
+	font-size: font-size("sm");
+}
+
+.btn-lg {
+	padding: space(3) space(6);
+	font-size: font-size("lg");
+}
+
+.btn-xl {
+	padding: space(4) space(8);
+	font-size: font-size("xl");
+	border-radius: radius("lg");
+}
+
+// ============================================
+// Button Shapes
+// ============================================
+
+.btn-square {
+	aspect-ratio: 1;
+	padding: space(2);
+}
+
+.btn-rounded {
+	border-radius: radius("full");
+}
+
+.btn-pill {
+	border-radius: radius("full");
+	padding-inline: space(6);
+}
+
+// ============================================
+// Button Width
+// ============================================
+
+.btn-block {
+	display: flex;
+	width: 100%;
+}
+
+// ============================================
+// Button Groups
+// ============================================
+
+.btn-group {
+	display: inline-flex;
+
+	> .btn {
+		border-radius: 0;
+
+		&:first-child {
+			border-top-left-radius: radius("md");
+			border-bottom-left-radius: radius("md");
+		}
+
+		&:last-child {
+			border-top-right-radius: radius("md");
+			border-bottom-right-radius: radius("md");
+		}
+
+		&:not(:first-child) {
+			margin-left: -1px;
+		}
+
+		&:hover,
+		&:focus {
+			z-index: 1;
+		}
+	}
+}
+
+.btn-group-vertical {
+	display: inline-flex;
+	flex-direction: column;
+
+	> .btn {
+		border-radius: 0;
+
+		&:first-child {
+			border-top-left-radius: radius("md");
+			border-top-right-radius: radius("md");
+		}
+
+		&:last-child {
+			border-bottom-left-radius: radius("md");
+			border-bottom-right-radius: radius("md");
+		}
+
+		&:not(:first-child) {
+			margin-top: -1px;
+		}
+	}
+}
+
+// ============================================
+// Icon Buttons
+// ============================================
+
+.btn-icon {
+	padding: space(2);
+	aspect-ratio: 1;
+
+	svg,
+	[class*="icon"] {
+		width: 1.25em;
+		height: 1.25em;
+	}
+}
+
+.btn-icon-sm {
+	padding: space(1);
+
+	svg {
+		width: 1em;
+		height: 1em;
+	}
+}
+
+.btn-icon-lg {
+	padding: space(3);
+
+	svg {
+		width: 1.5em;
+		height: 1.5em;
+	}
+}
+
+// ============================================
+// Dark Mode
+// ============================================
+
+@include dark-mode {
+	.btn-secondary {
+		color: $color-neutral-200;
+		background-color: $color-neutral-800;
+		border-color: $color-neutral-700;
+
+		&:hover:not(:disabled) {
+			background-color: $color-neutral-700;
+			border-color: $color-neutral-600;
+		}
+	}
+
+	.btn-ghost {
+		color: $color-neutral-200;
+
+		&:hover:not(:disabled) {
+			background-color: $color-neutral-800;
+		}
+	}
+}

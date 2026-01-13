@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "Tokenize Styles",
+  "short_name": "tokens-light",
+  "description": "Generate & Audit Style Tokens (CLI Tool)",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#6b7280",
+  "icons": [
+    {
+      "src": "google-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["developer", "utilities"],
+  "orientation": "any",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr"
+}

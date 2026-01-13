@@ -1,0 +1,7 @@
+*.db
+*.lockb
+*.log*
+.DS_Store
+.tmp/
+dist/
+node*/

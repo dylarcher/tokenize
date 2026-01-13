@@ -1,0 +1,23 @@
+// ============================================
+// SCSS Library Index
+// Forwards all modules for external consumption
+// ============================================
+
+// Forward abstracts (variables, functions, mixins, placeholders)
+// These are tools for building, not output-generating
+@forward "abstracts";
+
+// Forward base styles (reset, typography, animations)
+@forward "base";
+
+// Forward layout primitives
+@forward "layout";
+
+// Forward components
+@forward "components";
+
+// Forward themes
+@forward "themes";
+
+// Forward utilities
+@forward "utilities";

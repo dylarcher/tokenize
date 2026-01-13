@@ -1,0 +1,191 @@
+@use "sass:color";
+@use "../abstracts" as *;
+
+// ============================================
+// Dark Theme
+// Override CSS custom properties for dark mode
+// ============================================
+
+// ============================================
+// Dark Theme Tokens Mixin
+// Must be defined before use
+// ============================================
+
+@mixin dark-theme-tokens {
+	// Color scheme hint
+	color-scheme: dark;
+
+	// ============================================
+	// Semantic Color Tokens
+	// ============================================
+
+	// Background colors
+	--color-bg-primary: #{$color-neutral-900};
+	--color-bg-secondary: #{$color-neutral-800};
+	--color-bg-tertiary: #{$color-neutral-700};
+	--color-bg-inverse: #{$color-white};
+
+	// Surface colors
+	--color-surface-default: #{$color-neutral-800};
+	--color-surface-raised: #{$color-neutral-700};
+	--color-surface-overlay: #{alpha($color-neutral-800, 0.95)};
+	--color-surface-sunken: #{$color-neutral-900};
+
+	// Text colors
+	--color-text-primary: #{$color-neutral-50};
+	--color-text-secondary: #{$color-neutral-300};
+	--color-text-tertiary: #{$color-neutral-400};
+	--color-text-disabled: #{$color-neutral-500};
+	--color-text-inverse: #{$color-neutral-900};
+	--color-text-link: #{$color-primary-400};
+	--color-text-link-hover: #{$color-primary-300};
+
+	// Border colors
+	--color-border-default: #{$color-neutral-700};
+	--color-border-muted: #{$color-neutral-800};
+	--color-border-strong: #{$color-neutral-600};
+	--color-border-focus: #{$color-primary-400};
+
+	// Interactive colors (lighter in dark mode)
+	--color-interactive-default: #{$color-primary-500};
+	--color-interactive-hover: #{$color-primary-400};
+	--color-interactive-active: #{$color-primary-300};
+	--color-interactive-disabled: #{$color-neutral-600};
+
+	// Status colors (adjusted for dark backgrounds)
+	--color-success-bg: #{alpha($color-success, 0.15)};
+	--color-success-border: #{color.scale($color-success, $lightness: 10%)};
+	--color-success-text: #{color.scale($color-success, $lightness: 30%)};
+
+	--color-warning-bg: #{alpha($color-warning, 0.15)};
+	--color-warning-border: #{color.scale($color-warning, $lightness: 10%)};
+	--color-warning-text: #{color.scale($color-warning, $lightness: 30%)};
+
+	--color-error-bg: #{alpha($color-error, 0.15)};
+	--color-error-border: #{color.scale($color-error, $lightness: 10%)};
+	--color-error-text: #{color.scale($color-error, $lightness: 30%)};
+
+	--color-info-bg: #{alpha($color-info, 0.15)};
+	--color-info-border: #{color.scale($color-info, $lightness: 10%)};
+	--color-info-text: #{color.scale($color-info, $lightness: 30%)};
+
+	// ============================================
+	// Shadow Tokens (darker for dark mode)
+	// ============================================
+
+	$dark-shadow-color: alpha($color-black, 0.3);
+	$dark-shadow-color-strong: alpha($color-black, 0.5);
+
+	--shadow-sm: 0 1px 2px 0 #{$dark-shadow-color};
+	--shadow-base: 0 1px 3px 0 #{$dark-shadow-color}, 0 1px 2px -1px #{$dark-shadow-color};
+	--shadow-md: 0 4px 6px -1px #{$dark-shadow-color}, 0 2px 4px -2px #{$dark-shadow-color};
+	--shadow-lg: 0 10px 15px -3px #{$dark-shadow-color}, 0 4px 6px -4px #{$dark-shadow-color};
+	--shadow-xl: 0 20px 25px -5px #{$dark-shadow-color}, 0 8px 10px -6px #{$dark-shadow-color};
+	--shadow-2xl: 0 25px 50px -12px #{$dark-shadow-color-strong};
+	--shadow-inner: inset 0 2px 4px 0 #{$dark-shadow-color};
+}
+
+// ============================================
+// Apply Dark Theme via Media Query
+// ============================================
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		@include dark-theme-tokens;
+	}
+}
+
+[data-theme="dark"] {
+	@include dark-theme-tokens;
+}
+
+// ============================================
+// Dark Theme Utility Classes
+// ============================================
+
+.theme-dark {
+	@include dark-theme-tokens;
+
+	background-color: var(--color-bg-primary);
+	color: var(--color-text-primary);
+}
+
+// ============================================
+// Dark Mode Specific Overrides
+// ============================================
+
+@include dark-mode {
+	// Adjust image brightness
+	img:not([src*=".svg"]) {
+		filter: brightness(0.9);
+	}
+
+	// Scrollbar colors
+	::-webkit-scrollbar-track {
+		background: $color-neutral-800;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: $color-neutral-600;
+
+		&:hover {
+			background: $color-neutral-500;
+		}
+	}
+
+	// Selection colors
+	::selection {
+		background-color: alpha($color-primary-400, 0.4);
+		color: $color-neutral-50;
+	}
+
+	// Focus ring
+	:focus-visible {
+		outline-color: $color-primary-400;
+	}
+
+	// HR
+	hr {
+		border-color: $color-neutral-700;
+	}
+
+	// Code blocks
+	code {
+		background-color: $color-neutral-800;
+		color: $color-primary-300;
+	}
+
+	pre {
+		background-color: $color-neutral-950;
+
+		code {
+			background: none;
+			color: $color-neutral-100;
+		}
+	}
+
+	// Kbd
+	kbd {
+		background-color: $color-neutral-700;
+		border-color: $color-neutral-600;
+		box-shadow: 0 1px 0 $color-neutral-600;
+	}
+
+	// Mark
+	mark {
+		background-color: alpha($color-warning, 0.3);
+	}
+}
+
+// ============================================
+// High Contrast Mode
+// ============================================
+
+@include high-contrast {
+	:root {
+		--color-text-primary: #{$color-white};
+		--color-text-secondary: #{$color-neutral-100};
+		--color-border-default: #{$color-neutral-400};
+		--color-border-focus: #{$color-white};
+	}
+}

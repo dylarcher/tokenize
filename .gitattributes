@@ -1,0 +1,57 @@
+* text=auto
+*.*js text eol=lf
+*.*ml text eol=lf
+*.aac binary
+*.aiff binary
+*.avi* binary
+*.bmp binary
+*.cts text eol=lf
+*.cur binary
+*.eot binary
+*.ets text eol=lf
+*.flac binary
+*.flv binary
+*.gif binary
+*.hei* binary
+*.htm* text eol=lf
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.json* text eol=lf
+*.lock* text eol=lf -diff
+*.m4* binary
+*.md text eol=lf
+*.mkv binary
+*.mov binary
+*.mp* binary
+*.mpeg binary
+*.mts text eol=lf
+*.ogg binary
+*.otf binary
+*.pdf binary
+*.png binary
+*.psd binary
+*.spec.js export-ignore
+*.svg text eol=lf
+*.tar.gz binary
+*.test.js export-ignore
+*.tif* binary
+*.ts* text eol=lf
+*.ttf binary
+*.wav binary
+*.web* binary
+*.wm* binary
+*.woff* binary
+*.zip binary
+*config.* text eol=lf
+*sconfig.json export-ignore
+.*rc text eol=lf
+.*rc.* text eol=lf
+.claude/ export-ignore
+.git* export-ignore
+.git* text eol=lf
+.git/ export-ignore
+.github/ export-ignore
+.vsc*/ export-ignore
+__test*/ export-ignore
+test*/ export-ignore

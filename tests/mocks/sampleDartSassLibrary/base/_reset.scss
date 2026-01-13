@@ -1,0 +1,262 @@
+@use "../abstracts" as *;
+
+// ============================================
+// Modern CSS Reset
+// Based on Josh Comeau's CSS Reset with additions
+// ============================================
+
+// Box sizing rules
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+// Prevent font size inflation
+html {
+	-moz-text-size-adjust: none;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+	font-size: $font-size-base;
+	scroll-behavior: smooth;
+
+	@include reduced-motion {
+		scroll-behavior: auto;
+	}
+}
+
+// Remove default margin and set core body defaults
+body {
+	min-height: 100vh;
+	min-height: 100dvh;
+	margin: 0;
+	font-family: $font-family-sans;
+	font-size: font-size("base");
+	line-height: line-height("normal");
+	color: $color-neutral-900;
+	background-color: $color-white;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+// Remove default margin on common elements
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+dl,
+dd {
+	margin: 0;
+}
+
+// Remove list styles on ul, ol elements with a list role
+ul[role="list"],
+ol[role="list"] {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+// Set core link defaults
+a {
+	color: $color-primary-600;
+	text-decoration-skip-ink: auto;
+	text-underline-offset: 0.15em;
+
+	&:hover {
+		color: $color-primary-700;
+	}
+}
+
+// A elements without a class get default styles
+a:not([class]) {
+	text-decoration: underline;
+}
+
+// Make images easier to work with
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+// Inherit fonts for inputs and buttons
+input,
+button,
+textarea,
+select {
+	font: inherit;
+	color: inherit;
+}
+
+// Make sure textareas without a rows attribute are not tiny
+textarea:not([rows]) {
+	min-height: 10em;
+}
+
+// Anything with an anchor target should have extra scroll margin
+:target {
+	scroll-margin-block: 5ex;
+}
+
+// Remove all animations, transitions and smooth scroll for reduced motion
+@include reduced-motion {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+// Focus styles
+:focus-visible {
+	outline: 2px solid $color-primary-500;
+	outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+	outline: none;
+}
+
+// Selection styles
+::selection {
+	background-color: alpha($color-primary-500, 0.3);
+	color: $color-neutral-900;
+}
+
+// Placeholder styles
+::placeholder {
+	color: $color-neutral-400;
+	opacity: 1;
+}
+
+// Hidden attribute support
+[hidden] {
+	display: none !important;
+}
+
+// Disabled state
+[disabled] {
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+// Summary element cursor
+summary {
+	cursor: pointer;
+}
+
+// Table defaults
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+// Dialog reset
+dialog {
+	padding: 0;
+	border: none;
+	background: transparent;
+}
+
+dialog::backdrop {
+	background-color: alpha($color-black, 0.5);
+}
+
+// HR styling
+hr {
+	border: none;
+	border-top: 1px solid $color-neutral-200;
+	margin: space(8) 0;
+}
+
+// Code elements
+code,
+kbd,
+samp,
+pre {
+	font-family: $font-family-mono;
+	font-size: 0.875em;
+}
+
+pre {
+	margin: 0;
+	overflow-x: auto;
+}
+
+// Abbreviation
+abbr[title] {
+	text-decoration: underline dotted;
+	cursor: help;
+}
+
+// Mark element
+mark {
+	background-color: alpha($color-warning, 0.3);
+	color: inherit;
+	padding: 0.1em 0.2em;
+	border-radius: radius("sm");
+}
+
+// Small element
+small {
+	font-size: font-size("sm");
+}
+
+// Sub and sup
+sub,
+sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+sub {
+	bottom: -0.25em;
+}
+
+sup {
+	top: -0.5em;
+}
+
+// Progress and meter
+progress,
+meter {
+	vertical-align: middle;
+}
+
+// Details/Summary
+details {
+	> summary {
+		list-style: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+	}
+}
+
+// Fieldset and legend
+fieldset {
+	border: 1px solid $color-neutral-200;
+	border-radius: radius("md");
+	padding: space(4);
+	margin: 0;
+}
+
+legend {
+	padding: 0 space(2);
+	font-weight: font-weight("medium");
+}

@@ -1,0 +1,40 @@
+[install]
+dev = true
+exact = true
+linker = "hoisted"
+peer = true
+
+[run]
+bun = true
+silent = false
+verbose = true
+
+[test]
+coverage = true
+coverageThreshold = 0.75
+coverageSkipTestFiles = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "tests/coverage"
+coveragePathIgnorePatterns = [
+  "**/*.config.*",
+  "**/*.d.ts",
+  "**/*.json",
+  "**/*.lock*",
+  "**/*.md",
+  "**/*.spec.*",
+  "**/*.test.*",
+  "**/.*rc",
+  "**/.*rc.*",
+  "**/.claude/**",
+  "**/.editorconfig",
+  "**/.git*",
+  "**/.github/**",
+  "**/.tmp/**",
+  "**/.vscode/**",
+  "**/bin/**",
+  "**/dist/**",
+  "**/docs/**",
+  "**/node_modules/**",
+  "**/test*/**",
+  "**/__test*__/**",
+]

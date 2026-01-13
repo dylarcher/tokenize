@@ -1,0 +1,139 @@
+@use "sass:color";
+@use "../abstracts" as *;
+
+// ============================================
+// Light Theme
+// Default theme with CSS custom properties
+// ============================================
+
+:root,
+[data-theme="light"] {
+	// Color scheme hint
+	color-scheme: light;
+
+	// ============================================
+	// Semantic Color Tokens
+	// ============================================
+
+	// Background colors
+	--color-bg-primary: #{$color-white};
+	--color-bg-secondary: #{$color-neutral-50};
+	--color-bg-tertiary: #{$color-neutral-100};
+	--color-bg-inverse: #{$color-neutral-900};
+
+	// Surface colors (for cards, modals, etc.)
+	--color-surface-default: #{$color-white};
+	--color-surface-raised: #{$color-white};
+	--color-surface-overlay: #{alpha($color-white, 0.9)};
+	--color-surface-sunken: #{$color-neutral-50};
+
+	// Text colors
+	--color-text-primary: #{$color-neutral-900};
+	--color-text-secondary: #{$color-neutral-600};
+	--color-text-tertiary: #{$color-neutral-500};
+	--color-text-disabled: #{$color-neutral-400};
+	--color-text-inverse: #{$color-white};
+	--color-text-link: #{$color-primary-600};
+	--color-text-link-hover: #{$color-primary-700};
+
+	// Border colors
+	--color-border-default: #{$color-neutral-200};
+	--color-border-muted: #{$color-neutral-100};
+	--color-border-strong: #{$color-neutral-300};
+	--color-border-focus: #{$color-primary-500};
+
+	// Interactive colors
+	--color-interactive-default: #{$color-primary-600};
+	--color-interactive-hover: #{$color-primary-700};
+	--color-interactive-active: #{$color-primary-800};
+	--color-interactive-disabled: #{$color-neutral-300};
+
+	// Status colors
+	--color-success-bg: #{alpha($color-success, 0.1)};
+	--color-success-border: #{$color-success};
+	--color-success-text: #{color.scale($color-success, $lightness: -20%)};
+
+	--color-warning-bg: #{alpha($color-warning, 0.1)};
+	--color-warning-border: #{$color-warning};
+	--color-warning-text: #{color.scale($color-warning, $lightness: -20%)};
+
+	--color-error-bg: #{alpha($color-error, 0.1)};
+	--color-error-border: #{$color-error};
+	--color-error-text: #{color.scale($color-error, $lightness: -20%)};
+
+	--color-info-bg: #{alpha($color-info, 0.1)};
+	--color-info-border: #{$color-info};
+	--color-info-text: #{color.scale($color-info, $lightness: -20%)};
+
+	// ============================================
+	// Shadow Tokens
+	// ============================================
+
+	--shadow-sm: #{shadow("sm")};
+	--shadow-base: #{shadow("base")};
+	--shadow-md: #{shadow("md")};
+	--shadow-lg: #{shadow("lg")};
+	--shadow-xl: #{shadow("xl")};
+	--shadow-2xl: #{shadow("2xl")};
+	--shadow-inner: #{shadow("inner")};
+
+	// ============================================
+	// Typography Tokens
+	// ============================================
+
+	--font-family-sans: #{$font-family-sans};
+	--font-family-serif: #{$font-family-serif};
+	--font-family-mono: #{$font-family-mono};
+
+	// ============================================
+	// Spacing Tokens
+	// ============================================
+
+	--space-1: #{space(1)};
+	--space-2: #{space(2)};
+	--space-3: #{space(3)};
+	--space-4: #{space(4)};
+	--space-5: #{space(5)};
+	--space-6: #{space(6)};
+	--space-8: #{space(8)};
+	--space-10: #{space(10)};
+	--space-12: #{space(12)};
+	--space-16: #{space(16)};
+	--space-20: #{space(20)};
+	--space-24: #{space(24)};
+
+	// ============================================
+	// Border Radius Tokens
+	// ============================================
+
+	--radius-sm: #{radius("sm")};
+	--radius-base: #{radius("base")};
+	--radius-md: #{radius("md")};
+	--radius-lg: #{radius("lg")};
+	--radius-xl: #{radius("xl")};
+	--radius-2xl: #{radius("2xl")};
+	--radius-full: #{radius("full")};
+
+	// ============================================
+	// Transition Tokens
+	// ============================================
+
+	--duration-fast: #{map-get($transition-durations, "fast")};
+	--duration-normal: #{map-get($transition-durations, "normal")};
+	--duration-slow: #{map-get($transition-durations, "slow")};
+
+	--ease-default: #{map-get($transition-easings, "ease-out")};
+	--ease-in: #{map-get($transition-easings, "ease-in")};
+	--ease-out: #{map-get($transition-easings, "ease-out")};
+	--ease-in-out: #{map-get($transition-easings, "ease-in-out")};
+}
+
+// ============================================
+// Light Theme Utility Classes
+// ============================================
+
+.theme-light {
+	color-scheme: light;
+	background-color: var(--color-bg-primary);
+	color: var(--color-text-primary);
+}

@@ -1,0 +1,256 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// ============================================
+// Spacing Utilities
+// Margin and padding utility classes
+// ============================================
+
+// Spacing scale for utilities
+$utility-spacing: (
+	"0": 0,
+	"1": space(1),
+	"2": space(2),
+	"3": space(3),
+	"4": space(4),
+	"5": space(5),
+	"6": space(6),
+	"8": space(8),
+	"10": space(10),
+	"12": space(12),
+	"16": space(16),
+	"20": space(20),
+	"24": space(24),
+	"auto": auto,
+);
+
+// Direction mappings
+$directions: (
+	"": "",
+	"t": "-top",
+	"r": "-right",
+	"b": "-bottom",
+	"l": "-left",
+	"x": "-inline",
+	"y": "-block",
+);
+
+// ============================================
+// Margin Utilities
+// ============================================
+
+@each $key, $value in $utility-spacing {
+	// All sides
+	.m-#{$key} {
+		margin: $value;
+	}
+
+	// Individual sides
+	.mt-#{$key} {
+		margin-top: $value;
+	}
+
+	.mr-#{$key} {
+		margin-right: $value;
+	}
+
+	.mb-#{$key} {
+		margin-bottom: $value;
+	}
+
+	.ml-#{$key} {
+		margin-left: $value;
+	}
+
+	// Logical properties
+	.mx-#{$key} {
+		margin-inline: $value;
+	}
+
+	.my-#{$key} {
+		margin-block: $value;
+	}
+
+	// Inline start/end
+	.ms-#{$key} {
+		margin-inline-start: $value;
+	}
+
+	.me-#{$key} {
+		margin-inline-end: $value;
+	}
+}
+
+// Negative margins
+@each $key, $value in $utility-spacing {
+	@if $key != "0" and $key != "auto" {
+		.-m-#{$key} {
+			margin: calc(-1 * #{$value});
+		}
+
+		.-mt-#{$key} {
+			margin-top: calc(-1 * #{$value});
+		}
+
+		.-mr-#{$key} {
+			margin-right: calc(-1 * #{$value});
+		}
+
+		.-mb-#{$key} {
+			margin-bottom: calc(-1 * #{$value});
+		}
+
+		.-ml-#{$key} {
+			margin-left: calc(-1 * #{$value});
+		}
+
+		.-mx-#{$key} {
+			margin-inline: calc(-1 * #{$value});
+		}
+
+		.-my-#{$key} {
+			margin-block: calc(-1 * #{$value});
+		}
+	}
+}
+
+// ============================================
+// Padding Utilities
+// ============================================
+
+@each $key, $value in $utility-spacing {
+	@if $key != "auto" {
+		// All sides
+		.p-#{$key} {
+			padding: $value;
+		}
+
+		// Individual sides
+		.pt-#{$key} {
+			padding-top: $value;
+		}
+
+		.pr-#{$key} {
+			padding-right: $value;
+		}
+
+		.pb-#{$key} {
+			padding-bottom: $value;
+		}
+
+		.pl-#{$key} {
+			padding-left: $value;
+		}
+
+		// Logical properties
+		.px-#{$key} {
+			padding-inline: $value;
+		}
+
+		.py-#{$key} {
+			padding-block: $value;
+		}
+
+		// Inline start/end
+		.ps-#{$key} {
+			padding-inline-start: $value;
+		}
+
+		.pe-#{$key} {
+			padding-inline-end: $value;
+		}
+	}
+}
+
+// ============================================
+// Gap Utilities
+// ============================================
+
+@each $key, $value in $utility-spacing {
+	@if $key != "auto" {
+		.gap-#{$key} {
+			gap: $value;
+		}
+
+		.gap-x-#{$key} {
+			column-gap: $value;
+		}
+
+		.gap-y-#{$key} {
+			row-gap: $value;
+		}
+	}
+}
+
+// ============================================
+// Space Between Utilities
+// ============================================
+
+@each $key, $value in $utility-spacing {
+	@if $key != "auto" and $key != "0" {
+		.space-x-#{$key} > * + * {
+			margin-left: $value;
+		}
+
+		.space-y-#{$key} > * + * {
+			margin-top: $value;
+		}
+	}
+}
+
+.space-x-reverse > * + * {
+	margin-left: 0;
+	margin-right: var(--space-x-reverse, 0);
+}
+
+.space-y-reverse > * + * {
+	margin-top: 0;
+	margin-bottom: var(--space-y-reverse, 0);
+}
+
+// ============================================
+// Responsive Spacing
+// Uses "at-" prefix for breakpoint classes (e.g., at-sm-m-4)
+// This avoids invalid CSS when breakpoints start with digits (2xl)
+// ============================================
+
+@each $bp, $bp-value in $breakpoints {
+	@if $bp-value != 0 {
+		@include mq($bp) {
+			@each $key, $value in $utility-spacing {
+				// Margin
+				.at-#{$bp}-m-#{$key} {
+					margin: $value;
+				}
+
+				.at-#{$bp}-mx-#{$key} {
+					margin-inline: $value;
+				}
+
+				.at-#{$bp}-my-#{$key} {
+					margin-block: $value;
+				}
+
+				// Padding
+				@if $key != "auto" {
+					.at-#{$bp}-p-#{$key} {
+						padding: $value;
+					}
+
+					.at-#{$bp}-px-#{$key} {
+						padding-inline: $value;
+					}
+
+					.at-#{$bp}-py-#{$key} {
+						padding-block: $value;
+					}
+
+					// Gap
+					.at-#{$bp}-gap-#{$key} {
+						gap: $value;
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Extract and generate design tokens from SCSS/CSS">
+	<meta name="generator" content="tokenize docs generator">
+	<meta name="theme-color" content="#6b7280" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#a78bfa" media="(prefers-color-scheme: dark)">
+	<link rel="icon" type="image/svg+xml" href="favicon.svg">
+	<link rel="mask-icon" href="mask-icon.svg" color="#6b7280">
+	<link rel="icon" type="image/x-icon" href="static/light/favicon.ico" media="not (prefers-color-scheme: dark)">
+	<link rel="apple-touch-icon" href="static/light/apple-touch-icon.png" media="not (prefers-color-scheme: dark)">
+	<link rel="manifest" href="static/light/manifest.json" media="not (prefers-color-scheme: dark)">
+	<link rel="icon" type="image/x-icon" href="static/dark/favicon.ico" media="(prefers-color-scheme: dark)">
+	<link rel="apple-touch-icon" href="static/dark/apple-touch-icon.png" media="(prefers-color-scheme: dark)">
+	<link rel="manifest" href="static/dark/manifest.json" media="(prefers-color-scheme: dark)">
+	<title>Tokenize CLI - Documentation</title>
+	<style>
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+		}
+
+		:root {
+			--color-bg: #f8fafc;
+			--color-bg-alt: #f1f5f9;
+			--color-text: #1e293b;
+			--color-text-muted: #64748b;
+			--color-accent: #6366f1;
+			--color-border: #e2e8f0;
+			--color-code-bg: #1e293b;
+			--color-code-text: #e2e8f0;
+			--color-success: #10b981;
+			--font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			--font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			:root {
+				--color-bg: #0f172a;
+				--color-bg-alt: #1e293b;
+				--color-text: #f1f5f9;
+				--color-text-muted: #94a3b8;
+				--color-accent: #a78bfa;
+				--color-border: #334155;
+				--color-code-bg: #020617;
+				--color-code-text: #e2e8f0;
+			}
+		}
+
+		html {
+			color-scheme: light dark;
+			scroll-behavior: smooth;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: var(--font-sans);
+			background-color: var(--color-bg);
+			color: var(--color-text);
+			line-height: 1.6;
+			min-height: 100dvh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		main {
+			flex: 1;
+			max-width: 72rem;
+			margin: 0 auto;
+			padding: 2rem 1.5rem;
+			width: 100%;
+		}
+
+		header {
+			text-align: center;
+			padding: 3rem 1rem;
+			border-bottom: 1px solid var(--color-border);
+			background: var(--color-bg-alt);
+		}
+
+		.logo {
+			width: 5rem;
+			height: 5rem;
+			margin-bottom: 1rem;
+		}
+
+		h1 {
+			margin: 0 0 0.5rem;
+			font-size: 2.5rem;
+			font-weight: 700;
+			letter-spacing: -0.02em;
+		}
+
+		.tagline {
+			margin: 0;
+			font-size: 1.125rem;
+			color: var(--color-text-muted);
+		}
+
+		.version {
+			display: inline-block;
+			margin-top: 1rem;
+			padding: 0.25rem 0.75rem;
+			font-size: 0.875rem;
+			font-family: var(--font-mono);
+			background: var(--color-bg);
+			border: 1px solid var(--color-border);
+			border-radius: 9999px;
+			color: var(--color-text-muted);
+		}
+
+		nav {
+			background: var(--color-bg-alt);
+			border-bottom: 1px solid var(--color-border);
+			padding: 0.75rem 1rem;
+			position: sticky;
+			top: 0;
+			z-index: 100;
+		}
+
+		nav ul {
+			display: flex;
+			gap: 1.5rem;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		nav a {
+			color: var(--color-text-muted);
+			text-decoration: none;
+			font-size: 0.875rem;
+			font-weight: 500;
+			transition: color 0.2s;
+		}
+
+		nav a:hover {
+			color: var(--color-accent);
+		}
+
+		section {
+			margin: 3rem 0;
+			scroll-margin-top: 4rem;
+		}
+
+		h2 {
+			font-size: 1.5rem;
+			font-weight: 600;
+			margin: 0 0 1rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 2px solid var(--color-accent);
+			display: inline-block;
+		}
+
+		h3 {
+			font-size: 1.25rem;
+			font-weight: 600;
+			margin: 2rem 0 1rem;
+			color: var(--color-text);
+		}
+
+		h4 {
+			font-size: 1rem;
+			font-weight: 600;
+			margin: 0 0 0.5rem;
+			font-family: var(--font-mono);
+		}
+
+		h5 {
+			font-size: 0.875rem;
+			font-weight: 600;
+			margin: 1rem 0 0.5rem;
+			color: var(--color-text-muted);
+		}
+
+		pre {
+			background: var(--color-code-bg);
+			border-radius: 0.5rem;
+			padding: 1.25rem;
+			overflow-x: auto;
+			margin: 1rem 0;
+		}
+
+		pre code {
+			font-family: var(--font-mono);
+			font-size: 0.875rem;
+			color: var(--color-code-text);
+			line-height: 1.7;
+		}
+
+		code {
+			font-family: var(--font-mono);
+			font-size: 0.875em;
+			background: var(--color-bg-alt);
+			padding: 0.125rem 0.375rem;
+			border-radius: 0.25rem;
+		}
+
+		pre code {
+			background: none;
+			padding: 0;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 1rem 0;
+			font-size: 0.875rem;
+		}
+
+		th, td {
+			padding: 0.75rem;
+			text-align: left;
+			border-bottom: 1px solid var(--color-border);
+		}
+
+		th {
+			background: var(--color-bg-alt);
+			font-weight: 600;
+		}
+
+		.typedef-card,
+		.function-card,
+		.config-card {
+			background: var(--color-bg-alt);
+			border: 1px solid var(--color-border);
+			border-radius: 0.5rem;
+			padding: 1.25rem;
+			margin: 1rem 0;
+		}
+
+		.typedef-card:hover,
+		.function-card:hover,
+		.config-card:hover {
+			border-color: var(--color-accent);
+		}
+
+		.type-info,
+		.format-badge {
+			font-size: 0.75rem;
+			color: var(--color-text-muted);
+			margin: 0.25rem 0;
+		}
+
+		.file-ref {
+			font-size: 0.75rem;
+			color: var(--color-text-muted);
+			margin-top: 1rem;
+			padding-top: 0.5rem;
+			border-top: 1px solid var(--color-border);
+		}
+
+		.export-badge {
+			display: inline-block;
+			background: var(--color-success);
+			color: white;
+			font-size: 0.625rem;
+			padding: 0.125rem 0.375rem;
+			border-radius: 0.25rem;
+			margin-right: 0.5rem;
+			vertical-align: middle;
+			text-transform: uppercase;
+			font-family: var(--font-sans);
+			font-weight: 600;
+		}
+
+		.params ul,
+		.returns p {
+			margin: 0.5rem 0;
+		}
+
+		.param-type {
+			color: var(--color-accent);
+			font-size: 0.875em;
+		}
+
+		.readme-content h1 {
+			font-size: 2rem;
+		}
+
+		.readme-content h2 {
+			font-size: 1.5rem;
+			border-bottom: 1px solid var(--color-border);
+			display: block;
+			margin-top: 2rem;
+		}
+
+		.readme-content h3 {
+			font-size: 1.25rem;
+		}
+
+		.props-table,
+		.config-table,
+		.scripts-table {
+			font-size: 0.8125rem;
+		}
+
+		footer {
+			text-align: center;
+			padding: 2rem 1rem;
+			border-top: 1px solid var(--color-border);
+			font-size: 0.875rem;
+			color: var(--color-text-muted);
+		}
+
+		footer a {
+			color: var(--color-accent);
+			text-decoration: none;
+		}
+
+		footer a:hover {
+			text-decoration: underline;
+		}
+
+		.grid {
+			display: grid;
+			gap: 1rem;
+			grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+		}
+
+		@media (max-width: 640px) {
+			header {
+				padding: 2rem 1rem;
+			}
+
+			h1 {
+				font-size: 2rem;
+			}
+
+			.logo {
+				width: 4rem;
+				height: 4rem;
+			}
+
+			main {
+				padding: 1.5rem 1rem;
+			}
+
+			nav ul {
+				gap: 1rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<img class="logo" src="favicon.svg" alt="Tokenize CLI logo" width="80" height="80">
+		<h1>Tokenize CLI</h1>
+		<p class="tagline">Extract and generate design tokens from SCSS/CSS</p>
+		<span class="version">v0.2.0</span>
+	</header>
+
+	<nav>
+		<ul>
+			<li><a href="#overview">Overview</a></li>
+			<li><a href="#scripts">Scripts</a></li>
+			<li><a href="#structure">Structure</a></li>
+			<li><a href="#types">Types</a></li>
+			<li><a href="#functions">Functions</a></li>
+			<li><a href="#config">Configuration</a></li>
+		</ul>
+	</nav>
+
+	<main>
+		<section id="overview" aria-labelledby="overview-heading">
+			<h2 id="overview-heading">Overview</h2>
+			<div class="readme-content">
+				<h1>Tokenize CLI</h1>
+
+<p>ESM-based CLI to extract design values from SCSS/CSS and generate a three-layer design token system.</p>
+
+<h2>Requirements</h2>
+
+<ul>
+<li><code>Bun@&gt;=1.3.6</code> | <code>Node.js@&gt;=25.2.1</code></li>
+<li><strong>sources:</strong> <code>SCSS</code> (<code>dart-sass</code>) & <code>CSS</code> (<code>global</code>/<code>module</code>)</li>
+</ul>
+
+<h2>Installation</h2>
+
+<pre><code class="language-sh">bun i &amp;&amp; bun link # Enable global CLI access</code></pre>
+
+<h2>Token Architecture</h2>
+
+<p>Tokenize generates a three-layer token system where each layer references the one below.</p>
+
+<pre><code class="language-sh">┌─────────────────────────────────────────────────────────┐
+│  Component Tokens                      (scoped/modules) │
+│  --button-primary-bg  →  {interactive.primary.default}  │
+├─────────────────────────────────────────────────────────┤
+│  Semantic Tokens                      (bridge/refs/map) │
+│  interactive.primary.default  →  {color.blue.500}       │
+├─────────────────────────────────────────────────────────┤
+│  Primitive Tokens                        (base/options) │
+│  color.blue.500  →  #3b82f6                             │
+└─────────────────────────────────────────────────────────┘</code></pre>
+
+<h2>Commands</h2>
+
+<h3><code>build</code>/<code>compile</code> - SCSS to CSS</h3>
+
+<p>Compiles SCSS files to flat CSS, separating global and component styles.</p>
+
+<pre><code class="language-sh">tokenize build tests/mocks/src
+tokenize build tests/mocks/src --out tests/mocks/dist
+tokenize build tests/mocks/src --exclude \<em>\</em>/\<em>.x.js</code></pre>
+
+<p><strong>Output:</strong></p>
+
+<pre><code class="language-sh">tests/mocks/dist/<strong>/
+├── global.css           # Merged non-component styles
+├── components/
+│   ├── Button.css
+│   ├── Modal.css
+│   └── ...
+└── manifest.json        # Compilation metadata</code></pre>
+
+<h3><code>scan</code>/<code>audit</code> - Extract Values</h3>
+
+<p>Scans CSS/SCSS files and extracts design values.</p>
+
+<blockquote>e.g. <code>colors</code>, <code>spacing</code>, <code>typography</code>, etc…</blockquote>
+
+<pre><code class="language-sh">tokenize scan tests/mocks/src                             # Scan SCSS sources
+tokenize scan tests/mocks/dist                            # Scan compiled CSS
+tokenize scan tests/mocks/src --out tests/mocks/dist/.tmp # Outputs directory</code></pre>
+
+<p></strong>Output:<strong></p>
+
+<pre><code class="language-sh">tests/mocks/dist/.tmp/
+├── base.json          # Values from global styles
+└── scoped.json        # Values from component styles</code></pre>
+
+<h3><code>tokens</code> - Generate Token Layers</h3>
+
+<p>Generates design tokens from scanned values.</p>
+
+<pre><code class="language-sh">tokenize tokens --all              # Generate all layers
+tokenize tokens primitives         # Generate primitives only
+tokenize tokens semantic           # Generate semantic (requires primitives)
+tokenize tokens components         # Generate components (requires semantic)
+tokenize tokens --all --force      # Force regeneration
+tokenize tokens --layer semantic   # By layer namespace (multi-layer)</code></pre>
+
+<p></strong>Output:</em><em></p>
+
+<pre><code class="language-sh">tests/mocks/{.tmp,src,dist}/
+├── primitives / .json / .scss / .css
+├── semantic   / .json / .scss / .css
+└── components / .json / .scss / .css</code></pre>
+
+<h3><code>all</code> - Full Pipeline</h3>
+
+<p>Runs the complete workflow (e.g. <code>scan → tokens</code>).</p>
+
+<pre><code class="language-sh">tokenize all tests/mocks/src
+tokenize all tests/mocks/src --out tests/mocks/dist/.tmp --exclude \</em>\<em>/\</em>.y.\<em></code></pre>
+
+<h3><code>init</code> - Generate Config</h3>
+
+<p>Creates a starter configuration file.</p>
+
+<pre><code class="language-sh">tokenize init</code></pre>
+
+<h3><code>debug</code> - Trace Token</h3>
+
+<p>Traces a token's resolution chain through all layers.</p>
+
+<pre><code class="language-sh">tokenize debug button.primary.background
+tokenize debug interactive.primary.default</code></pre>
+
+<p><strong>Example output:</strong></p>
+
+<pre><code class="language-sh">Tracing: button.primary.background
+==================================================
+[components] button.primary.background
+   = {interactive.primary.default}
+  -&gt; [semantic] interactive.primary.default
+     = {color.blue.500}
+    -&gt; [primitives] color.blue.500
+       = #3b82f6</code></pre>
+
+<h3><code>stats</code> - Token Analytics</h3>
+
+<p>Shows token statistics across all layers.</p>
+
+<pre><code class="language-sh">tokenize stats</code></pre>
+
+<p><strong>Example output:</strong></p>
+
+<pre><code class="language-sh">Tokens              Statistics
+==================================
+  base/primitives     142 tokens
+  semantic/bridge      87 tokens
+  component/scope     156 tokens
+<hr>
+  Total(s)            385 tokens</code></pre>
+
+<h3><code>types</code> - Bundle Declarations</h3>
+
+<p>Bundles TypeScript declaration files.</p>
+
+<pre><code class="language-sh">bun run type__build</code></pre>
+
+<h2>CLI Options</h2>
+
+<h3>Global Options</h3>
+
+<p>| Option | Description |<br>| :----- | :---------- |<br>| <code>-c, --config &lt;path&gt;</code> | Config file path (default: <code>tokenize.config.js</code>) |<br>| <code>-o, --out &lt;path&gt;</code> | Output directory |<br>| <code>-e, --exclude &lt;pattern&gt;</code> | Glob patterns to exclude (repeatable) |<br>| <code>-v, --version</code> | Show version number |<br>| <code>-h, --help</code> | Show help message |</p>
+
+<h3>Output Control</h3>
+
+<p>| Option | Description |<br>| :----- | :---------- |<br>| <code>-V, --verbose</code> | Verbose output with additional details |<br>| <code>-Q, --quiet</code> | Suppress non-error output |<br>| <code>-N, --dry-run</code> | Preview actions without writing files |</p>
+
+<h3>Token Generation</h3>
+
+<p>| Option | Description |<br>| :----- | :---------- |<br>| <code>-a, --all</code> | Generate all token layers |<br>| <code>-l, --layer &lt;name&gt;</code> | Specify layer to generate (repeatable) |<br>| <code>-f, --force</code> | Force regeneration of existing files |</p>
+
+<h2>Configuration</h2>
+
+<p>Create a <code>tokenize.config.js</code> file in your project root.</p>
+
+<pre><code class="language-js">export default {
+  scanDir: &quot;tests/mocks/src&quot;, // Directory to scan for styles
+  outDir: &quot;tests/mocks/dist/.tmp&quot;, // Output directory for generated tokens
+  compileOutDir: &quot;tests/mocks/dist&quot;, // Output directory for compiled CSS
+  ignore: [&quot;node_modules&quot;, &quot;dist&quot;, &quot;build&quot;, &quot;.git&quot;], // Directories to ignore when scanning
+  exclude: [&quot;<strong>/legacy/</strong>&quot;, &quot;<strong>/vendor/</strong>&quot;], // Glob patterns to exclude
+  componentPatterns: [
+    /\.component\.s?css$/i,
+    /\.module\.s?css$/i,
+    /components\/.</em>\.s?css$/i,
+  ], // Patterns to identify component files
+  spacingBase: 4, // Base unit for spacing scale (in pixels)
+  outputFormats: [&quot;json&quot;, &quot;scss&quot;, &quot;css&quot;], // Output formats to generate
+};</code></pre>
+
+<h2>Workflow Examples</h2>
+
+<h3>Full Token Generation</h3>
+
+<pre><code class="language-sh"># 1. Compile SCSS to flat CSS
+tokenize build tests/mocks/src --out tests/mocks/dist
+
+<h1>2. Scan compiled CSS for design values</h1>
+tokenize scan tests/mocks/dist --out tests/mocks/dist/.tmp
+
+<h1>3. Generate all token layers</h1>
+tokenize tokens --all
+
+<h1>Or run everything at once:</h1>
+tokenize all tests/mocks/src</code></pre>
+
+<h3>Incremental Updates</h3>
+
+<pre><code class="language-sh"># Regenerate only semantic and component tokens
+tokenize tokens semantic components --force</code></pre>
+
+<h3>Preview Changes</h3>
+
+<pre><code class="language-sh"># See what would be generated without writing files
+tokenize scan tests/mocks/src --dry-run
+tokenize tokens --all --dry-run</code></pre>
+
+<h2>Output Formats</h2>
+
+<p>Tokens are generated in three formats for different use cases.</p>
+
+<h3>JSON (Data)</h3>
+
+<pre><code class="language-json">{
+  &quot;color&quot;: {
+    &quot;blue&quot;: {
+      &quot;500&quot;: &quot;#3b82f6&quot;
+    }
+  }
+}</code></pre>
+
+<h3>SCSS (Variables)</h3>
+
+<pre><code class="language-scss">$color-blue-500: #3b82f6;
+$interactive-primary-default: $color-blue-500;</code></pre>
+
+<h3>CSS (Custom Properties)</h3>
+
+<pre><code class="language-css">:root {
+  --color-blue-500: #3b82f6;
+  --interactive-primary-default: var(--color-blue-500);
+}</code></pre>
+
+<h2>Using Generated Tokens</h2>
+
+<h3>CSS Import</h3>
+
+<pre><code class="language-css">@import &#039;tests/mocks/dist/.tmp/primitives.css&#039;;
+@import &#039;tests/mocks/dist/.tmp/semantic.css&#039;;
+@import &#039;tests/mocks/dist/.tmp/components.css&#039;;
+
+<p>.btn {<br>  background: var(--button-primary-background);<br>  color: var(--button-primary-text);<br>}</code></pre></p>
+
+<h3>SCSS Import</h3>
+
+<pre><code class="language-scss">@use &#039;tests/mocks/dist/.tmp/primitives&#039; as p;
+@use &#039;tests/mocks/dist/.tmp/semantic&#039; as s;
+@use &#039;tests/mocks/dist/.tmp/components&#039; as c;
+
+<p>.btn {<br>  background: c.$button-primary-background;<br>  color: c.$button-primary-text;<br>}</code></pre></p>
+
+<h3>Programmatic Usage</h3>
+
+<pre><code class="language-js">import { loadConfiguration, walkDirectory, categorizeHexColor } from &#039;tokenize&#039;;
+
+<p>const config = await loadConfiguration();<br>const files = walkDirectory(&#039;tests/mocks/src&#039;, { extensions: [&#039;.scss&#039;] });</code></pre></p>
+
+<h2>Project Structure</h2>
+
+<pre><code class="language-sh">tokenize/
+├── bin/
+│   └── tokenize.js       # CLI entry point
+├── src/
+│   ├── index.js          # Library exports
+│   ├── cli.js            # CLI router
+│   ├── helperUtils/            # Utility modules
+│   │   ├── config.js     # Configuration loading
+│   │   ├── files.js      # File operations
+│   │   ├── css.js        # CSS utilities
+│   │   └── colors.js     # Color processing
+│   ├── commands/         # CLI commands
+│   │   ├── compile.js    # SCSS compilation
+│   │   ├── scan.js       # Value extraction
+│   │   ├── tokens.js     # Token generation
+│   │   └── types.js      # Type bundling
+│   └── generators/       # Token generators
+│       ├── primitives.js # Raw design values
+│       ├── semantic.js   # Semantic tokens
+│       └── components.js # Component tokens
+├── tokenize.config.js    # Default configuration
+└── package.json</code></pre>
+
+<h2>npm Scripts</h2>
+
+<p>| Script | Description |<br>| :----- | :---------- |<br>| <code>bun run build</code> | Compile SCSS files |<br>| <code>bun run audit</code> | Scan for style values |<br>| <code>bun run tokens</code> | Generate all token layers |<br>| <code>bun run cli</code> | Run full pipeline |<br>| <code>bun run start</code> | Initialize config |<br>| <code>bun run debug</code> | Debug token resolution |<br>| <code>bun run stats</code> | Show token statistics |</p>
+			</div>
+		</section>
+
+		<section id="scripts" aria-labelledby="scripts-heading">
+			<h2 id="scripts-heading">Package Scripts</h2>
+			<table class="scripts-table">
+		<thead><tr><th>Script</th><th>Command</th></tr></thead>
+		<tbody>
+		<tr><td><code>bun run audit</code></td><td><code>bun src/commands/scan.js</code></td></tr><tr><td><code>bun run build</code></td><td><code>bun src/commands/compile.js</code></td></tr><tr><td><code>bun run bump</code></td><td><code>npm version --sign-git-tag</code></td></tr><tr><td><code>bun run clean</code></td><td><code>bunx rimraf --glob *.lockb node_modules ~/.bun/install/cache</code></td></tr><tr><td><code>bun run cli</code></td><td><code>bun src/cli.js</code></td></tr><tr><td><code>bun run docs</code></td><td><code>bun src/commands/docs.js</code></td></tr><tr><td><code>bun run dts</code></td><td><code>bunx tsc &amp;&amp; bun src/commands/types.js</code></td></tr><tr><td><code>bun run postinstall</code></td><td><code>bun link --ignore-scripts</code></td></tr><tr><td><code>bun run postpack</code></td><td><code>bun install --ignore-scripts --only-missing</code></td></tr><tr><td><code>bun run postversion</code></td><td><code>bun update --global --latest --ignore-scripts</code></td></tr><tr><td><code>bun run prepack</code></td><td><code>bun install --linker=isolated --ignore-scripts</code></td></tr><tr><td><code>bun run prepare</code></td><td><code>bun run clean &amp;&amp; bun install --ignore-scripts</code></td></tr><tr><td><code>bun run preuninstall</code></td><td><code>bun unlink --ignore-scripts</code></td></tr><tr><td><code>bun run reload</code></td><td><code>bun run clean &amp;&amp; bun install --exact --ignore-scripts</code></td></tr><tr><td><code>bun run check</code></td><td><code>bunx biome --config biome.json src</code></td></tr><tr><td><code>bun run test</code></td><td><code>bun test --verbose</code></td></tr><tr><td><code>bun run tokens</code></td><td><code>bun src/commands/tokens.js --all</code></td></tr><tr><td><code>bun run types</code></td><td><code>bunx tsc --noEmit</code></td></tr>
+		</tbody>
+	</table>
+		</section>
+
+		<section id="structure" aria-labelledby="structure-heading">
+			<h2 id="structure-heading">Project Structure</h2>
+			<pre><code>tokenize/
+├── src/
+│   ├── helperUtils/
+│   │   ├── files.js
+│   │   ├── config.js
+│   │   ├── colors.js
+│   │   ├── css.js
+│   │   ├── markdown.js
+│   ├── index.js
+│   ├── cli.js
+│   ├── commands/
+│   │   ├── tokens.js
+│   │   ├── types.js
+│   │   ├── docs.js
+│   │   ├── scan.js
+│   │   ├── compile.js
+│   ├── generators/
+│   │   ├── primitives.js
+│   │   ├── semantic.js
+│   │   ├── components.js</code></pre>
+		</section>
+
+		<section id="types" aria-labelledby="types-heading">
+			<h2 id="types-heading">Type Definitions</h2>
+			<p>34 type definitions found</p>
+			<div class="grid">
+				<article class="typedef-card">
+		<h4><code>WalkOptions</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>extensions?</code></td>
+					<td><code>string[]</code></td>
+					<td>=[&#039;.scss&#039;, &#039;.css&#039;]] - File extensions to include</td>
+				</tr><tr>
+					<td><code>ignore?</code></td>
+					<td><code>string[]</code></td>
+					<td>=[&#039;node_modules&#039;, &#039;dist&#039;, &#039;build&#039;, &#039;.git&#039;, &#039;compiled&#039;]] - Directory names to ignore</td>
+				</tr><tr>
+					<td><code>excludePatterns?</code></td>
+					<td><code>string[]</code></td>
+					<td>=[]] - Glob patterns to exclude</td>
+				</tr><tr>
+					<td><code>includePartials?</code></td>
+					<td><code>boolean</code></td>
+					<td>=true] - Whether to include partial files</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>Config</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>scanDir?</code></td>
+					<td><code>string</code></td>
+					<td>Directory to scan for styles</td>
+				</tr><tr>
+					<td><code>outDir?</code></td>
+					<td><code>string</code></td>
+					<td>Output directory for generated files</td>
+				</tr><tr>
+					<td><code>compileOutDir?</code></td>
+					<td><code>string</code></td>
+					<td>Output directory for compiled CSS</td>
+				</tr><tr>
+					<td><code>exclude?</code></td>
+					<td><code>string[]</code></td>
+					<td>Glob patterns to exclude</td>
+				</tr><tr>
+					<td><code>ignore?</code></td>
+					<td><code>string[]</code></td>
+					<td>Directory names to ignore</td>
+				</tr><tr>
+					<td><code>componentPatterns?</code></td>
+					<td><code>RegExp[]</code></td>
+					<td>Patterns to identify component files</td>
+				</tr><tr>
+					<td><code>outputFormats?</code></td>
+					<td><code>string[]</code></td>
+					<td>Output formats (json, scss, css)</td>
+				</tr><tr>
+					<td><code>spacingBase?</code></td>
+					<td><code>number</code></td>
+					<td>Base unit for spacing scale</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/helperUtils/config.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>HslColor</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>hue</code></td>
+					<td><code>number</code></td>
+					<td>Hue (0-360)</td>
+				</tr><tr>
+					<td><code>saturation</code></td>
+					<td><code>number</code></td>
+					<td>Saturation (0-100)</td>
+				</tr><tr>
+					<td><code>lightness</code></td>
+					<td><code>number</code></td>
+					<td>Lightness (0-100)</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>HueCategory</code></h4>
+		<p class="type-info">Type: <code>&#039;red&#039; | &#039;orange&#039; | &#039;yellow&#039; | &#039;green&#039; | &#039;cyan&#039; | &#039;blue&#039; | &#039;purple&#039; | &#039;pink&#039;</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>ParsedArguments</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>directory</code></td>
+					<td><code>string</code></td>
+					<td>The target directory</td>
+				</tr><tr>
+					<td><code>passArguments</code></td>
+					<td><code>string[]</code></td>
+					<td>Arguments to pass through</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/cli.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>Layer</code></h4>
+		<p class="type-info">Type: <code>&#039;primitives&#039; | &#039;semantic&#039; | &#039;components&#039;</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/commands/tokens.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>ParsedArgs</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>layers</code></td>
+					<td><code>Layer[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>force</code></td>
+					<td><code>boolean</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>help</code></td>
+					<td><code>boolean</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>all</code></td>
+					<td><code>boolean</code></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/tokens.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>JSDocTag</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>tag</code></td>
+					<td><code>string</code></td>
+					<td>Tag name (param, returns, typedef, etc.)</td>
+				</tr><tr>
+					<td><code>type</code></td>
+					<td><code>string|null</code></td>
+					<td>Type annotation</td>
+				</tr><tr>
+					<td><code>name</code></td>
+					<td><code>string|null</code></td>
+					<td>Parameter/property name</td>
+				</tr><tr>
+					<td><code>description</code></td>
+					<td><code>string</code></td>
+					<td>Tag description</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/docs.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>JSDocBlock</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>raw</code></td>
+					<td><code>string</code></td>
+					<td>Raw JSDoc comment text</td>
+				</tr><tr>
+					<td><code>description</code></td>
+					<td><code>string</code></td>
+					<td>Main description</td>
+				</tr><tr>
+					<td><code>tags</code></td>
+					<td><code>JSDocTag[]</code></td>
+					<td>Parsed tags</td>
+				</tr><tr>
+					<td><code>line</code></td>
+					<td><code>number</code></td>
+					<td>Line number in source</td>
+				</tr><tr>
+					<td><code>file</code></td>
+					<td><code>string</code></td>
+					<td>Source file path</td>
+				</tr><tr>
+					<td><code>associatedName</code></td>
+					<td><code>string|null</code></td>
+					<td>Name of associated function/const</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/docs.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>TypeDef</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>name</code></td>
+					<td><code>string</code></td>
+					<td>Type name</td>
+				</tr><tr>
+					<td><code>type</code></td>
+					<td><code>string</code></td>
+					<td>Base type</td>
+				</tr><tr>
+					<td><code>description</code></td>
+					<td><code>string</code></td>
+					<td>Type description</td>
+				</tr><tr>
+					<td><code>properties</code></td>
+					<td><code>JSDocTag[]</code></td>
+					<td>Object properties</td>
+				</tr><tr>
+					<td><code>file</code></td>
+					<td><code>string</code></td>
+					<td>Source file</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/docs.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>FunctionDoc</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>name</code></td>
+					<td><code>string</code></td>
+					<td>Function name</td>
+				</tr><tr>
+					<td><code>description</code></td>
+					<td><code>string</code></td>
+					<td>Function description</td>
+				</tr><tr>
+					<td><code>params</code></td>
+					<td><code>JSDocTag[]</code></td>
+					<td>Parameters</td>
+				</tr><tr>
+					<td><code>returns</code></td>
+					<td><code>JSDocTag|null</code></td>
+					<td>Return value</td>
+				</tr><tr>
+					<td><code>file</code></td>
+					<td><code>string</code></td>
+					<td>Source file</td>
+				</tr><tr>
+					<td><code>exported</code></td>
+					<td><code>boolean</code></td>
+					<td>Is exported</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/docs.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>ConfigSection</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>name</code></td>
+					<td><code>string</code></td>
+					<td>Section name</td>
+				</tr><tr>
+					<td><code>values</code></td>
+					<td><code>Record&lt;string, unknown&gt;</code></td>
+					<td>Section values</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/docs.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>ConfigDoc</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>file</code></td>
+					<td><code>string</code></td>
+					<td>Config file name</td>
+				</tr><tr>
+					<td><code>format</code></td>
+					<td><code>string</code></td>
+					<td>File format</td>
+				</tr><tr>
+					<td><code>sections</code></td>
+					<td><code>ConfigSection[]</code></td>
+					<td>Configuration sections</td>
+				</tr><tr>
+					<td><code>raw</code></td>
+					<td><code>unknown</code></td>
+					<td>Raw parsed content</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/docs.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>DocsData</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>readme</code></td>
+					<td><code>string</code></td>
+					<td>Rendered README HTML</td>
+				</tr><tr>
+					<td><code>typedefs</code></td>
+					<td><code>TypeDef[]</code></td>
+					<td>Type definitions</td>
+				</tr><tr>
+					<td><code>functions</code></td>
+					<td><code>FunctionDoc[]</code></td>
+					<td>Exported functions</td>
+				</tr><tr>
+					<td><code>configs</code></td>
+					<td><code>ConfigDoc[]</code></td>
+					<td>Configuration files</td>
+				</tr><tr>
+					<td><code>packageJson</code></td>
+					<td><code>Record&lt;string, unknown&gt;</code></td>
+					<td>package.json content</td>
+				</tr><tr>
+					<td><code>version</code></td>
+					<td><code>string</code></td>
+					<td>Package version</td>
+				</tr><tr>
+					<td><code>generated</code></td>
+					<td><code>string</code></td>
+					<td>Generation timestamp</td>
+				</tr><tr>
+					<td><code>sourceFiles</code></td>
+					<td><code>string[]</code></td>
+					<td>List of parsed source files</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/docs.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>Config</code></h4>
+		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/commands/scan.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>ExtractedValues</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>colors</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>spacing</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>fontFamilies</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>fontSizes</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>fontWeights</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>lineHeights</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>letterSpacings</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>borderRadii</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>borderWidths</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>shadows</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>zIndices</code></td>
+					<td><code>Set&lt;string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>variables</code></td>
+					<td><code>Record&lt;string, string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>source</code></td>
+					<td><code>string</code></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/scan.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>MergedTokens</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>colors</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>spacing</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>fontFamilies</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>fontSizes</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>fontWeights</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>lineHeights</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>letterSpacings</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>borderRadii</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>borderWidths</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>shadows</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>zIndices</code></td>
+					<td><code>Set&lt;string&gt;|string[]</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>variables</code></td>
+					<td><code>Record&lt;string, string&gt;</code></td>
+					<td></td>
+				</tr><tr>
+					<td><code>sources</code></td>
+					<td><code>string[]</code></td>
+					<td></td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/commands/scan.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>Config</code></h4>
+		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/commands/compile.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>Config</code></h4>
+		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>ColorEntry</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>value</code></td>
+					<td><code>string</code></td>
+					<td>Hex color value</td>
+				</tr><tr>
+					<td><code>luminance</code></td>
+					<td><code>number</code></td>
+					<td>Lightness value (0-100)</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>ColorGroups</code></h4>
+		<p class="type-info">Type: <code>Record&lt;string, ColorEntry[]&gt;</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>WriteFunction</code></h4>
+		<p class="type-info">Type: <code>(filename: string, content: string) =&gt; void</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>OutputFormat</code></h4>
+		<p class="type-info">Type: <code>&#039;json&#039; | &#039;scss&#039; | &#039;css&#039;</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>Config</code></h4>
+		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/semantic.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>InteractiveStates</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>default</code></td>
+					<td><code>string</code></td>
+					<td>Default state color</td>
+				</tr><tr>
+					<td><code>hover</code></td>
+					<td><code>string</code></td>
+					<td>Hover state color</td>
+				</tr><tr>
+					<td><code>active</code></td>
+					<td><code>string</code></td>
+					<td>Active state color</td>
+				</tr><tr>
+					<td><code>disabled</code></td>
+					<td><code>string</code></td>
+					<td>Disabled state color</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/generators/semantic.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>FeedbackTokens</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>bg</code></td>
+					<td><code>string</code></td>
+					<td>Background color</td>
+				</tr><tr>
+					<td><code>border</code></td>
+					<td><code>string</code></td>
+					<td>Border color</td>
+				</tr><tr>
+					<td><code>text</code></td>
+					<td><code>string</code></td>
+					<td>Text color</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/generators/semantic.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>WriteFunction</code></h4>
+		<p class="type-info">Type: <code>(filename: string, content: string) =&gt; void</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/semantic.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>OutputFormat</code></h4>
+		<p class="type-info">Type: <code>&#039;json&#039; | &#039;scss&#039; | &#039;css&#039;</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/semantic.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>Config</code></h4>
+		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>FeedbackVariant</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>background</code></td>
+					<td><code>string</code></td>
+					<td>Background color</td>
+				</tr><tr>
+					<td><code>border</code></td>
+					<td><code>string</code></td>
+					<td>Border color</td>
+				</tr><tr>
+					<td><code>text</code></td>
+					<td><code>string</code></td>
+					<td>Text color</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>BadgeVariant</code></h4>
+		<p class="type-info">Type: <code>Object</code></p>
+		<p></p>
+		<table class="props-table">
+			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+			<tbody>
+			<tr>
+					<td><code>background</code></td>
+					<td><code>string</code></td>
+					<td>Background color</td>
+				</tr><tr>
+					<td><code>text</code></td>
+					<td><code>string</code></td>
+					<td>Text color</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>ButtonVariant</code></h4>
+		<p class="type-info">Type: <code>&#039;primary&#039; | &#039;secondary&#039; | &#039;ghost&#039;</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>WriteFunction</code></h4>
+		<p class="type-info">Type: <code>(filename: string, content: string) =&gt; void</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
+	</article>
+<article class="typedef-card">
+		<h4><code>OutputFormat</code></h4>
+		<p class="type-info">Type: <code>&#039;json&#039; | &#039;scss&#039; | &#039;css&#039;</code></p>
+		<p></p>
+		
+		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
+	</article>
+			</div>
+		</section>
+
+		<section id="functions" aria-labelledby="functions-heading">
+			<h2 id="functions-heading">Functions</h2>
+			<p>30 exported functions</p>
+			<div class="grid">
+				<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>convertGlobPatternToRegularExpression()</code>
+		</h4>
+		<p>Converts a glob pattern to a regular expression.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>globPattern</code> <span class="param-type">{string}</span> - Glob pattern string</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{RegExp}</code> expression matching the glob pattern</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>matchesExcludePattern()</code>
+		</h4>
+		<p>Checks if a filepath matches any of the exclude patterns.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>filePath</code> <span class="param-type">{string}</span> - File path to check</li><li><code>patterns</code> <span class="param-type">{string[]}</span> - Array of glob patterns</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{boolean}</code> if filepath matches any pattern</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>defaultComponentPatterns()</code>
+		</h4>
+		<p>Default patterns for identifying component files.</p>
+		
+		
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>isComponentFile()</code>
+		</h4>
+		<p>Checks if a filepath represents a component file.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>filePath</code> <span class="param-type">{string}</span> - File path to check</li><li><code>patterns?</code> <span class="param-type">{RegExp[]}</span> - =defaultComponentPatterns] - Array of regex patterns</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{boolean}</code> if filepath matches any component pattern</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>isPartialFile()</code>
+		</h4>
+		<p>Checks if a filepath represents a partial file (starts with underscore).</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>filePath</code> <span class="param-type">{string}</span> - File path to check</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{boolean}</code> if file is a partial</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>walkDirectory()</code>
+		</h4>
+		<p>Recursively walks a directory and returns matching files.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>baseDirectory</code> <span class="param-type">{string}</span> - Base directory to start walking from</li><li><code>options?</code> <span class="param-type">{WalkOptions}</span> - ={}] - Walk options</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string[]}</code> of matching file paths</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getComponentName()</code>
+		</h4>
+		<p>Extracts and formats a component name from a filepath.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>filePath</code> <span class="param-type">{string}</span> - File path to extract component name from</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> component name</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>ensureDirectory()</code>
+		</h4>
+		<p>Ensures a directory exists, creating it if necessary.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>dirPath</code> <span class="param-type">{string}</span> - Directory path to ensure exists</li>
+			</ul>
+		</div>
+		
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getFileModTime()</code>
+		</h4>
+		<p>Gets file modification time.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>filePath</code> <span class="param-type">{string}</span> - Path to file</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{number|null}</code> time in ms, or null if file doesn&#039;t exist</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>loadConfiguration()</code>
+		</h4>
+		<p>Loads configuration from a file specified via CLI arguments or default path.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>commandLineArguments?</code> <span class="param-type">{string[]}</span> - =process.argv] - Command line arguments array</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{Promise&lt;Config&gt;}</code> object</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/config.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getOutputDirectory()</code>
+		</h4>
+		<p>Gets the output directory from CLI arguments or config.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>commandLineArguments</code> <span class="param-type">{string[]}</span> - Command line arguments array</li><li><code>configuration</code> <span class="param-type">{Object}</span> - Configuration object</li><li><code>configuration?</code> <span class="param-type">{string}</span> - .outDir] - Output directory from config</li><li><code>defaultDirectory?</code> <span class="param-type">{string}</span> - =&#039;./tokens&#039;] - Default output directory</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> directory path</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/config.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getExcludePatterns()</code>
+		</h4>
+		<p>Gets exclude patterns from CLI arguments and config.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>commandLineArguments</code> <span class="param-type">{string[]}</span> - Command line arguments array</li><li><code>configuration</code> <span class="param-type">{Object}</span> - Configuration object</li><li><code>configuration?</code> <span class="param-type">{string[]}</span> - .exclude] - Exclude patterns from config</li><li><code>excludePatterns?</code> <span class="param-type">{string[]}</span> - =[]] - Exclude patterns from CLI</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string[]}</code> of exclude patterns</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/config.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>hasFlag()</code>
+		</h4>
+		<p>Checks if a CLI flag is present in arguments.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>args</code> <span class="param-type">{string[]}</span> - Command line arguments</li><li><code>flags</code> <span class="param-type">{string[]}</span> - Flags to check for</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{boolean}</code> if any flag is present</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/config.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getFlagValue()</code>
+		</h4>
+		<p>Gets a flag value from CLI arguments.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>args</code> <span class="param-type">{string[]}</span> - Command line arguments</li><li><code>flags</code> <span class="param-type">{string[]}</span> - Flags to check for</li><li><code>defaultValue?</code> <span class="param-type">{string}</span> - Default value if flag not found</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string|undefined}</code> value or default</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/config.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>convertHexColorToHsl()</code>
+		</h4>
+		<p>Converts a hex color string to HSL values.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>hexColor</code> <span class="param-type">{string}</span> - Hex color string (with or without #)</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{HslColor}</code> color object</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getHueCategoryFromValue()</code>
+		</h4>
+		<p>Gets the color category based on hue value.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>hueValue</code> <span class="param-type">{number}</span> - Hue value (0-360)</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{HueCategory}</code> category name</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>categorizeHexColor()</code>
+		</h4>
+		<p>Categorizes a hex color into a named color category.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>hexColor</code> <span class="param-type">{string}</span> - Hex color string</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{HueCategory | &#039;neutral&#039;}</code> category name</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>normalizeColorToHex()</code>
+		</h4>
+		<p>Normalizes a color string to lowercase 6-digit hex format.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>colorString</code> <span class="param-type">{string}</span> - Color string to normalize</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> color string</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>convertHslToHex()</code>
+		</h4>
+		<p>Converts HSL values to hex color string.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>h</code> <span class="param-type">{number}</span> - Hue (0-360)</li><li><code>s</code> <span class="param-type">{number}</span> - Saturation (0-100)</li><li><code>l</code> <span class="param-type">{number}</span> - Lightness (0-100)</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> color string</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getRelativeLuminance()</code>
+		</h4>
+		<p>Calculates relative luminance for WCAG contrast calculations.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>hexColor</code> <span class="param-type">{string}</span> - Hex color string</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{number}</code> luminance (0-1)</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getContrastRatio()</code>
+		</h4>
+		<p>Calculates WCAG contrast ratio between two colors.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>color1</code> <span class="param-type">{string}</span> - First hex color</li><li><code>color2</code> <span class="param-type">{string}</span> - Second hex color</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{number}</code> ratio (1-21)</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>flattenCssCustomProperties()</code>
+		</h4>
+		<p>Flattens CSS by removing CSS custom properties and var() functions.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>cssString</code> <span class="param-type">{string}</span> - CSS string to flatten</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> CSS string</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/css.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>cleanCssValue()</code>
+		</h4>
+		<p>Cleans a CSS value by removing !important declarations.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>cssValue</code> <span class="param-type">{string}</span> - CSS value to clean</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> CSS value</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/css.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>extractCustomProperties()</code>
+		</h4>
+		<p>Extracts CSS custom property declarations from a string.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>cssString</code> <span class="param-type">{string}</span> - CSS string to parse</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{Map&lt;string, string&gt;}</code> of property names to values</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/css.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>resolveVarReferences()</code>
+		</h4>
+		<p>Resolves var() references in a CSS value.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>value</code> <span class="param-type">{string}</span> - CSS value potentially containing var()</li><li><code>properties</code> <span class="param-type">{Map&lt;string, string&gt;}</span> - Map of available custom properties</li><li><code>visited?</code> <span class="param-type">{Set&lt;string&gt;}</span> - =new Set()] - Set of visited properties to detect cycles</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> value</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/css.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>getColorType()</code>
+		</h4>
+		<p>Parses a CSS color value and returns its type.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>value</code> <span class="param-type">{string}</span> - CSS color value</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{&#039;hex&#039; | &#039;rgb&#039; | &#039;hsl&#039; | &#039;named&#039; | &#039;unknown&#039;}</code> type</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/css.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>escapeHtml()</code>
+		</h4>
+		<p>Escapes HTML special characters.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>text</code> <span class="param-type">{string}</span> - Text to escape</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> text</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/markdown.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>markdownToHtml()</code>
+		</h4>
+		<p>Converts markdown to HTML.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>markdown</code> <span class="param-type">{string}</span> - Markdown content</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string}</code> content</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/markdown.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>extractTitle()</code>
+		</h4>
+		<p>Extracts the first heading from markdown as a title.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>markdown</code> <span class="param-type">{string}</span> - Markdown content</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{string|null}</code> heading text or null</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/markdown.js</code></p>
+	</article>
+<article class="function-card">
+		<h4>
+			<span class="export-badge">export</span>
+			<code>extractHeadings()</code>
+		</h4>
+		<p>Extracts all headings from markdown with their levels.</p>
+		<div class="params">
+			<h5>Parameters</h5>
+			<ul>
+			<li><code>markdown</code> <span class="param-type">{string}</span> - Markdown content</li>
+			</ul>
+		</div>
+		<div class="returns">
+			<h5>Returns</h5>
+			<p><code>{{ level: number, text: string, id: string }</code> []} Array of headings</p>
+		</div>
+		<p class="file-ref">Defined in: <code>src/helperUtils/markdown.js</code></p>
+	</article>
+			</div>
+		</section>
+
+		<section id="config" aria-labelledby="config-heading">
+			<h2 id="config-heading">Configuration</h2>
+			<div class="grid">
+				<article class="config-card">
+		<h4>package.json</h4>
+		<p class="format-badge">json</p>
+		<pre><code class="language-json">{
+  &quot;bin&quot;: {
+    &quot;tokenize&quot;: &quot;bin/tokenize.js&quot;
+  },
+  &quot;bundleDependencies&quot;: true,
+  &quot;dependencies&quot;: {
+    &quot;sass&quot;: &quot;1.97.2&quot;
+  },
+  &quot;description&quot;: &quot;Extract and generate design tokens from SCSS/CSS&quot;,
+  &quot;displayName&quot;: &quot;Tokenize CLI&quot;,
+  &quot;engines&quot;: {
+    &quot;bun&quot;: &quot;&gt;=1.3.6&quot;,
+    &quot;node&quot;: &quot;&gt;=25.2.1&quot;
+  },
+  &quot;exports&quot;: {
+    &quot;.&quot;: &quot;./src&quot;,
+    &quot;./lib&quot;: &quot;./src/cli.js&quot;,
+    &quot;./utils&quot;: &quot;./src&quot;
+  },
+  &quot;main&quot;: &quot;src&quot;,
+  &quot;name&quot;: &quot;tokenize&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;audit&quot;: &quot;bun src/commands/scan.js&quot;,
+    &quot;build&quot;: &quot;bun src/commands/compile.js&quot;,
+    &quot;bump&quot;: &quot;npm version --sign-git-tag&quot;,
+    &quot;clean&quot;: &quot;bunx rimraf --glob *.lockb node_modules ~/.bun/install/cache&quot;,
+    &quot;cli&quot;: &quot;bun src/cli.js&quot;,
+    &quot;docs&quot;: &quot;bun src/commands/docs.js&quot;,
+    &quot;dts&quot;: &quot;bunx tsc &amp;&amp; bun src/commands/types.js&quot;,
+    &quot;postinstall&quot;: &quot;bun link --ignore-scripts&quot;,
+    &quot;postpack&quot;: &quot;bun install --ignore-scripts --only-missing&quot;,
+    &quot;postversion&quot;: &quot;bun update --global --latest --ignore-scripts&quot;,
+    &quot;prepack&quot;: &quot;bun install --linker=isolated --ignore-scripts&quot;,
+    &quot;prepare&quot;: &quot;bun run clean &amp;&amp; bun install --ignore-scripts&quot;,
+    &quot;preuninstall&quot;: &quot;bun unlink --ignore-scripts&quot;,
+    &quot;reload&quot;: &quot;bun run clean &amp;&amp; bun install --exact --ignore-scripts&quot;,
+    &quot;check&quot;: &quot;bunx biome --config biome.json src&quot;,
+    &quot;test&quot;: &quot;bun test --verbose&quot;,
+    &quot;tokens&quot;: &quot;bun src/commands/tokens.js --all&quot;,
+    &quot;types&quot;: &quot;bunx tsc --noEmit&quot;
+  },
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;version&quot;: &quot;0.2.0&quot;
+}</code></pre>
+	</article>
+<article class="config-card">
+		<h4>bunfig.toml</h4>
+		<p class="format-badge">toml</p>
+		
+			<h5>[install]</h5>
+			<table class="config-table">
+				<thead><tr><th>Key</th><th>Value</th></tr></thead>
+				<tbody>
+				<tr><td><code>dev</code></td><td><code>true</code></td></tr><tr><td><code>exact</code></td><td><code>true</code></td></tr><tr><td><code>linker</code></td><td><code>hoisted</code></td></tr><tr><td><code>peer</code></td><td><code>true</code></td></tr>
+				</tbody>
+			</table>
+			<h5>[run]</h5>
+			<table class="config-table">
+				<thead><tr><th>Key</th><th>Value</th></tr></thead>
+				<tbody>
+				<tr><td><code>bun</code></td><td><code>true</code></td></tr><tr><td><code>silent</code></td><td><code>false</code></td></tr><tr><td><code>verbose</code></td><td><code>true</code></td></tr>
+				</tbody>
+			</table>
+			<h5>[test]</h5>
+			<table class="config-table">
+				<thead><tr><th>Key</th><th>Value</th></tr></thead>
+				<tbody>
+				<tr><td><code>coverage</code></td><td><code>true</code></td></tr><tr><td><code>coverageThreshold</code></td><td><code>0.75</code></td></tr><tr><td><code>coverageSkipTestFiles</code></td><td><code>true</code></td></tr><tr><td><code>coverageReporter</code></td><td><code>[&quot;text&quot;,&quot;lcov&quot;]</code></td></tr><tr><td><code>coverageDir</code></td><td><code>tests/coverage</code></td></tr><tr><td><code>coveragePathIgnorePatterns</code></td><td><code>[</code></td></tr>
+				</tbody>
+			</table>
+	</article>
+<article class="config-card">
+		<h4>biome.json</h4>
+		<p class="format-badge">json</p>
+		<pre><code class="language-json">{
+  &quot;extends&quot;: [
+    &quot;../../preset/biome.json&quot;
+  ],
+  &quot;root&quot;: true
+}</code></pre>
+	</article>
+<article class="config-card">
+		<h4>tsconfig.json</h4>
+		<p class="format-badge">json</p>
+		<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;allowJs&quot;: true,
+    &quot;baseUrl&quot;: &quot;.&quot;,
+    &quot;declaration&quot;: true,
+    &quot;declarationDir&quot;: &quot;dist&quot;,
+    &quot;declarationMap&quot;: false,
+    &quot;emitDeclarationOnly&quot;: true,
+    &quot;isolatedModules&quot;: false,
+    &quot;noEmit&quot;: false,
+    &quot;paths&quot;: {
+      &quot;./*&quot;: [
+        &quot;./*&quot;
+      ]
+    },
+    &quot;rootDirs&quot;: [
+      &quot;bin&quot;,
+      &quot;docs&quot;,
+      &quot;lib&quot;
+    ],
+    &quot;verbatimModuleSyntax&quot;: false
+  },
+  &quot;exclude&quot;: [
+    &quot;.tmp&quot;,
+    &quot;.claude&quot;,
+    &quot;dist&quot;,
+    &quot;node_modules&quot;,
+    &quot;.vscode&quot;
+  ],
+  &quot;extends&quot;: &quot;../../tsconfig.json&quot;,
+  &quot;include&quot;: [
+    &quot;**/*&quot;,
+    &quot;!**/*.test.*&quot;,
+    &quot;!**/*.spec.*&quot;
+  ]
+}</code></pre>
+	</article>
+<article class="config-card">
+		<h4>tokenize.config.js</h4>
+		<p class="format-badge">javascript</p>
+		
+			
+			<table class="config-table">
+				<thead><tr><th>Key</th><th>Value</th></tr></thead>
+				<tbody>
+				<tr><td><code>compileOutDir</code></td><td><code>./tests/mocks/dist</code></td></tr><tr><td><code>componentPatterns</code></td><td><code>[{},{},{},{}]</code></td></tr><tr><td><code>exclude</code></td><td><code>[]</code></td></tr><tr><td><code>ignore</code></td><td><code>[&quot;node_modules&quot;,&quot;dist&quot;,&quot;.git*&quot;,&quot;.tmp&quot;,&quot;bin&quot;,&quot;docs&quot;,&quot;.vscode&quot;,&quot;.claude&quot;,&quot;.editorconfig&quot;,&quot;**/*.md&quot;]</code></td></tr><tr><td><code>outDir</code></td><td><code>./tests/mocks/dist/.tmp</code></td></tr><tr><td><code>outputFormats</code></td><td><code>[&quot;json&quot;,&quot;scss&quot;,&quot;css&quot;]</code></td></tr><tr><td><code>scanDir</code></td><td><code>./tests/mocks/src</code></td></tr><tr><td><code>spacingBase</code></td><td><code>4</code></td></tr>
+				</tbody>
+			</table>
+	</article>
+			</div>
+		</section>
+	</main>
+
+	<footer>
+		<p>Generated on 2026-01-13T14:09:52.465Z &middot; Built with vanilla JavaScript</p>
+	</footer>
+</body>
+
+</html>

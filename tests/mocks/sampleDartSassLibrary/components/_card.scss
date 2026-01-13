@@ -1,0 +1,338 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// ============================================
+// Card Component
+// ============================================
+
+.card {
+	@extend %card-base;
+
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	// Card sections
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: space(4);
+		padding: space(4) space(5);
+		border-bottom: 1px solid $color-neutral-100;
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	&__body {
+		flex: 1 1 auto;
+		padding: space(5);
+	}
+
+	&__footer {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: space(3);
+		padding: space(4) space(5);
+		border-top: 1px solid $color-neutral-100;
+		background-color: $color-neutral-50;
+
+		&:first-child {
+			border-top: none;
+		}
+	}
+
+	&__title {
+		margin: 0;
+		font-size: font-size("lg");
+		font-weight: font-weight("semibold");
+		color: $color-neutral-900;
+	}
+
+	&__subtitle {
+		margin: 0;
+		font-size: font-size("sm");
+		color: $color-neutral-500;
+	}
+
+	&__description {
+		margin: 0;
+		color: $color-neutral-600;
+		line-height: line-height("relaxed");
+	}
+
+	&__image {
+		width: 100%;
+		height: auto;
+		object-fit: cover;
+
+		&--top {
+			border-radius: radius("lg") radius("lg") 0 0;
+		}
+
+		&--full {
+			border-radius: 0;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: space(2);
+	}
+
+	// Nested cards
+	.card {
+		box-shadow: none;
+		border: 1px solid $color-neutral-200;
+	}
+}
+
+// ============================================
+// Card Variants
+// ============================================
+
+// Elevated card
+.card--elevated {
+	box-shadow: shadow("lg");
+}
+
+// Outlined card
+.card--outlined {
+	box-shadow: none;
+	border: 1px solid $color-neutral-200;
+}
+
+// Flat card
+.card--flat {
+	box-shadow: none;
+	background-color: $color-neutral-50;
+}
+
+// Interactive card
+.card--interactive {
+	cursor: pointer;
+
+	@include transition((box-shadow, transform), "fast");
+
+	&:hover {
+		box-shadow: shadow("lg");
+		transform: translateY(-2px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	&:focus-visible {
+		outline: 2px solid $color-primary-500;
+		outline-offset: 2px;
+	}
+}
+
+// Selectable card
+.card--selectable {
+	cursor: pointer;
+	border: 2px solid transparent;
+
+	@include transition((border-color, box-shadow), "fast");
+
+	&:hover {
+		border-color: $color-neutral-300;
+	}
+
+	&.is-selected {
+		border-color: $color-primary-500;
+		box-shadow: 0 0 0 3px alpha($color-primary-500, 0.2);
+	}
+}
+
+// ============================================
+// Card Sizes
+// ============================================
+
+.card--sm {
+	.card__header,
+	.card__body,
+	.card__footer {
+		padding: space(3) space(4);
+	}
+
+	.card__title {
+		font-size: font-size("base");
+	}
+}
+
+.card--lg {
+	.card__header,
+	.card__body,
+	.card__footer {
+		padding: space(6) space(8);
+	}
+
+	.card__title {
+		font-size: font-size("xl");
+	}
+}
+
+// ============================================
+// Card Colors
+// ============================================
+
+.card--primary {
+	border-left: 4px solid $color-primary-500;
+}
+
+.card--success {
+	border-left: 4px solid $color-success;
+}
+
+.card--warning {
+	border-left: 4px solid $color-warning;
+}
+
+.card--error {
+	border-left: 4px solid $color-error;
+}
+
+// ============================================
+// Horizontal Card
+// ============================================
+
+.card--horizontal {
+	flex-direction: row;
+
+	@include mq-down("md") {
+		flex-direction: column;
+	}
+
+	.card__image {
+		width: 200px;
+		flex-shrink: 0;
+		object-fit: cover;
+
+		@include mq-down("md") {
+			width: 100%;
+			height: 200px;
+		}
+
+		&--left {
+			border-radius: radius("lg") 0 0 radius("lg");
+
+			@include mq-down("md") {
+				border-radius: radius("lg") radius("lg") 0 0;
+			}
+		}
+
+		&--right {
+			order: 1;
+			border-radius: 0 radius("lg") radius("lg") 0;
+
+			@include mq-down("md") {
+				order: 0;
+				border-radius: radius("lg") radius("lg") 0 0;
+			}
+		}
+	}
+
+	.card__content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+// ============================================
+// Card Grid
+// ============================================
+
+.card-grid {
+	@include grid-auto-fit(280px, space(6));
+}
+
+.card-grid--compact {
+	@include grid-auto-fit(220px, space(4));
+}
+
+.card-grid--wide {
+	@include grid-auto-fit(320px, space(8));
+}
+
+// ============================================
+// Card Stack
+// ============================================
+
+.card-stack {
+	display: flex;
+	flex-direction: column;
+	gap: space(4);
+}
+
+// ============================================
+// Card Media Object
+// ============================================
+
+.card__media {
+	display: flex;
+	align-items: flex-start;
+	gap: space(4);
+
+	&-figure {
+		flex-shrink: 0;
+
+		img {
+			width: 64px;
+			height: 64px;
+			border-radius: radius("md");
+			object-fit: cover;
+		}
+	}
+
+	&-body {
+		flex: 1;
+		min-width: 0;
+	}
+}
+
+// ============================================
+// Dark Mode
+// ============================================
+
+@include dark-mode {
+	.card {
+		background-color: $color-neutral-800;
+		border-color: $color-neutral-700;
+
+		&__header,
+		&__footer {
+			border-color: $color-neutral-700;
+		}
+
+		&__footer {
+			background-color: $color-neutral-900;
+		}
+
+		&__title {
+			color: $color-neutral-100;
+		}
+
+		&__subtitle {
+			color: $color-neutral-400;
+		}
+
+		&__description {
+			color: $color-neutral-300;
+		}
+	}
+
+	.card--flat {
+		background-color: $color-neutral-900;
+	}
+
+	.card--outlined {
+		border-color: $color-neutral-700;
+	}
+}

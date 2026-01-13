@@ -1,0 +1,432 @@
+@use "sass:map";
+@use "sass:math";
+@use "../abstracts" as *;
+
+// ============================================
+// Grid System
+// 12-column responsive grid with CSS Grid
+// ============================================
+
+// Grid container
+.grid {
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	gap: space(4);
+
+	// Gap variants
+	&--gap-0 {
+		gap: 0;
+	}
+
+	&--gap-2 {
+		gap: space(2);
+	}
+
+	&--gap-6 {
+		gap: space(6);
+	}
+
+	&--gap-8 {
+		gap: space(8);
+	}
+
+	// Row gap only
+	&--row-gap-2 {
+		row-gap: space(2);
+	}
+
+	&--row-gap-4 {
+		row-gap: space(4);
+	}
+
+	&--row-gap-6 {
+		row-gap: space(6);
+	}
+
+	// Column gap only
+	&--col-gap-2 {
+		column-gap: space(2);
+	}
+
+	&--col-gap-4 {
+		column-gap: space(4);
+	}
+
+	&--col-gap-6 {
+		column-gap: space(6);
+	}
+}
+
+// ============================================
+// Grid Columns
+// ============================================
+
+// Generate column classes
+@for $i from 1 through 12 {
+	.col-#{$i} {
+		grid-column: span $i;
+	}
+}
+
+// Responsive column classes
+@each $bp, $value in $breakpoints {
+	@if $value != 0 {
+		@include mq($bp) {
+			@for $i from 1 through 12 {
+				.col-#{$bp}-#{$i} {
+					grid-column: span $i;
+				}
+			}
+
+			// Full width at breakpoint
+			.col-#{$bp}-full {
+				grid-column: 1 / -1;
+			}
+
+			// Auto width at breakpoint
+			.col-#{$bp}-auto {
+				grid-column: auto;
+			}
+		}
+	}
+}
+
+// Start position
+@for $i from 1 through 12 {
+	.col-start-#{$i} {
+		grid-column-start: $i;
+	}
+}
+
+// End position
+@for $i from 1 through 13 {
+	.col-end-#{$i} {
+		grid-column-end: $i;
+	}
+}
+
+// Full width column
+.col-full {
+	grid-column: 1 / -1;
+}
+
+// Auto width column
+.col-auto {
+	grid-column: auto;
+}
+
+// ============================================
+// Grid Rows
+// ============================================
+
+@for $i from 1 through 6 {
+	.row-#{$i} {
+		grid-row: span $i;
+	}
+
+	.row-start-#{$i} {
+		grid-row-start: $i;
+	}
+
+	.row-end-#{$i} {
+		grid-row-end: $i;
+	}
+}
+
+.row-full {
+	grid-row: 1 / -1;
+}
+
+// ============================================
+// Grid Alignment
+// ============================================
+
+// Justify items (horizontal)
+.justify-items-start {
+	justify-items: start;
+}
+
+.justify-items-center {
+	justify-items: center;
+}
+
+.justify-items-end {
+	justify-items: end;
+}
+
+.justify-items-stretch {
+	justify-items: stretch;
+}
+
+// Align items (vertical)
+.align-items-start {
+	align-items: start;
+}
+
+.align-items-center {
+	align-items: center;
+}
+
+.align-items-end {
+	align-items: end;
+}
+
+.align-items-stretch {
+	align-items: stretch;
+}
+
+// Place items (both)
+.place-items-center {
+	place-items: center;
+}
+
+// Justify content
+.justify-content-start {
+	justify-content: start;
+}
+
+.justify-content-center {
+	justify-content: center;
+}
+
+.justify-content-end {
+	justify-content: end;
+}
+
+.justify-content-between {
+	justify-content: space-between;
+}
+
+.justify-content-around {
+	justify-content: space-around;
+}
+
+.justify-content-evenly {
+	justify-content: space-evenly;
+}
+
+// Align content
+.align-content-start {
+	align-content: start;
+}
+
+.align-content-center {
+	align-content: center;
+}
+
+.align-content-end {
+	align-content: end;
+}
+
+.align-content-between {
+	align-content: space-between;
+}
+
+// Self alignment
+.justify-self-start {
+	justify-self: start;
+}
+
+.justify-self-center {
+	justify-self: center;
+}
+
+.justify-self-end {
+	justify-self: end;
+}
+
+.justify-self-stretch {
+	justify-self: stretch;
+}
+
+.align-self-start {
+	align-self: start;
+}
+
+.align-self-center {
+	align-self: center;
+}
+
+.align-self-end {
+	align-self: end;
+}
+
+.align-self-stretch {
+	align-self: stretch;
+}
+
+.place-self-center {
+	place-self: center;
+}
+
+// ============================================
+// Auto-fit and Auto-fill Grids
+// ============================================
+
+.grid-auto-fit {
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-auto-fill {
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+// Size variants
+.grid-auto-fit-sm {
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.grid-auto-fit-lg {
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.grid-auto-fill-sm {
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.grid-auto-fill-lg {
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+// ============================================
+// Simple Grid Layouts
+// ============================================
+
+.grid-2 {
+	grid-template-columns: repeat(2, 1fr);
+
+	@include mq-down("md") {
+		grid-template-columns: 1fr;
+	}
+}
+
+.grid-3 {
+	grid-template-columns: repeat(3, 1fr);
+
+	@include mq-down("lg") {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include mq-down("sm") {
+		grid-template-columns: 1fr;
+	}
+}
+
+.grid-4 {
+	grid-template-columns: repeat(4, 1fr);
+
+	@include mq-down("lg") {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include mq-down("sm") {
+		grid-template-columns: 1fr;
+	}
+}
+
+// ============================================
+// Subgrid Support
+// ============================================
+
+.subgrid {
+	display: grid;
+	grid-template-columns: subgrid;
+}
+
+.subgrid-rows {
+	display: grid;
+	grid-template-rows: subgrid;
+}
+
+// ============================================
+// Grid Areas (Common Layouts)
+// ============================================
+
+// Holy grail layout
+.grid-holy-grail {
+	display: grid;
+	grid-template-areas:
+		"header header header"
+		"nav main aside"
+		"footer footer footer";
+	grid-template-columns: 200px 1fr 200px;
+	grid-template-rows: auto 1fr auto;
+	min-height: 100vh;
+
+	@include mq-down("lg") {
+		grid-template-areas:
+			"header"
+			"nav"
+			"main"
+			"aside"
+			"footer";
+		grid-template-columns: 1fr;
+	}
+
+	.header {
+		grid-area: header;
+	}
+
+	.nav {
+		grid-area: nav;
+	}
+
+	.main {
+		grid-area: main;
+	}
+
+	.aside {
+		grid-area: aside;
+	}
+
+	.footer {
+		grid-area: footer;
+	}
+}
+
+// Sidebar layout
+.grid-sidebar {
+	display: grid;
+	grid-template-columns: 280px 1fr;
+	gap: space(6);
+
+	@include mq-down("lg") {
+		grid-template-columns: 1fr;
+	}
+
+	&--right {
+		grid-template-columns: 1fr 280px;
+
+		@include mq-down("lg") {
+			grid-template-columns: 1fr;
+		}
+	}
+}
+
+// ============================================
+// Masonry Layout (using CSS Grid)
+// Note: True masonry requires JS, this is an approximation
+// ============================================
+
+.grid-masonry {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	grid-auto-rows: 10px;
+	gap: space(4);
+}
+
+// ============================================
+// Dense Packing
+// ============================================
+
+.grid-dense {
+	grid-auto-flow: dense;
+}
+
+.grid-row-dense {
+	grid-auto-flow: row dense;
+}
+
+.grid-col-dense {
+	grid-auto-flow: column dense;
+}

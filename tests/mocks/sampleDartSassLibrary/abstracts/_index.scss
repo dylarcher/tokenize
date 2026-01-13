@@ -1,0 +1,16 @@
+// ============================================
+// Abstracts Module
+// This file forwards all abstract partials for easy importing
+// ============================================
+
+// Forward variables with a namespace prefix
+@forward "variables";
+
+// Forward functions (depends on variables)
+@forward "functions";
+
+// Forward mixins (depends on variables and functions)
+@forward "mixins";
+
+// Forward placeholders (depends on all above)
+@forward "placeholders";

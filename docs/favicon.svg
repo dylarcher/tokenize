@@ -1,0 +1,103 @@
+<svg aria-label="Favicon" fill="none" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 230 230">
+  <defs>
+    <title>Favorites Icon</title>
+    <desc>Terminal, shell, command-line interface, cmd prompt</desc>
+
+    <style type="text/css">
+      :root:not(html):is(svg) {
+        vertical-align: middle;
+        @supports (aspect-ratio: 1 / 1) {
+          aspect-ratio: 1 / 1;
+        }
+        
+        display: inline-block;
+        @supports (display: inline flow-root) {
+          display: inline flow-root;
+        }
+
+        height: auto;
+        max-height: 100%;
+        @supports (block-size: 20rem) {
+          block-size: auto;
+          max-block-size: 100%;
+        }
+
+        width: 100%;
+        max-width: 100%;
+        @supports (max-inline-size: 20rem) {
+          inline-size: 100%;
+          max-inline-size: 100%;
+        }
+      }
+
+      path:nth-of-type(1) {
+        fill-opacity: var(--_alpha, 12%);
+        fill: var(--_color, mediumpurple);
+
+        @media (prefers-color-scheme: dark) {
+          --_alpha: 32%;
+          --_color: lightseagreen;
+        }
+      }
+
+      html[data-theme="dark" i] path[aria-label="Pane" i] {
+        --_alpha: 32%;
+        --_color: lightseagreen;
+      }
+
+      path:nth-of-type(2) {
+        fill-opacity: var(--_alpha, 96%);
+        fill: var(--_color, slateblue);
+
+        @media (prefers-color-scheme: dark) {
+          --_alpha: 92%;
+          --_color: seagreen;
+        }
+      }
+
+      html[data-theme="dark" i] path[aria-label="Frame" i] {
+        --_alpha: 92%;
+        --_color: seagreen;
+      }
+
+      path:nth-of-type(3) {
+        fill-opacity: var(--_alpha, 72%);
+        fill: var(--_color, mediumslateblue);
+        filter: var(--_shade, url(#ds));
+
+        @media (prefers-color-scheme: dark) {
+          --_alpha: 92%;
+          --_color: mediumseagreen;
+        }
+      }
+
+      html[data-theme="dark" i] path[aria-label="Prompt" i] {
+        --_alpha: 92%;
+        --_color: mediumseagreen;
+      }
+
+      filter[aria-label="Shadow" i] {
+        flood-color: var(--_color, darkslateblue);
+        flood-opacity: var(--_alpha, 16%);
+
+        @media (prefers-color-scheme: dark) {
+          --_alpha: 28%;
+          --_color: darkseagreen;
+        }
+      }
+
+      html[data-theme="dark" i] filter#depth {
+        --_alpha: 28%;
+          --_color: darkseagreen;
+      }
+    </style>
+
+    <filter id="depth" aria-label="Shadow">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" />
+    </filter>
+  </defs>
+
+  <path aria-label="Pane" d="M221.7 71.4a55 55 0 0 0-39.6-42.8 345 345 0 0 0-134.2 0A53 53 0 0 0 8.3 71.4a293 293 0 0 0 0 87.7A55 55 0 0 0 47.9 202a320 320 0 0 0 134.2 0 53 53 0 0 0 39.6-42.8v-1q6.6-42.9 0-85.6z" />
+  <path aria-label="Frame" d="M226.6 68.7A58 58 0 0 0 185.2 24a360 360 0 0 0-140.3 0A55 55 0 0 0 3.4 68.7a308 308 0 0 0 0 92 58 58 0 0 0 41.4 44.8c46.2 10 94 10 140.3 0a55 55 0 0 0 41.4-44.8v-1.1a293 293 0 0 0 0-89.7zm-23 87.4q-3.5 19.6-23 25.3a309 309 0 0 1-130 0 29 29 0 0 1-24.2-25.3 264 264 0 0 1 0-85q3.6-19.6 23-25.4a313 313 0 0 1 130 0A29 29 0 0 1 203.6 71v1.2a250 250 0 0 1 0 82.8" />
+  <path aria-label="Prompt" d="M169.8 141.5q-3.4-3.2-8.2-3.3h-34.4a11.5 11.5 0 0 0 0 23h34.5a11.5 11.5 0 0 0 8-19.7m-57.5-18.3q6.9-8 0-16.1L77.7 72.6a11.5 11.5 0 1 0-16.1 16.1L88 115.2l-26.4 26.4a11.5 11.5 0 1 0 16.1 16.1z" />
+</svg>
