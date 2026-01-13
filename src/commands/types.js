@@ -4,7 +4,13 @@
  * @module types
  */
 
-import { readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+	readdirSync,
+	readFileSync,
+	rmSync,
+	statSync,
+	writeFileSync,
+} from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 

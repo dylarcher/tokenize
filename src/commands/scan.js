@@ -162,7 +162,9 @@ function extractValues(content, filepath) {
 		}
 	}
 
-	for (const m of content.matchAll(/:\s*(-?\d+(?:\.\d+)?(?:px|rem|em|ch|vw|vh|%))/g)) {
+	for (const m of content.matchAll(
+		/:\s*(-?\d+(?:\.\d+)?(?:px|rem|em|ch|vw|vh|%))/g,
+	)) {
 		results.spacing.add(m[1]);
 	}
 
@@ -403,16 +405,21 @@ const files = walkDirectory(path.resolve(dir), {
 });
 
 const baseFiles = files.filter((f) => !isComponentFile(f, componentPatterns));
-const componentFiles = files.filter((f) => isComponentFile(f, componentPatterns));
+const componentFiles = files.filter((f) =>
+	isComponentFile(f, componentPatterns),
+);
 
 if (!quiet) {
 	console.log(
 		`Found ${files.length} style files (${baseFiles.length} base, ${componentFiles.length} component)`,
 	);
-	if (excludePatterns.length) console.log(`Excluding: ${excludePatterns.join(", ")}`);
+	if (excludePatterns.length)
+		console.log(`Excluding: ${excludePatterns.join(", ")}`);
 }
 
-const baseResults = baseFiles.map((f) => extractValues(fs.readFileSync(f, "utf8"), f));
+const baseResults = baseFiles.map((f) =>
+	extractValues(fs.readFileSync(f, "utf8"), f),
+);
 const componentResults = componentFiles.map((f) =>
 	extractValues(fs.readFileSync(f, "utf8"), f),
 );
@@ -425,7 +432,9 @@ if (dryRun) {
 	console.log(`  ${outDir}/base.json`);
 	console.log(`  ${outDir}/components.json`);
 	console.log(`\nBase styles found:`);
-	console.log(`  Colors: ${Array.isArray(base.colors) ? base.colors.length : base.colors.size}`);
+	console.log(
+		`  Colors: ${Array.isArray(base.colors) ? base.colors.length : base.colors.size}`,
+	);
 	console.log(`  Variables: ${Object.keys(base.variables).length}`);
 	process.exit(0);
 }

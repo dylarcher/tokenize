@@ -84,32 +84,32 @@ const projectRoot = path.resolve(__dirname, "../..");
  * @returns {JSDocBlock[]}
  */
 const extractJSDocBlocks = (content, filePath) => {
-    /** @type {JSDocBlock[]} */
-    const blocks = [];
-    const jsdocRegex = /\/\*\*\s*([\s\S]*?)\s*\*\//g;
-    const matches = content.matchAll(jsdocRegex);
+	/** @type {JSDocBlock[]} */
+	const blocks = [];
+	const jsdocRegex = /\/\*\*\s*([\s\S]*?)\s*\*\//g;
+	const matches = content.matchAll(jsdocRegex);
 
-    for (const match of matches) {
-        const raw = match[1];
-        const lineNumber = content.slice(0, match.index).split("\n").length;
+	for (const match of matches) {
+		const raw = match[1];
+		const lineNumber = content.slice(0, match.index).split("\n").length;
 
-        // Find associated name (function or const after the JSDoc)
-        const afterComment = content.slice(match.index + match[0].length);
-        const nameMatch = afterComment.match(
-            /^\s*(?:export\s+)?(?:const|let|var|function|async\s+function)\s+(\w+)/,
-        );
+		// Find associated name (function or const after the JSDoc)
+		const afterComment = content.slice(match.index + match[0].length);
+		const nameMatch = afterComment.match(
+			/^\s*(?:export\s+)?(?:const|let|var|function|async\s+function)\s+(\w+)/,
+		);
 
-        blocks.push({
-            raw,
-            description: extractDescription(raw),
-            tags: extractTags(raw),
-            line: lineNumber,
-            file: filePath,
-            associatedName: nameMatch ? nameMatch[1] : null,
-        });
-    }
+		blocks.push({
+			raw,
+			description: extractDescription(raw),
+			tags: extractTags(raw),
+			line: lineNumber,
+			file: filePath,
+			associatedName: nameMatch ? nameMatch[1] : null,
+		});
+	}
 
-    return blocks;
+	return blocks;
 };
 
 /**
@@ -118,15 +118,15 @@ const extractJSDocBlocks = (content, filePath) => {
  * @returns {string}
  */
 const extractDescription = (raw) => {
-    const lines = raw.split("\n").map((line) => line.replace(/^\s*\*\s?/, ""));
-    const descLines = [];
+	const lines = raw.split("\n").map((line) => line.replace(/^\s*\*\s?/, ""));
+	const descLines = [];
 
-    for (const line of lines) {
-        if (line.startsWith("@")) break;
-        descLines.push(line);
-    }
+	for (const line of lines) {
+		if (line.startsWith("@")) break;
+		descLines.push(line);
+	}
 
-    return descLines.join(" ").trim();
+	return descLines.join(" ").trim();
 };
 
 /**
@@ -135,24 +135,24 @@ const extractDescription = (raw) => {
  * @returns {JSDocTag[]}
  */
 const extractTags = (raw) => {
-    /** @type {JSDocTag[]} */
-    const tags = [];
-    const normalized = raw.replace(/\n\s*\*\s?/g, "\n").trim();
-    const tagMatches = normalized.matchAll(
-        /@(\w+)(?:\s+\{([^}]*)\})?(?:\s+(\[?\w+\]?))?(?:\s*-?\s*)?([^@]*)/g,
-    );
+	/** @type {JSDocTag[]} */
+	const tags = [];
+	const normalized = raw.replace(/\n\s*\*\s?/g, "\n").trim();
+	const tagMatches = normalized.matchAll(
+		/@(\w+)(?:\s+\{([^}]*)\})?(?:\s+(\[?\w+\]?))?(?:\s*-?\s*)?([^@]*)/g,
+	);
 
-    for (const match of tagMatches) {
-        const [, tag, type, name, desc] = match;
-        tags.push({
-            tag,
-            type: type || null,
-            name: name || null,
-            description: (desc || "").trim().replace(/\n/g, " "),
-        });
-    }
+	for (const match of tagMatches) {
+		const [, tag, type, name, desc] = match;
+		tags.push({
+			tag,
+			type: type || null,
+			name: name || null,
+			description: (desc || "").trim().replace(/\n/g, " "),
+		});
+	}
 
-    return tags;
+	return tags;
 };
 
 /**
@@ -161,25 +161,25 @@ const extractTags = (raw) => {
  * @returns {TypeDef[]}
  */
 const extractTypeDefs = (blocks) => {
-    /** @type {TypeDef[]} */
-    const typedefs = [];
+	/** @type {TypeDef[]} */
+	const typedefs = [];
 
-    for (const block of blocks) {
-        const typedefTag = block.tags.find((t) => t.tag === "typedef");
-        if (!typedefTag) continue;
+	for (const block of blocks) {
+		const typedefTag = block.tags.find((t) => t.tag === "typedef");
+		if (!typedefTag) continue;
 
-        const properties = block.tags.filter((t) => t.tag === "property");
+		const properties = block.tags.filter((t) => t.tag === "property");
 
-        typedefs.push({
-            name: typedefTag.name || "Unknown",
-            type: typedefTag.type || "Object",
-            description: block.description || typedefTag.description,
-            properties,
-            file: path.relative(projectRoot, block.file),
-        });
-    }
+		typedefs.push({
+			name: typedefTag.name || "Unknown",
+			type: typedefTag.type || "Object",
+			description: block.description || typedefTag.description,
+			properties,
+			file: path.relative(projectRoot, block.file),
+		});
+	}
 
-    return typedefs;
+	return typedefs;
 };
 
 /**
@@ -189,34 +189,35 @@ const extractTypeDefs = (blocks) => {
  * @returns {FunctionDoc[]}
  */
 const extractFunctions = (blocks, content) => {
-    /** @type {FunctionDoc[]} */
-    const functions = [];
+	/** @type {FunctionDoc[]} */
+	const functions = [];
 
-    for (const block of blocks) {
-        if (!block.associatedName) continue;
-        if (block.tags.some((t) => t.tag === "typedef" || t.tag === "module")) continue;
+	for (const block of blocks) {
+		if (!block.associatedName) continue;
+		if (block.tags.some((t) => t.tag === "typedef" || t.tag === "module"))
+			continue;
 
-        const params = block.tags.filter((t) => t.tag === "param");
-        const returns =
-            block.tags.find((t) => t.tag === "returns" || t.tag === "return") || null;
+		const params = block.tags.filter((t) => t.tag === "param");
+		const returns =
+			block.tags.find((t) => t.tag === "returns" || t.tag === "return") || null;
 
-        // Check if exported
-        const exportRegex = new RegExp(
-            `export\\s+(?:const|let|var|function|async\\s+function)\\s+${block.associatedName}\\b`,
-        );
-        const exported = exportRegex.test(content);
+		// Check if exported
+		const exportRegex = new RegExp(
+			`export\\s+(?:const|let|var|function|async\\s+function)\\s+${block.associatedName}\\b`,
+		);
+		const exported = exportRegex.test(content);
 
-        functions.push({
-            name: block.associatedName,
-            description: block.description,
-            params,
-            returns,
-            file: path.relative(projectRoot, block.file),
-            exported,
-        });
-    }
+		functions.push({
+			name: block.associatedName,
+			description: block.description,
+			params,
+			returns,
+			file: path.relative(projectRoot, block.file),
+			exported,
+		});
+	}
 
-    return functions;
+	return functions;
 };
 
 /**
@@ -225,54 +226,54 @@ const extractFunctions = (blocks, content) => {
  * @returns {ConfigSection[]}
  */
 const parseToml = (content) => {
-    /** @type {ConfigSection[]} */
-    const sections = [];
-    let currentSection = {
-        name: "root",
-        values: /** @type {Record<string, unknown>} */ ({}),
-    };
+	/** @type {ConfigSection[]} */
+	const sections = [];
+	let currentSection = {
+		name: "root",
+		values: /** @type {Record<string, unknown>} */ ({}),
+	};
 
-    for (const line of content.split("\n")) {
-        const trimmed = line.trim();
-        if (!trimmed || trimmed.startsWith("#")) continue;
+	for (const line of content.split("\n")) {
+		const trimmed = line.trim();
+		if (!trimmed || trimmed.startsWith("#")) continue;
 
-        const sectionMatch = trimmed.match(/^\[([^\]]+)\]$/);
-        if (sectionMatch) {
-            if (Object.keys(currentSection.values).length > 0) {
-                sections.push(currentSection);
-            }
-            currentSection = { name: sectionMatch[1], values: {} };
-            continue;
-        }
+		const sectionMatch = trimmed.match(/^\[([^\]]+)\]$/);
+		if (sectionMatch) {
+			if (Object.keys(currentSection.values).length > 0) {
+				sections.push(currentSection);
+			}
+			currentSection = { name: sectionMatch[1], values: {} };
+			continue;
+		}
 
-        const kvMatch = trimmed.match(/^(\w+)\s*=\s*(.+)$/);
-        if (kvMatch) {
-            const [, key, rawValue] = kvMatch;
-            let value = rawValue.trim();
+		const kvMatch = trimmed.match(/^(\w+)\s*=\s*(.+)$/);
+		if (kvMatch) {
+			const [, key, rawValue] = kvMatch;
+			let value = rawValue.trim();
 
-            // Parse value type
-            if (value === "true") value = true;
-            else if (value === "false") value = false;
-            else if (/^\d+\.?\d*$/.test(value)) value = Number.parseFloat(value);
-            else if (value.startsWith('"') && value.endsWith('"'))
-                value = value.slice(1, -1);
-            else if (value.startsWith("[")) {
-                try {
-                    value = JSON.parse(value.replace(/'/g, '"'));
-                } catch {
-                    // Keep as string if parse fails
-                }
-            }
+			// Parse value type
+			if (value === "true") value = true;
+			else if (value === "false") value = false;
+			else if (/^\d+\.?\d*$/.test(value)) value = Number.parseFloat(value);
+			else if (value.startsWith('"') && value.endsWith('"'))
+				value = value.slice(1, -1);
+			else if (value.startsWith("[")) {
+				try {
+					value = JSON.parse(value.replace(/'/g, '"'));
+				} catch {
+					// Keep as string if parse fails
+				}
+			}
 
-            currentSection.values[key] = value;
-        }
-    }
+			currentSection.values[key] = value;
+		}
+	}
 
-    if (Object.keys(currentSection.values).length > 0) {
-        sections.push(currentSection);
-    }
+	if (Object.keys(currentSection.values).length > 0) {
+		sections.push(currentSection);
+	}
 
-    return sections;
+	return sections;
 };
 
 /**
@@ -281,48 +282,48 @@ const parseToml = (content) => {
  * @returns {Promise<ConfigDoc|null>}
  */
 const parseConfigFile = async (filePath) => {
-    const fullPath = path.resolve(projectRoot, filePath);
-    if (!fs.existsSync(fullPath)) return null;
+	const fullPath = path.resolve(projectRoot, filePath);
+	if (!fs.existsSync(fullPath)) return null;
 
-    const ext = path.extname(filePath);
-    const content = fs.readFileSync(fullPath, "utf8");
+	const ext = path.extname(filePath);
+	const content = fs.readFileSync(fullPath, "utf8");
 
-    try {
-        if (ext === ".json") {
-            const parsed = JSON.parse(content);
-            return {
-                file: path.basename(filePath),
-                format: "json",
-                sections: [{ name: "root", values: parsed }],
-                raw: parsed,
-            };
-        }
+	try {
+		if (ext === ".json") {
+			const parsed = JSON.parse(content);
+			return {
+				file: path.basename(filePath),
+				format: "json",
+				sections: [{ name: "root", values: parsed }],
+				raw: parsed,
+			};
+		}
 
-        if (ext === ".toml") {
-            const sections = parseToml(content);
-            return {
-                file: path.basename(filePath),
-                format: "toml",
-                sections,
-                raw: sections,
-            };
-        }
+		if (ext === ".toml") {
+			const sections = parseToml(content);
+			return {
+				file: path.basename(filePath),
+				format: "toml",
+				sections,
+				raw: sections,
+			};
+		}
 
-        if (ext === ".js" && filePath.includes("config")) {
-            const module = await import(fullPath);
-            const config = module.default || module;
-            return {
-                file: path.basename(filePath),
-                format: "javascript",
-                sections: [{ name: "default", values: config }],
-                raw: config,
-            };
-        }
-    } catch (error) {
-        console.error(`Failed to parse ${filePath}:`, error.message);
-    }
+		if (ext === ".js" && filePath.includes("config")) {
+			const module = await import(fullPath);
+			const config = module.default || module;
+			return {
+				file: path.basename(filePath),
+				format: "javascript",
+				sections: [{ name: "default", values: config }],
+				raw: config,
+			};
+		}
+	} catch (error) {
+		console.error(`Failed to parse ${filePath}:`, error.message);
+	}
 
-    return null;
+	return null;
 };
 
 /**
@@ -331,27 +332,27 @@ const parseConfigFile = async (filePath) => {
  * @returns {string}
  */
 const generateTypeDefHtml = (typedef) => {
-    const propsHtml = typedef.properties.length
-        ? `<table class="props-table">
+	const propsHtml = typedef.properties.length
+		? `<table class="props-table">
 			<thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
 			<tbody>
 			${typedef.properties
-                .map((p) => {
-                    // Clean up property name (remove optional brackets)
-                    const propName = (p.name || "").replace(/^\[|\]$/g, "");
-                    const isOptional = (p.name || "").startsWith("[");
-                    return `<tr>
+				.map((p) => {
+					// Clean up property name (remove optional brackets)
+					const propName = (p.name || "").replace(/^\[|\]$/g, "");
+					const isOptional = (p.name || "").startsWith("[");
+					return `<tr>
 					<td><code>${escapeHtml(propName)}${isOptional ? "?" : ""}</code></td>
 					<td><code>${escapeHtml(p.type || "any")}</code></td>
 					<td>${escapeHtml(p.description)}</td>
 				</tr>`;
-                })
-                .join("")}
+				})
+				.join("")}
 			</tbody>
 		</table>`
-        : "";
+		: "";
 
-    return `<article class="typedef-card">
+	return `<article class="typedef-card">
 		<h4><code>${escapeHtml(typedef.name)}</code></h4>
 		<p class="type-info">Type: <code>${escapeHtml(typedef.type)}</code></p>
 		<p>${escapeHtml(typedef.description)}</p>
@@ -366,30 +367,30 @@ const generateTypeDefHtml = (typedef) => {
  * @returns {string}
  */
 const generateFunctionHtml = (fn) => {
-    const paramsHtml = fn.params.length
-        ? `<div class="params">
+	const paramsHtml = fn.params.length
+		? `<div class="params">
 			<h5>Parameters</h5>
 			<ul>
 			${fn.params
-                .map((p) => {
-                    // Clean up parameter name (remove optional brackets)
-                    const paramName = (p.name || "").replace(/^\[|\]$/g, "");
-                    const isOptional = (p.name || "").startsWith("[");
-                    return `<li><code>${escapeHtml(paramName)}${isOptional ? "?" : ""}</code> <span class="param-type">{${escapeHtml(p.type || "any")}}</span> - ${escapeHtml(p.description)}</li>`;
-                })
-                .join("")}
+				.map((p) => {
+					// Clean up parameter name (remove optional brackets)
+					const paramName = (p.name || "").replace(/^\[|\]$/g, "");
+					const isOptional = (p.name || "").startsWith("[");
+					return `<li><code>${escapeHtml(paramName)}${isOptional ? "?" : ""}</code> <span class="param-type">{${escapeHtml(p.type || "any")}}</span> - ${escapeHtml(p.description)}</li>`;
+				})
+				.join("")}
 			</ul>
 		</div>`
-        : "";
+		: "";
 
-    const returnsHtml = fn.returns
-        ? `<div class="returns">
+	const returnsHtml = fn.returns
+		? `<div class="returns">
 			<h5>Returns</h5>
 			<p><code>{${escapeHtml(fn.returns.type || "void")}}</code> ${escapeHtml(fn.returns.description)}</p>
 		</div>`
-        : "";
+		: "";
 
-    return `<article class="function-card">
+	return `<article class="function-card">
 		<h4>
 			${fn.exported ? '<span class="export-badge">export</span>' : ""}
 			<code>${escapeHtml(fn.name)}()</code>
@@ -407,37 +408,37 @@ const generateFunctionHtml = (fn) => {
  * @returns {string}
  */
 const generateConfigHtml = (config) => {
-    const sectionsHtml = config.sections
-        .map((section) => {
-            const entries = Object.entries(section.values);
-            if (entries.length === 0) return "";
+	const sectionsHtml = config.sections
+		.map((section) => {
+			const entries = Object.entries(section.values);
+			if (entries.length === 0) return "";
 
-            const isNested = entries.some(([, v]) => typeof v === "object" && v !== null);
+			const isNested = entries.some(
+				([, v]) => typeof v === "object" && v !== null,
+			);
 
-            if (isNested && config.format === "json") {
-                return `<pre><code class="language-json">${escapeHtml(JSON.stringify(section.values, null, 2))}</code></pre>`;
-            }
+			if (isNested && config.format === "json") {
+				return `<pre><code class="language-json">${escapeHtml(JSON.stringify(section.values, null, 2))}</code></pre>`;
+			}
 
-            return `
+			return `
 			${section.name !== "root" && section.name !== "default" ? `<h5>[${escapeHtml(section.name)}]</h5>` : ""}
 			<table class="config-table">
 				<thead><tr><th>Key</th><th>Value</th></tr></thead>
 				<tbody>
 				${entries
-                    .map(([key, value]) => {
-                        const displayValue =
-                            typeof value === "object"
-                                ? JSON.stringify(value)
-                                : String(value);
-                        return `<tr><td><code>${escapeHtml(key)}</code></td><td><code>${escapeHtml(displayValue)}</code></td></tr>`;
-                    })
-                    .join("")}
+					.map(([key, value]) => {
+						const displayValue =
+							typeof value === "object" ? JSON.stringify(value) : String(value);
+						return `<tr><td><code>${escapeHtml(key)}</code></td><td><code>${escapeHtml(displayValue)}</code></td></tr>`;
+					})
+					.join("")}
 				</tbody>
 			</table>`;
-        })
-        .join("");
+		})
+		.join("");
 
-    return `<article class="config-card">
+	return `<article class="config-card">
 		<h4>${escapeHtml(config.file)}</h4>
 		<p class="format-badge">${escapeHtml(config.format)}</p>
 		${sectionsHtml}
@@ -450,18 +451,18 @@ const generateConfigHtml = (config) => {
  * @returns {string}
  */
 const generateScriptsSection = (pkg) => {
-    const scripts = /** @type {Record<string, string>} */ (pkg.scripts || {});
-    if (Object.keys(scripts).length === 0) return "";
+	const scripts = /** @type {Record<string, string>} */ (pkg.scripts || {});
+	if (Object.keys(scripts).length === 0) return "";
 
-    return `<table class="scripts-table">
+	return `<table class="scripts-table">
 		<thead><tr><th>Script</th><th>Command</th></tr></thead>
 		<tbody>
 		${Object.entries(scripts)
-            .map(
-                ([name, cmd]) =>
-                    `<tr><td><code>bun run ${escapeHtml(name)}</code></td><td><code>${escapeHtml(cmd)}</code></td></tr>`,
-            )
-            .join("")}
+			.map(
+				([name, cmd]) =>
+					`<tr><td><code>bun run ${escapeHtml(name)}</code></td><td><code>${escapeHtml(cmd)}</code></td></tr>`,
+			)
+			.join("")}
 		</tbody>
 	</table>`;
 };
@@ -472,34 +473,34 @@ const generateScriptsSection = (pkg) => {
  * @returns {string}
  */
 const generateStructureSection = (sourceFiles) => {
-    const tree = {};
+	const tree = {};
 
-    for (const file of sourceFiles) {
-        const parts = file.split("/");
-        let current = tree;
-        for (let i = 0; i < parts.length; i++) {
-            const part = parts[i];
-            if (i === parts.length - 1) {
-                current[part] = null;
-            } else {
-                current[part] = current[part] || {};
-                current = current[part];
-            }
-        }
-    }
+	for (const file of sourceFiles) {
+		const parts = file.split("/");
+		let current = tree;
+		for (let i = 0; i < parts.length; i++) {
+			const part = parts[i];
+			if (i === parts.length - 1) {
+				current[part] = null;
+			} else {
+				current[part] = current[part] || {};
+				current = current[part];
+			}
+		}
+	}
 
-    const renderTree = (obj, indent = "") => {
-        return Object.entries(obj)
-            .map(([key, value]) => {
-                if (value === null) {
-                    return `${indent}├── ${key}`;
-                }
-                return `${indent}├── ${key}/\n${renderTree(value, `${indent}│   `)}`;
-            })
-            .join("\n");
-    };
+	const renderTree = (obj, indent = "") => {
+		return Object.entries(obj)
+			.map(([key, value]) => {
+				if (value === null) {
+					return `${indent}├── ${key}`;
+				}
+				return `${indent}├── ${key}/\n${renderTree(value, `${indent}│   `)}`;
+			})
+			.join("\n");
+	};
 
-    return `<pre><code>tokenize/\n${renderTree(tree)}</code></pre>`;
+	return `<pre><code>tokenize/\n${renderTree(tree)}</code></pre>`;
 };
 
 /**
@@ -508,12 +509,13 @@ const generateStructureSection = (sourceFiles) => {
  * @returns {string}
  */
 const generateHtml = (data) => {
-    const pkg = data.packageJson;
-    const version = /** @type {string} */ (pkg.version) || "0.0.0";
-    const name = /** @type {string} */ (pkg.displayName || pkg.name) || "Tokenize";
-    const description = /** @type {string} */ (pkg.description) || "";
+	const pkg = data.packageJson;
+	const version = /** @type {string} */ (pkg.version) || "0.0.0";
+	const name =
+		/** @type {string} */ (pkg.displayName || pkg.name) || "Tokenize";
+	const description = /** @type {string} */ (pkg.description) || "";
 
-    return `<!DOCTYPE html>
+	return `<!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
@@ -915,9 +917,9 @@ const generateHtml = (data) => {
 			<p>${data.functions.filter((f) => f.exported).length} exported function${data.functions.filter((f) => f.exported).length !== 1 ? "s" : ""}</p>
 			<div class="grid">
 				${data.functions
-                    .filter((f) => f.exported)
-                    .map(generateFunctionHtml)
-                    .join("\n")}
+					.filter((f) => f.exported)
+					.map(generateFunctionHtml)
+					.join("\n")}
 			</div>
 		</section>
 
@@ -942,116 +944,116 @@ const generateHtml = (data) => {
  * @returns {Promise<void>}
  */
 const main = async () => {
-    const args = process.argv.slice(2);
-    const quiet = hasFlag(args, ["-Q", "--quiet"]);
-    const verbose = hasFlag(args, ["-V", "--verbose"]);
-    const outputPath = getFlagValue(args, ["-o", "--output"], "docs/index.html");
-    const skipReadme = hasFlag(args, ["--no-readme"]);
-    const skipConfig = hasFlag(args, ["--no-config"]);
+	const args = process.argv.slice(2);
+	const quiet = hasFlag(args, ["-Q", "--quiet"]);
+	const verbose = hasFlag(args, ["-V", "--verbose"]);
+	const outputPath = getFlagValue(args, ["-o", "--output"], "docs/index.html");
+	const skipReadme = hasFlag(args, ["--no-readme"]);
+	const skipConfig = hasFlag(args, ["--no-config"]);
 
-    if (!quiet) console.info("Generating documentation...");
+	if (!quiet) console.info("Generating documentation...");
 
-    // Collect source files
-    const sourceFiles = walkDirectory(path.join(projectRoot, "src"), {
-        extensions: [".js"],
-        ignore: ["node_modules", "dist", ".git"],
-    });
+	// Collect source files
+	const sourceFiles = walkDirectory(path.join(projectRoot, "src"), {
+		extensions: [".js"],
+		ignore: ["node_modules", "dist", ".git"],
+	});
 
-    if (verbose) console.info(`Found ${sourceFiles.length} source files`);
+	if (verbose) console.info(`Found ${sourceFiles.length} source files`);
 
-    // Parse JSDoc from all files
-    /** @type {JSDocBlock[]} */
-    const allBlocks = [];
-    /** @type {FunctionDoc[]} */
-    const allFunctions = [];
+	// Parse JSDoc from all files
+	/** @type {JSDocBlock[]} */
+	const allBlocks = [];
+	/** @type {FunctionDoc[]} */
+	const allFunctions = [];
 
-    for (const file of sourceFiles) {
-        const content = fs.readFileSync(file, "utf8");
-        const blocks = extractJSDocBlocks(content, file);
-        allBlocks.push(...blocks);
+	for (const file of sourceFiles) {
+		const content = fs.readFileSync(file, "utf8");
+		const blocks = extractJSDocBlocks(content, file);
+		allBlocks.push(...blocks);
 
-        const functions = extractFunctions(blocks, content);
-        allFunctions.push(...functions);
-    }
+		const functions = extractFunctions(blocks, content);
+		allFunctions.push(...functions);
+	}
 
-    if (verbose) console.info(`Extracted ${allBlocks.length} JSDoc blocks`);
+	if (verbose) console.info(`Extracted ${allBlocks.length} JSDoc blocks`);
 
-    // Extract type definitions
-    const typedefs = extractTypeDefs(allBlocks);
-    if (verbose) console.info(`Found ${typedefs.length} type definitions`);
+	// Extract type definitions
+	const typedefs = extractTypeDefs(allBlocks);
+	if (verbose) console.info(`Found ${typedefs.length} type definitions`);
 
-    // Parse README
-    let readmeHtml = "";
-    if (!skipReadme) {
-        const readmePath = path.join(projectRoot, "README.md");
-        if (fs.existsSync(readmePath)) {
-            const readmeContent = fs.readFileSync(readmePath, "utf8");
-            readmeHtml = markdownToHtml(readmeContent);
-            if (verbose) console.info("Parsed README.md");
-        }
-    }
+	// Parse README
+	let readmeHtml = "";
+	if (!skipReadme) {
+		const readmePath = path.join(projectRoot, "README.md");
+		if (fs.existsSync(readmePath)) {
+			const readmeContent = fs.readFileSync(readmePath, "utf8");
+			readmeHtml = markdownToHtml(readmeContent);
+			if (verbose) console.info("Parsed README.md");
+		}
+	}
 
-    // Parse config files
-    /** @type {ConfigDoc[]} */
-    const configs = [];
-    if (!skipConfig) {
-        const configFiles = [
-            "package.json",
-            "bunfig.toml",
-            "biome.json",
-            "tsconfig.json",
-            "tokenize.config.js",
-        ];
+	// Parse config files
+	/** @type {ConfigDoc[]} */
+	const configs = [];
+	if (!skipConfig) {
+		const configFiles = [
+			"package.json",
+			"bunfig.toml",
+			"biome.json",
+			"tsconfig.json",
+			"tokenize.config.js",
+		];
 
-        for (const configFile of configFiles) {
-            const config = await parseConfigFile(configFile);
-            if (config) {
-                configs.push(config);
-                if (verbose) console.info(`Parsed ${configFile}`);
-            }
-        }
-    }
+		for (const configFile of configFiles) {
+			const config = await parseConfigFile(configFile);
+			if (config) {
+				configs.push(config);
+				if (verbose) console.info(`Parsed ${configFile}`);
+			}
+		}
+	}
 
-    // Read package.json
-    const packageJsonPath = path.join(projectRoot, "package.json");
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+	// Read package.json
+	const packageJsonPath = path.join(projectRoot, "package.json");
+	const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
-    // Assemble documentation data
-    /** @type {DocsData} */
-    const docsData = {
-        readme: readmeHtml,
-        typedefs,
-        functions: allFunctions,
-        configs,
-        packageJson,
-        version: packageJson.version,
-        generated: new Date().toISOString(),
-        sourceFiles: sourceFiles.map((f) => path.relative(projectRoot, f)),
-    };
+	// Assemble documentation data
+	/** @type {DocsData} */
+	const docsData = {
+		readme: readmeHtml,
+		typedefs,
+		functions: allFunctions,
+		configs,
+		packageJson,
+		version: packageJson.version,
+		generated: new Date().toISOString(),
+		sourceFiles: sourceFiles.map((f) => path.relative(projectRoot, f)),
+	};
 
-    // Generate HTML
-    const html = generateHtml(docsData);
+	// Generate HTML
+	const html = generateHtml(docsData);
 
-    // Write output
-    const fullOutputPath = path.resolve(projectRoot, outputPath);
-    const outputDir = path.dirname(fullOutputPath);
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
-    }
+	// Write output
+	const fullOutputPath = path.resolve(projectRoot, outputPath);
+	const outputDir = path.dirname(fullOutputPath);
+	if (!fs.existsSync(outputDir)) {
+		fs.mkdirSync(outputDir, { recursive: true });
+	}
 
-    fs.writeFileSync(fullOutputPath, html);
+	fs.writeFileSync(fullOutputPath, html);
 
-    if (!quiet) {
-        console.info(`Documentation generated: ${outputPath}`);
-        console.info(`  - ${typedefs.length} type definitions`);
-        console.info(
-            `  - ${allFunctions.filter((f) => f.exported).length} exported functions`,
-        );
-        console.info(`  - ${configs.length} config files`);
-    }
+	if (!quiet) {
+		console.info(`Documentation generated: ${outputPath}`);
+		console.info(`  - ${typedefs.length} type definitions`);
+		console.info(
+			`  - ${allFunctions.filter((f) => f.exported).length} exported functions`,
+		);
+		console.info(`  - ${configs.length} config files`);
+	}
 };
 
 main().catch((error) => {
-    console.error("Documentation generation failed:", error);
-    process.exit(1);
+	console.error("Documentation generation failed:", error);
+	process.exit(1);
 });

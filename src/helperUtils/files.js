@@ -49,7 +49,10 @@ export const defaultComponentPatterns = [
  * @param {RegExp[]} [patterns=defaultComponentPatterns] - Array of regex patterns
  * @returns {boolean} True if filepath matches any component pattern
  */
-export const isComponentFile = (filePath, patterns = defaultComponentPatterns) => {
+export const isComponentFile = (
+	filePath,
+	patterns = defaultComponentPatterns,
+) => {
 	return patterns.some((pattern) => pattern.test(filePath));
 };
 
@@ -168,9 +171,12 @@ export const getUniqueComponentName = (relativePath) => {
 
 		// Handle "components" and "shared" folders
 		if (part === "components" || part === "shared") {
-			// Include if the next part is directly a file (not another folder with specific name)
-			// This handles cases like "Menu/components/styles.module.scss" where we want "MenuComponents"
-			if (nextPart && (nextPart.endsWith(".scss") || nextPart.endsWith(".css"))) {
+			/* Include if the next part is directly a file (not another folder with specific name)
+			   This handles cases like "Menu/components/styles.module.scss" where we want "MenuComponents" */
+			if (
+				nextPart &&
+				(nextPart.endsWith(".scss") || nextPart.endsWith(".css"))
+			) {
 				significantParts.push(part);
 			}
 			// Otherwise skip it to avoid "FormsDropdownComponentsPlaceholder"

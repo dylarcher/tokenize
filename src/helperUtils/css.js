@@ -32,7 +32,11 @@ export const extractCustomProperties = (cssString) => {
 	const regex = /--([\w-]+)\s*:\s*([^;]+);/g;
 	let match;
 
-	for (match = regex.exec(cssString); match !== null; match = regex.exec(cssString)) {
+	for (
+		match = regex.exec(cssString);
+		match !== null;
+		match = regex.exec(cssString)
+	) {
 		properties.set(`--${match[1]}`, match[2].trim());
 	}
 
@@ -46,7 +50,11 @@ export const extractCustomProperties = (cssString) => {
  * @param {Set<string>} [visited=new Set()] - Set of visited properties to detect cycles
  * @returns {string} Resolved value
  */
-export const resolveVarReferences = (value, properties, visited = new Set()) => {
+export const resolveVarReferences = (
+	value,
+	properties,
+	visited = new Set(),
+) => {
 	const varRegex = /var\(\s*(--[\w-]+)(?:\s*,\s*([^)]+))?\)/g;
 
 	return value.replace(varRegex, (match, propName, fallback) => {

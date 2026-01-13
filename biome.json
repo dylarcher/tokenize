@@ -1,1 +1,0 @@
-{ "extends": ["../../preset/biome.json"], "root": true }

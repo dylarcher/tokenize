@@ -303,7 +303,8 @@ const writeOutput = (directory) => (filename, content) =>
 
 /** @type {Record<OutputFormat, (data: Record<string, unknown>, write: WriteFunction) => void>} */
 const outputWriters = {
-	json: (data, write) => write("components.json", JSON.stringify(data, null, 2)),
+	json: (data, write) =>
+		write("components.json", JSON.stringify(data, null, 2)),
 	scss: (data, write) =>
 		write(
 			"_components.scss",

@@ -52,8 +52,8 @@ describe("types", () => {
 	describe("output format", () => {
 		test("reports output file when files exist", async () => {
 			const { stdout } = await runTypes();
-			// If files were bundled, reports the created file
-			// If no files, reports no files found
+			/* If files were bundled, reports the created file
+			   If no files, reports no files found */
 			expect(stdout.length).toBeGreaterThan(0);
 		});
 	});

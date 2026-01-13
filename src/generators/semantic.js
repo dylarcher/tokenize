@@ -50,7 +50,8 @@ const isRef = (value) => typeof value === "string" && value.startsWith("{");
  * @param {Record<string, unknown>} [obj={}] - Object to get keys from
  * @returns {number[]}
  */
-const getSortedKeys = (obj = {}) => Object.keys(obj).map(Number).sort(sortNumeric);
+const getSortedKeys = (obj = {}) =>
+	Object.keys(obj).map(Number).sort(sortNumeric);
 
 /**
  * Gets a key at a specific index with fallback.
@@ -73,7 +74,8 @@ const getMiddleIndex = (keys) => Math.floor(keys.length / 2);
  * @param {string} category - Color category
  * @returns {(scale: number) => string}
  */
-const buildColorRef = (category) => (scale) => ref(`color.${category}.${scale}`);
+const buildColorRef = (category) => (scale) =>
+	ref(`color.${category}.${scale}`);
 
 const neutrals = primitives.color.neutral || {};
 const neutralKeys = getSortedKeys(neutrals);
@@ -83,7 +85,9 @@ const mid = getKeyAt(neutralKeys, getMiddleIndex(neutralKeys));
 
 const neutralRef = buildColorRef("neutral");
 
-const colorCategories = Object.keys(primitives.color).filter((c) => c !== "neutral");
+const colorCategories = Object.keys(primitives.color).filter(
+	(c) => c !== "neutral",
+);
 const primary = colorCategories[0] || "blue";
 const primaryKeys = getSortedKeys(primitives.color[primary] || {});
 const primaryMid = getKeyAt(primaryKeys, getMiddleIndex(primaryKeys));
@@ -181,7 +185,9 @@ const semantic = {
 	},
 	text: {
 		primary: neutralRef(darkest),
-		secondary: neutralRef(getKeyAt(neutralKeys, neutralKeys.length - 2, darkest)),
+		secondary: neutralRef(
+			getKeyAt(neutralKeys, neutralKeys.length - 2, darkest),
+		),
 		tertiary: neutralRef(mid),
 		inverse: neutralRef(lightest),
 		disabled: neutralRef(mid),
@@ -258,7 +264,10 @@ const semantic = {
 	},
 };
 
-const secondaryInteractive = buildSecondaryInteractive(colorCategories, primitives.color);
+const secondaryInteractive = buildSecondaryInteractive(
+	colorCategories,
+	primitives.color,
+);
 if (secondaryInteractive) {
 	semantic.interactive.secondary = secondaryInteractive;
 }

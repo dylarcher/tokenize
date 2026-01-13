@@ -167,7 +167,9 @@ const runLayer = async (layer) => {
 				args.push("-o", process.argv[outIdx + 1]);
 			}
 
-			const configIdx = process.argv.findIndex((a) => a === "-c" || a === "--config");
+			const configIdx = process.argv.findIndex(
+				(a) => a === "-c" || a === "--config",
+			);
 			if (configIdx > -1 && process.argv[configIdx + 1]) {
 				args.push("-c", process.argv[configIdx + 1]);
 			}
@@ -235,7 +237,10 @@ const generateLayers = async (layers, force = false) => {
 			});
 
 	if (layersToRun.length === 0) {
-		if (!quiet) console.log("All requested layers already exist. Use --force to regenerate.");
+		if (!quiet)
+			console.log(
+				"All requested layers already exist. Use --force to regenerate.",
+			);
 		return;
 	}
 
@@ -247,7 +252,8 @@ const generateLayers = async (layers, force = false) => {
 		return;
 	}
 
-	if (!quiet) console.log(`Token layers to generate: ${layersToRun.join(" -> ")}`);
+	if (!quiet)
+		console.log(`Token layers to generate: ${layersToRun.join(" -> ")}`);
 
 	for (const layer of layersToRun) {
 		const missing = checkDependencies(layer);
@@ -282,7 +288,8 @@ const main = async () => {
 	if (args.all) {
 		layersToGenerate = LAYERS;
 	} else if (layersToGenerate.length === 0) {
-		if (!quiet) console.log("No layers specified. Use --all to generate all layers.");
+		if (!quiet)
+			console.log("No layers specified. Use --all to generate all layers.");
 		printHelp();
 		process.exit(1);
 	}

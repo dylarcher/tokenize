@@ -9,12 +9,12 @@
  * @returns {string} Escaped text
  */
 export const escapeHtml = (text) => {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+	return text
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
 };
 
 /**
@@ -23,10 +23,10 @@ export const escapeHtml = (text) => {
  * @returns {string} HTML with code blocks
  */
 const processCodeBlocks = (markdown) => {
-    return markdown.replace(/```(\w*)\n([\s\S]*?)```/g, (_, language, code) => {
-        const langClass = language ? ` class="language-${language}"` : "";
-        return `<pre><code${langClass}>${escapeHtml(code.trim())}</code></pre>`;
-    });
+	return markdown.replace(/```(\w*)\n([\s\S]*?)```/g, (_, language, code) => {
+		const langClass = language ? ` class="language-${language}"` : "";
+		return `<pre><code${langClass}>${escapeHtml(code.trim())}</code></pre>`;
+	});
 };
 
 /**
@@ -35,30 +35,32 @@ const processCodeBlocks = (markdown) => {
  * @returns {string} HTML with tables
  */
 const processTables = (markdown) => {
-    const tableRegex = /^\|(.+)\|\n\|[\s:-]+\|\n((?:\|.+\|\n?)+)/gm;
+	const tableRegex = /^\|(.+)\|\n\|[\s:-]+\|\n((?:\|.+\|\n?)+)/gm;
 
-    return markdown.replace(tableRegex, (_, headerRow, bodyRows) => {
-        const headers = headerRow
-            .split("|")
-            .map((cell) => cell.trim())
-            .filter(Boolean);
-        const rows = bodyRows
-            .trim()
-            .split("\n")
-            .map((row) =>
-                row
-                    .split("|")
-                    .map((cell) => cell.trim())
-                    .filter(Boolean),
-            );
+	return markdown.replace(tableRegex, (_, headerRow, bodyRows) => {
+		const headers = headerRow
+			.split("|")
+			.map((cell) => cell.trim())
+			.filter(Boolean);
+		const rows = bodyRows
+			.trim()
+			.split("\n")
+			.map((row) =>
+				row
+					.split("|")
+					.map((cell) => cell.trim())
+					.filter(Boolean),
+			);
 
-        const headerHtml = headers.map((h) => `<th>${h}</th>`).join("");
-        const bodyHtml = rows
-            .map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`)
-            .join("\n");
+		const headerHtml = headers.map((h) => `<th>${h}</th>`).join("");
+		const bodyHtml = rows
+			.map(
+				(row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`,
+			)
+			.join("\n");
 
-        return `<table>\n<thead><tr>${headerHtml}</tr></thead>\n<tbody>\n${bodyHtml}\n</tbody>\n</table>`;
-    });
+		return `<table>\n<thead><tr>${headerHtml}</tr></thead>\n<tbody>\n${bodyHtml}\n</tbody>\n</table>`;
+	});
 };
 
 /**
@@ -67,31 +69,31 @@ const processTables = (markdown) => {
  * @returns {string} HTML with lists
  */
 const processLists = (markdown) => {
-    let result = markdown;
+	let result = markdown;
 
-    // Unordered lists
-    result = result.replace(/(?:^|\n)((?:[-*+]\s+.+\n?)+)/g, (_, listContent) => {
-        const items = listContent
-            .trim()
-            .split(/\n/)
-            .map((item) => item.replace(/^[-*+]\s+/, "").trim())
-            .map((item) => `<li>${item}</li>`)
-            .join("\n");
-        return `\n<ul>\n${items}\n</ul>\n`;
-    });
+	// Unordered lists
+	result = result.replace(/(?:^|\n)((?:[-*+]\s+.+\n?)+)/g, (_, listContent) => {
+		const items = listContent
+			.trim()
+			.split(/\n/)
+			.map((item) => item.replace(/^[-*+]\s+/, "").trim())
+			.map((item) => `<li>${item}</li>`)
+			.join("\n");
+		return `\n<ul>\n${items}\n</ul>\n`;
+	});
 
-    // Ordered lists
-    result = result.replace(/(?:^|\n)((?:\d+\.\s+.+\n?)+)/g, (_, listContent) => {
-        const items = listContent
-            .trim()
-            .split(/\n/)
-            .map((item) => item.replace(/^\d+\.\s+/, "").trim())
-            .map((item) => `<li>${item}</li>`)
-            .join("\n");
-        return `\n<ol>\n${items}\n</ol>\n`;
-    });
+	// Ordered lists
+	result = result.replace(/(?:^|\n)((?:\d+\.\s+.+\n?)+)/g, (_, listContent) => {
+		const items = listContent
+			.trim()
+			.split(/\n/)
+			.map((item) => item.replace(/^\d+\.\s+/, "").trim())
+			.map((item) => `<li>${item}</li>`)
+			.join("\n");
+		return `\n<ol>\n${items}\n</ol>\n`;
+	});
 
-    return result;
+	return result;
 };
 
 /**
@@ -100,14 +102,14 @@ const processLists = (markdown) => {
  * @returns {string} HTML with blockquotes
  */
 const processBlockquotes = (markdown) => {
-    return markdown.replace(/(?:^|\n)((?:>\s*.+\n?)+)/g, (_, quoteContent) => {
-        const content = quoteContent
-            .trim()
-            .split(/\n/)
-            .map((line) => line.replace(/^>\s*/, ""))
-            .join("\n");
-        return `\n<blockquote>${content}</blockquote>\n`;
-    });
+	return markdown.replace(/(?:^|\n)((?:>\s*.+\n?)+)/g, (_, quoteContent) => {
+		const content = quoteContent
+			.trim()
+			.split(/\n/)
+			.map((line) => line.replace(/^>\s*/, ""))
+			.join("\n");
+		return `\n<blockquote>${content}</blockquote>\n`;
+	});
 };
 
 /**
@@ -116,29 +118,35 @@ const processBlockquotes = (markdown) => {
  * @returns {string} HTML with inline elements
  */
 const processInlineElements = (markdown) => {
-    let result = markdown;
+	let result = markdown;
 
-    // Links: [text](url)
-    result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+	// Links: [text](url)
+	result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 
-    // Images: ![alt](url)
-    result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+	// Images: ![alt](url)
+	result = result.replace(
+		/!\[([^\]]*)\]\(([^)]+)\)/g,
+		'<img src="$2" alt="$1">',
+	);
 
-    // Bold: **text** or __text__
-    result = result.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-    result = result.replace(/__([^_]+)__/g, "<strong>$1</strong>");
+	// Bold: **text** or __text__
+	result = result.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+	result = result.replace(/__([^_]+)__/g, "<strong>$1</strong>");
 
-    // Italic: *text* or _text_
-    result = result.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-    result = result.replace(/(?<![_\w])_([^_]+)_(?![_\w])/g, "<em>$1</em>");
+	// Italic: *text* or _text_
+	result = result.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+	result = result.replace(/(?<![_\w])_([^_]+)_(?![_\w])/g, "<em>$1</em>");
 
-    // Inline code: `code`
-    result = result.replace(/`([^`]+)`/g, (_, code) => `<code>${escapeHtml(code)}</code>`);
+	// Inline code: `code`
+	result = result.replace(
+		/`([^`]+)`/g,
+		(_, code) => `<code>${escapeHtml(code)}</code>`,
+	);
 
-    // Strikethrough: ~~text~~
-    result = result.replace(/~~([^~]+)~~/g, "<del>$1</del>");
+	// Strikethrough: ~~text~~
+	result = result.replace(/~~([^~]+)~~/g, "<del>$1</del>");
 
-    return result;
+	return result;
 };
 
 /**
@@ -147,17 +155,17 @@ const processInlineElements = (markdown) => {
  * @returns {string} HTML with headers
  */
 const processHeaders = (markdown) => {
-    let result = markdown;
+	let result = markdown;
 
-    // ATX-style headers
-    result = result.replace(/^#{6}\s+(.+)$/gm, "<h6>$1</h6>");
-    result = result.replace(/^#{5}\s+(.+)$/gm, "<h5>$1</h5>");
-    result = result.replace(/^#{4}\s+(.+)$/gm, "<h4>$1</h4>");
-    result = result.replace(/^#{3}\s+(.+)$/gm, "<h3>$1</h3>");
-    result = result.replace(/^#{2}\s+(.+)$/gm, "<h2>$1</h2>");
-    result = result.replace(/^#{1}\s+(.+)$/gm, "<h1>$1</h1>");
+	// ATX-style headers
+	result = result.replace(/^#{6}\s+(.+)$/gm, "<h6>$1</h6>");
+	result = result.replace(/^#{5}\s+(.+)$/gm, "<h5>$1</h5>");
+	result = result.replace(/^#{4}\s+(.+)$/gm, "<h4>$1</h4>");
+	result = result.replace(/^#{3}\s+(.+)$/gm, "<h3>$1</h3>");
+	result = result.replace(/^#{2}\s+(.+)$/gm, "<h2>$1</h2>");
+	result = result.replace(/^#{1}\s+(.+)$/gm, "<h1>$1</h1>");
 
-    return result;
+	return result;
 };
 
 /**
@@ -166,7 +174,7 @@ const processHeaders = (markdown) => {
  * @returns {string} HTML with horizontal rules
  */
 const processHorizontalRules = (markdown) => {
-    return markdown.replace(/^(?:[-*_]){3,}\s*$/gm, "<hr>");
+	return markdown.replace(/^(?:[-*_]){3,}\s*$/gm, "<hr>");
 };
 
 /**
@@ -175,19 +183,19 @@ const processHorizontalRules = (markdown) => {
  * @returns {string} HTML with paragraphs
  */
 const wrapParagraphs = (html) => {
-    const blocks = html.split(/\n\n+/);
-    const blockTags =
-        /^<(h[1-6]|p|ul|ol|li|blockquote|pre|table|thead|tbody|tr|th|td|hr|div)/;
+	const blocks = html.split(/\n\n+/);
+	const blockTags =
+		/^<(h[1-6]|p|ul|ol|li|blockquote|pre|table|thead|tbody|tr|th|td|hr|div)/;
 
-    return blocks
-        .map((block) => {
-            const trimmed = block.trim();
-            if (!trimmed) return "";
-            if (blockTags.test(trimmed)) return trimmed;
-            return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
-        })
-        .filter(Boolean)
-        .join("\n\n");
+	return blocks
+		.map((block) => {
+			const trimmed = block.trim();
+			if (!trimmed) return "";
+			if (blockTags.test(trimmed)) return trimmed;
+			return `<p>${trimmed.replace(/\n/g, "<br>")}</p>`;
+		})
+		.filter(Boolean)
+		.join("\n\n");
 };
 
 /**
@@ -196,25 +204,25 @@ const wrapParagraphs = (html) => {
  * @returns {string} HTML content
  */
 export const markdownToHtml = (markdown) => {
-    if (!markdown || typeof markdown !== "string") return "";
+	if (!markdown || typeof markdown !== "string") return "";
 
-    let html = markdown;
+	let html = markdown;
 
-    // Process block elements first (order matters)
-    html = processCodeBlocks(html);
-    html = processTables(html);
-    html = processBlockquotes(html);
-    html = processLists(html);
-    html = processHorizontalRules(html);
-    html = processHeaders(html);
+	// Process block elements first (order matters)
+	html = processCodeBlocks(html);
+	html = processTables(html);
+	html = processBlockquotes(html);
+	html = processLists(html);
+	html = processHorizontalRules(html);
+	html = processHeaders(html);
 
-    // Process inline elements
-    html = processInlineElements(html);
+	// Process inline elements
+	html = processInlineElements(html);
 
-    // Wrap remaining text in paragraphs
-    html = wrapParagraphs(html);
+	// Wrap remaining text in paragraphs
+	html = wrapParagraphs(html);
 
-    return html;
+	return html;
 };
 
 /**
@@ -223,8 +231,8 @@ export const markdownToHtml = (markdown) => {
  * @returns {string|null} First heading text or null
  */
 export const extractTitle = (markdown) => {
-    const match = markdown.match(/^#{1,6}\s+(.+)$/m);
-    return match ? match[1].trim() : null;
+	const match = markdown.match(/^#{1,6}\s+(.+)$/m);
+	return match ? match[1].trim() : null;
 };
 
 /**
@@ -233,19 +241,19 @@ export const extractTitle = (markdown) => {
  * @returns {{ level: number, text: string, id: string }[]} Array of headings
  */
 export const extractHeadings = (markdown) => {
-    const headings = [];
-    const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-    const matches = markdown.matchAll(headingRegex);
+	const headings = [];
+	const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+	const matches = markdown.matchAll(headingRegex);
 
-    for (const match of matches) {
-        const level = match[1].length;
-        const text = match[2].trim();
-        const id = text
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")
-            .replace(/^-|-$/g, "");
-        headings.push({ level, text, id });
-    }
+	for (const match of matches) {
+		const level = match[1].length;
+		const text = match[2].trim();
+		const id = text
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, "-")
+			.replace(/^-|-$/g, "");
+		headings.push({ level, text, id });
+	}
 
-    return headings;
+	return headings;
 };

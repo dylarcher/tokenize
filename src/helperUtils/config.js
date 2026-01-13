@@ -4,13 +4,18 @@ import path from "node:path";
 /**
  * @typedef {Object} Config
  * @property {string} [scanDir] - Directory to scan for styles
+ * @property {string[]} [globalPaths] - Paths containing global/shared styles
+ * @property {string[]} [componentPaths] - Paths containing component styles
  * @property {string} [outDir] - Output directory for generated files
  * @property {string} [compileOutDir] - Output directory for compiled CSS
+ * @property {string} [refsDir] - Directory containing reference token files for diff
+ * @property {string|null} [manifest] - Path to component manifest file (merged with auto-detection)
  * @property {string[]} [exclude] - Glob patterns to exclude
  * @property {string[]} [ignore] - Directory names to ignore
  * @property {RegExp[]} [componentPatterns] - Patterns to identify component files
  * @property {string[]} [outputFormats] - Output formats (json, scss, css)
  * @property {number} [spacingBase] - Base unit for spacing scale
+ * @property {boolean} [dtcgFormat] - Use DTCG format ($value/$type) instead of legacy (value/type)
  */
 
 /**
@@ -20,7 +25,8 @@ import path from "node:path";
  */
 export const loadConfiguration = (commandLineArguments = process.argv) => {
 	const configFlagIndex = commandLineArguments.findIndex(
-		(argument) => argument === "-c" || argument === "-C" || argument === "--config",
+		(argument) =>
+			argument === "-c" || argument === "-C" || argument === "--config",
 	);
 	const configurationPath =
 		configFlagIndex > -1
@@ -51,7 +57,10 @@ export const getOutputDirectory = (
 ) => {
 	const outputFlagIndex = commandLineArguments.findIndex(
 		(argument) =>
-			argument === "-o" || argument === "-O" || argument === "--out" || argument === "--dist",
+			argument === "-o" ||
+			argument === "-O" ||
+			argument === "--out" ||
+			argument === "--dist",
 	);
 	return outputFlagIndex > -1
 		? commandLineArguments[outputFlagIndex + 1]

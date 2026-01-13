@@ -122,7 +122,10 @@ const inRange = (min, max) => (value) => value >= min && value <= max;
  * @returns {(values: string[]) => Record<number, string>}
  */
 const generateSpacingScale = (base) => (values) => {
-	const pxValues = values.filter(isPxValue).map(parseFloat).filter(inRange(1, 200));
+	const pxValues = values
+		.filter(isPxValue)
+		.map(parseFloat)
+		.filter(inRange(1, 200));
 
 	/**
 	 * @param {Record<number, string>} scale
@@ -148,7 +151,10 @@ const generateSpacingScale = (base) => (values) => {
  * @returns {(sizes: string[]) => Record<string, string>}
  */
 const generateTypeScale = (names) => (sizes) => {
-	const pxSizes = sizes.filter(isSizeUnit).map(toPixels).filter(inRange(10, 96));
+	const pxSizes = sizes
+		.filter(isSizeUnit)
+		.map(toPixels)
+		.filter(inRange(10, 96));
 
 	/**
 	 * @param {Record<string, string>} scale
@@ -214,8 +220,26 @@ const groupColors = (colors) => {
 	return groups;
 };
 
-const typeScaleNames = ["xs", "sm", "base", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl"];
-const lineHeightNames = ["tight", "snug", "normal", "relaxed", "loose", "spacious"];
+const typeScaleNames = [
+	"xs",
+	"sm",
+	"base",
+	"md",
+	"lg",
+	"xl",
+	"2xl",
+	"3xl",
+	"4xl",
+	"5xl",
+];
+const lineHeightNames = [
+	"tight",
+	"snug",
+	"normal",
+	"relaxed",
+	"loose",
+	"spacious",
+];
 const letterSpacingNames = ["tight", "normal", "wide", "wider"];
 const radiusNames = ["none", "sm", "md", "lg", "xl", "full"];
 const shadowNames = ["sm", "md", "lg", "xl", "2xl"];
@@ -344,7 +368,10 @@ const buildFontWeights = (weights) => {
 		}
 		return scale;
 	};
-	return weights.reduce(assignWeight, /** @type {Record<string, string>} */ ({}));
+	return weights.reduce(
+		assignWeight,
+		/** @type {Record<string, string>} */ ({}),
+	);
 };
 
 const colorGroups = groupColors(scan.colors);
@@ -424,9 +451,13 @@ const writeOutput = (directory) => (filename, content) =>
 
 /** @type {Record<OutputFormat, (data: Record<string, unknown>, write: WriteFunction) => void>} */
 const outputWriters = {
-	json: (data, write) => write("primitives.json", JSON.stringify(data, null, 2)),
+	json: (data, write) =>
+		write("primitives.json", JSON.stringify(data, null, 2)),
 	scss: (data, write) =>
-		write("_primitives.scss", `// Auto-generated primitives\n\n${toScss(data)}`),
+		write(
+			"_primitives.scss",
+			`// Auto-generated primitives\n\n${toScss(data)}`,
+		),
 	css: (data, write) =>
 		write(
 			"primitives.css",
@@ -446,12 +477,20 @@ formats.forEach((format) => {
 if (!quiet) {
 	console.log("Generated primitives:");
 	console.log(`  Color groups: ${Object.keys(primitives.color).length}`);
-	console.log(`  Spacing scale: ${Object.keys(primitives.spacing).length} steps`);
-	console.log(`  Font sizes: ${Object.keys(primitives.typography.fontSize).length}`);
+	console.log(
+		`  Spacing scale: ${Object.keys(primitives.spacing).length} steps`,
+	);
+	console.log(
+		`  Font sizes: ${Object.keys(primitives.typography.fontSize).length}`,
+	);
 	console.log(`\nSaved to ${outDir}/primitives.*`);
 }
 
 if (verbose) {
 	console.log("\nDetailed breakdown:");
-	console.log(`  Colors by category: ${Object.entries(primitives.color).map(([k, v]) => `${k}(${Object.keys(v).length})`).join(", ")}`);
+	console.log(
+		`  Colors by category: ${Object.entries(primitives.color)
+			.map(([k, v]) => `${k}(${Object.keys(v).length})`)
+			.join(", ")}`,
+	);
 }
