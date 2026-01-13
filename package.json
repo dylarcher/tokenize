@@ -1,24 +1,47 @@
 {
+    "name": "tokenize",
+    "version": "0.2.0",
+    "description": "Extract and generate design tokens from SCSS/CSS",
+    "displayName": "Tokenize CLI",
+    "author": "Dylan Archer <dylan.archer@cap-rx.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dylarcher/tokenize.git"
+    },
+    "bugs": {
+        "url": "https://github.com/dylarcher/tokenize/issues"
+    },
+    "homepage": "https://github.com/dylarcher/tokenize#readme",
+    "keywords": [
+        "design-tokens",
+        "dtcg",
+        "scss",
+        "css",
+        "cli",
+        "tokenize"
+    ],
+    "type": "module",
+    "main": "src/index.js",
     "bin": {
         "tokenize": "bin/tokenize.js"
     },
-    "bundleDependencies": true,
-    "dependencies": {
-        "sass": "1.97.2"
+    "exports": {
+        ".": "./src/index.js",
+        "./cli": "./src/cli.js",
+        "./utils": "./src/index.js"
     },
-    "description": "Extract and generate design tokens from SCSS/CSS",
-    "displayName": "Tokenize CLI",
+    "files": [
+        "bin/",
+        "src/",
+        "README.md"
+    ],
     "engines": {
         "node": ">=20"
     },
-    "exports": {
-        ".": "./src",
-        "./lib": "./src/cli.js",
-        "./utils": "./src"
+    "dependencies": {
+        "sass": "1.97.2"
     },
-    "main": "src",
-    "name": "tokenize",
-    "private": true,
     "scripts": {
         "audit": "pnpm src/commands/scan.js",
         "build": "pnpm src/commands/compile.js",
@@ -38,7 +61,5 @@
         "test": "pnpm test --verbose",
         "tokens": "pnpm src/commands/tokens.js --all",
         "types": "pnpm exec tsc --noEmit"
-    },
-    "type": "module",
-    "version": "0.2.0"
+    }
 }
