@@ -9,7 +9,7 @@ import { getOutputDirectory, hasFlag, loadConfiguration } from "../index.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const config = await loadConfiguration();
-const outDir = getOutputDirectory(process.argv, config, "./dist//.tmp");
+const outDir = getOutputDirectory(process.argv, config, "./dist/");
 const verbose = hasFlag(process.argv, ["-V", "--verbose"]);
 const quiet = hasFlag(process.argv, ["-Q", "--quiet"]);
 const dryRun = hasFlag(process.argv, ["-N", "--dry-run"]);

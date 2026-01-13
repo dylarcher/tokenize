@@ -61,15 +61,15 @@ Scans CSS/SCSS files and extracts design values.
 > e.g. `colors`, `spacing`, `typography`, etc…
 
 ```sh
-tokenize scan tests/mocks/src                             # Scan SCSS sources
+tokenize scan tests/mocks/src                  # Scan SCSS sources
 tokenize scan dist/                            # Scan compiled CSS
-tokenize scan tests/mocks/src --out dist//.tmp # Outputs directory
+tokenize scan tests/mocks/src --out dist       # Outputs directory
 ```
 
 **Output:**
 
 ```sh
-dist//.tmp/
+dist//
 ├── base.json          # Values from global styles
 └── scoped.json        # Values from component styles
 ```
@@ -102,7 +102,7 @@ Runs the complete workflow (e.g. `scan → tokens`).
 
 ```sh
 tokenize all tests/mocks/src
-tokenize all tests/mocks/src --out dist//.tmp --exclude \*\*/\*.y.\*
+tokenize all tests/mocks/src --out dist/ --exclude \*\*/\*.y.\*
 ```
 
 ### `init` - Generate Config
@@ -197,11 +197,11 @@ Create a `tokenize.config.js` file in your project root.
 
 ```js
 export default {
-  scanDir: "tests/mocks/src", // Directory to scan for styles
-  outDir: "dist//.tmp", // Output directory for generated tokens
-  compileOutDir: "dist/", // Output directory for compiled CSS
-  ignore: ["node_modules", "dist", "build", ".git"], // Directories to ignore when scanning
-  exclude: ["**/legacy/**", "**/vendor/**"], // Glob patterns to exclude
+  scanDir: "./capitalrx-components-2.0/", // Directory to scan for styles
+  outDir: "./dist/", // Output directory for generated tokens
+  compileOutDir: "./.tmp/", // Output directory for compiled CSS
+  ignore: ["node_modules", "dist", ".git"], // Directories to ignore when scanning
+  exclude: ["./capitalrx-components-2.0/lib/components/**"], // Glob patterns to exclude
   componentPatterns: [
     /\.component\.s?css$/i,
     /\.module\.s?css$/i,
@@ -221,7 +221,7 @@ export default {
 tokenize build tests/mocks/src --out dist/
 
 # 2. Scan compiled CSS for design values
-tokenize scan dist/ --out dist//.tmp
+tokenize scan dist/ --out dist/
 
 # 3. Generate all token layers
 tokenize tokens --all
@@ -282,9 +282,9 @@ $interactive-primary-default: $color-blue-500;
 ### CSS Import
 
 ```css
-@import 'dist//.tmp/primitives.css';
-@import 'dist//.tmp/semantic.css';
-@import 'dist//.tmp/components.css';
+@import 'dist//primitives.css';
+@import 'dist//semantic.css';
+@import 'dist//components.css';
 
 .btn {
   background: var(--button-primary-background);
@@ -295,9 +295,9 @@ $interactive-primary-default: $color-blue-500;
 ### SCSS Import
 
 ```scss
-@use 'dist//.tmp/primitives' as p;
-@use 'dist//.tmp/semantic' as s;
-@use 'dist//.tmp/components' as c;
+@use 'dist//primitives' as p;
+@use 'dist//semantic' as s;
+@use 'dist//components' as c;
 
 .btn {
   background: c.$button-primary-background;

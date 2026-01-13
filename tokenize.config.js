@@ -1,26 +1,25 @@
 export default {
-    compileOutDir: "./dist/",
+    compileOutDir: "./dist",
     componentPatterns: [
         /\.component\.s?css$/i,
         /\.module\.s?css$/i,
         /_component\.s?css$/i,
         /components\/.*\.s?css$/i,
     ],
-    exclude: [],
-    ignore: [
-        "node_modules",
-        "dist",
-        ".git*",
-        ".tmp",
-        "bin",
-        "docs",
-        ".vscode",
-        ".claude",
-        ".editorconfig",
-        "**/*.md"
+    exclude: [
+        "../capitalrx-components-2.0/lib/components",
+        "../capitalrx-components",
     ],
-    outDir: "./dist//.tmp",
-    outputFormats: ["json", "scss", "css"],
-    scanDir: "./tests/mocks/src",
+    ignore: [
+        "../capitalrx-components-2.0/lib/components",
+        "../tokenize/node_modules",
+        "../capitalrx-components",
+        "./dist",
+        "./bin",
+        "./docs",
+    ],
+    outDir: "./dist",
+    outputFormats: ["json", "jsonc", "scss", "sass", "css"],
+    scanDir: "../capitalrx-components-2.0",
     spacingBase: 4,
 };

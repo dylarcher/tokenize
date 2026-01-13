@@ -431,11 +431,11 @@ tokenize build tests/mocks/src --exclude \<em>\</em>/\<em>.x.js</code></pre>
 
 <pre><code class="language-sh">tokenize scan tests/mocks/src                             # Scan SCSS sources
 tokenize scan dist/                            # Scan compiled CSS
-tokenize scan tests/mocks/src --out dist//.tmp # Outputs directory</code></pre>
+tokenize scan tests/mocks/src --out dist/ # Outputs directory</code></pre>
 
 <p></strong>Output:<strong></p>
 
-<pre><code class="language-sh">dist//.tmp/
+<pre><code class="language-sh">dist//
 ├── base.json          # Values from global styles
 └── scoped.json        # Values from component styles</code></pre>
 
@@ -462,7 +462,7 @@ tokenize tokens --layer semantic   # By layer namespace (multi-layer)</code></pr
 <p>Runs the complete workflow (e.g. <code>scan → tokens</code>).</p>
 
 <pre><code class="language-sh">tokenize all tests/mocks/src
-tokenize all tests/mocks/src --out dist//.tmp --exclude \</em>\<em>/\</em>.y.\<em></code></pre>
+tokenize all tests/mocks/src --out dist/ --exclude \</em>\<em>/\</em>.y.\<em></code></pre>
 
 <h3><code>init</code> - Generate Config</h3>
 
@@ -530,7 +530,7 @@ tokenize debug interactive.primary.default</code></pre>
 
 <pre><code class="language-js">export default {
   scanDir: &quot;tests/mocks/src&quot;, // Directory to scan for styles
-  outDir: &quot;dist//.tmp&quot;, // Output directory for generated tokens
+  outDir: &quot;dist/&quot;, // Output directory for generated tokens
   compileOutDir: &quot;dist/&quot;, // Output directory for compiled CSS
   ignore: [&quot;node_modules&quot;, &quot;dist&quot;, &quot;build&quot;, &quot;.git&quot;], // Directories to ignore when scanning
   exclude: [&quot;<strong>/legacy/</strong>&quot;, &quot;<strong>/vendor/</strong>&quot;], // Glob patterns to exclude
@@ -551,7 +551,7 @@ tokenize debug interactive.primary.default</code></pre>
 tokenize build tests/mocks/src --out dist/
 
 <h1>2. Scan compiled CSS for design values</h1>
-tokenize scan dist/ --out dist//.tmp
+tokenize scan dist/ --out dist/
 
 <h1>3. Generate all token layers</h1>
 tokenize tokens --all
@@ -600,17 +600,17 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 
 <h3>CSS Import</h3>
 
-<pre><code class="language-css">@import &#039;dist//.tmp/primitives.css&#039;;
-@import &#039;dist//.tmp/semantic.css&#039;;
-@import &#039;dist//.tmp/components.css&#039;;
+<pre><code class="language-css">@import &#039;dist//primitives.css&#039;;
+@import &#039;dist//semantic.css&#039;;
+@import &#039;dist//components.css&#039;;
 
 <p>.btn {<br>  background: var(--button-primary-background);<br>  color: var(--button-primary-text);<br>}</code></pre></p>
 
 <h3>SCSS Import</h3>
 
-<pre><code class="language-scss">@use &#039;dist//.tmp/primitives&#039; as p;
-@use &#039;dist//.tmp/semantic&#039; as s;
-@use &#039;dist//.tmp/components&#039; as c;
+<pre><code class="language-scss">@use &#039;dist//primitives&#039; as p;
+@use &#039;dist//semantic&#039; as s;
+@use &#039;dist//components&#039; as c;
 
 <p>.btn {<br>  background: c.$button-primary-background;<br>  color: c.$button-primary-text;<br>}</code></pre></p>
 
@@ -2081,7 +2081,7 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 			<table class="config-table">
 				<thead><tr><th>Key</th><th>Value</th></tr></thead>
 				<tbody>
-				<tr><td><code>compileOutDir</code></td><td><code>./dist/</code></td></tr><tr><td><code>componentPatterns</code></td><td><code>[{},{},{},{}]</code></td></tr><tr><td><code>exclude</code></td><td><code>[]</code></td></tr><tr><td><code>ignore</code></td><td><code>[&quot;node_modules&quot;,&quot;dist&quot;,&quot;.git*&quot;,&quot;.tmp&quot;,&quot;bin&quot;,&quot;docs&quot;,&quot;.vscode&quot;,&quot;.claude&quot;,&quot;.editorconfig&quot;,&quot;**/*.md&quot;]</code></td></tr><tr><td><code>outDir</code></td><td><code>./dist//.tmp</code></td></tr><tr><td><code>outputFormats</code></td><td><code>[&quot;json&quot;,&quot;scss&quot;,&quot;css&quot;]</code></td></tr><tr><td><code>scanDir</code></td><td><code>./tests/mocks/src</code></td></tr><tr><td><code>spacingBase</code></td><td><code>4</code></td></tr>
+				<tr><td><code>compileOutDir</code></td><td><code>./dist/</code></td></tr><tr><td><code>componentPatterns</code></td><td><code>[{},{},{},{}]</code></td></tr><tr><td><code>exclude</code></td><td><code>[]</code></td></tr><tr><td><code>ignore</code></td><td><code>[&quot;node_modules&quot;,&quot;dist&quot;,&quot;.git*&quot;,&quot;.tmp&quot;,&quot;bin&quot;,&quot;docs&quot;,&quot;.vscode&quot;,&quot;.claude&quot;,&quot;.editorconfig&quot;,&quot;**/*.md&quot;]</code></td></tr><tr><td><code>outDir</code></td><td><code>./dist/</code></td></tr><tr><td><code>outputFormats</code></td><td><code>[&quot;json&quot;,&quot;scss&quot;,&quot;css&quot;]</code></td></tr><tr><td><code>scanDir</code></td><td><code>./tests/mocks/src</code></td></tr><tr><td><code>spacingBase</code></td><td><code>4</code></td></tr>
 				</tbody>
 			</table>
 	</article>

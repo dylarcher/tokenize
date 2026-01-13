@@ -23,7 +23,7 @@ import {
 const config = await loadConfiguration();
 const dirArg = process.argv.slice(2).find((arg) => !arg.startsWith("-"));
 const dir = dirArg || config.scanDir || ".";
-const outDir = getOutputDirectory(process.argv, config, "./dist//.tmp");
+const outDir = getOutputDirectory(process.argv, config, "./dist/");
 const excludePatterns = getExcludePatterns(process.argv, config);
 const componentPatterns = config.componentPatterns || defaultComponentPatterns;
 const verbose = hasFlag(process.argv, ["-V", "--verbose"]);
@@ -133,7 +133,11 @@ function extractValues(content, filepath) {
 		const varName = m[1];
 		const value = m[2].trim();
 		// Only store if it's a simple value (not a multiline SCSS map or function body)
-		if (!value.includes("\n") && !value.includes("@") && !value.startsWith("(")) {
+		if (
+			!value.includes("\n") &&
+			!value.includes("@") &&
+			!value.startsWith("(")
+		) {
 			results.variables[varName] = value;
 		}
 	}
