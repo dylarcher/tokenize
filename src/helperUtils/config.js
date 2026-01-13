@@ -29,15 +29,11 @@ export const loadConfiguration = (commandLineArguments = process.argv) => {
 			argument === "-c" || argument === "-C" || argument === "--config",
 	);
 	const configurationPath =
-		configFlagIndex > -1
-			? commandLineArguments[configFlagIndex + 1]
-			: "tokenize.config.js";
+		configFlagIndex > -1 ? commandLineArguments[configFlagIndex + 1] : "tokenize.config.js";
 
 	if (fs.existsSync(configurationPath)) {
 		const fullPath = path.resolve(configurationPath);
-		return import(fullPath)
-			.then((module) => module.default || module)
-			.catch(() => ({}));
+		return import(fullPath).then((module) => module.default || module).catch(() => ({}));
 	}
 	return Promise.resolve({});
 };

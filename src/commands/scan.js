@@ -441,10 +441,7 @@ if (dryRun) {
 
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, "base.json"), JSON.stringify(base, null, 2));
-fs.writeFileSync(
-	path.join(outDir, "components.json"),
-	JSON.stringify(components, null, 2),
-);
+fs.writeFileSync(path.join(outDir, "components.json"), JSON.stringify(components, null, 2));
 
 if (!quiet) {
 	console.log(`\nBase styles extracted:`);

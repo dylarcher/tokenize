@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { mkdirSync, writeFileSync, rmSync, readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { spawn } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { OUTPUTS_DIR } from "../helpers/testUtils.js";
 
 const TEST_DIR = join(OUTPUTS_DIR, ".tmp", "semantic-test");
@@ -14,11 +14,9 @@ const OUT_DIR = join(TEST_DIR, "dist");
  */
 const runSemantic = (args = []) => {
 	return new Promise((resolve) => {
-		const proc = spawn(
-			"bun",
-			["src/generators/semantic.js", ...args],
-			{ cwd: join(import.meta.dir, "../..") },
-		);
+		const proc = spawn("bun", ["src/generators/semantic.js", ...args], {
+			cwd: join(import.meta.dir, "../.."),
+		});
 		let stdout = "";
 		let stderr = "";
 		proc.stdout.on("data", (data) => {
@@ -40,16 +38,55 @@ describe("semantic", () => {
 
 		const primitives = {
 			color: {
-				blue: { 100: "#dbeafe", 300: "#93c5fd", 500: "#3b82f6", 700: "#1d4ed8", 900: "#1e3a8a" },
-				green: { 100: "#dcfce7", 300: "#86efac", 500: "#22c55e", 700: "#15803d", 900: "#14532d" },
-				red: { 100: "#fee2e2", 300: "#fca5a5", 500: "#ef4444", 700: "#b91c1c", 900: "#7f1d1d" },
-				yellow: { 100: "#fef9c3", 300: "#fde047", 500: "#eab308", 700: "#a16207", 900: "#713f12" },
-				orange: { 100: "#ffedd5", 300: "#fdba74", 500: "#f97316", 700: "#c2410c", 900: "#7c2d12" },
-				neutral: { 100: "#f5f5f5", 300: "#d4d4d4", 500: "#737373", 700: "#404040", 900: "#171717" },
+				blue: {
+					100: "#dbeafe",
+					300: "#93c5fd",
+					500: "#3b82f6",
+					700: "#1d4ed8",
+					900: "#1e3a8a",
+				},
+				green: {
+					100: "#dcfce7",
+					300: "#86efac",
+					500: "#22c55e",
+					700: "#15803d",
+					900: "#14532d",
+				},
+				red: {
+					100: "#fee2e2",
+					300: "#fca5a5",
+					500: "#ef4444",
+					700: "#b91c1c",
+					900: "#7f1d1d",
+				},
+				yellow: {
+					100: "#fef9c3",
+					300: "#fde047",
+					500: "#eab308",
+					700: "#a16207",
+					900: "#713f12",
+				},
+				orange: {
+					100: "#ffedd5",
+					300: "#fdba74",
+					500: "#f97316",
+					700: "#c2410c",
+					900: "#7c2d12",
+				},
+				neutral: {
+					100: "#f5f5f5",
+					300: "#d4d4d4",
+					500: "#737373",
+					700: "#404040",
+					900: "#171717",
+				},
 			},
 			spacing: { 1: "4px", 2: "8px", 4: "16px", 6: "24px", 8: "32px" },
 			typography: {
-				fontFamily: { primary: '"Inter", sans-serif', secondary: '"Roboto Mono", monospace' },
+				fontFamily: {
+					primary: '"Inter", sans-serif',
+					secondary: '"Roboto Mono", monospace',
+				},
 				fontSize: { xs: "12px", sm: "14px", base: "16px", lg: "18px", xl: "20px" },
 				fontWeight: { normal: "400", medium: "500", semibold: "600", bold: "700" },
 				lineHeight: { tight: "1.25", normal: "1.5", relaxed: "1.75" },

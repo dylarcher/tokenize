@@ -148,10 +148,7 @@ const buildFeedbackTokens = (feedbackMap) => (colors) => {
 			};
 			return feedback;
 		};
-	return Object.entries(feedbackMap).reduce(
-		(acc, entry) => createFeedback(acc)(entry),
-		{},
-	);
+	return Object.entries(feedbackMap).reduce((acc, entry) => createFeedback(acc)(entry), {});
 };
 
 const feedbackMap = {

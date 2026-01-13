@@ -459,10 +459,7 @@ const outputWriters = {
 			`// Auto-generated primitives\n\n${toScss(data)}`,
 		),
 	css: (data, write) =>
-		write(
-			"primitives.css",
-			`/* Auto-generated primitives */\n:root {\n${toCss(data)}}\n`,
-		),
+		write("primitives.css", `/* Auto-generated primitives */\n:root {\n${toCss(data)}}\n`),
 };
 
 const write = writeOutput(outDir);

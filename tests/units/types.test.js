@@ -1,4 +1,4 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { spawn } from "node:child_process";
 import { join } from "node:path";
 
@@ -43,9 +43,7 @@ describe("types", () => {
 			const { stdout, code } = await runTypes();
 			expect(code).toBe(0);
 			// Either finds files to bundle or reports none found
-			expect(
-				stdout.includes("No .d.ts files") || stdout.includes("Created"),
-			).toBe(true);
+			expect(stdout.includes("No .d.ts files") || stdout.includes("Created")).toBe(true);
 		});
 	});
 

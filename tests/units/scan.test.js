@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { mkdirSync, writeFileSync, rmSync, readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { spawn } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { INPUTS_DIR, OUTPUTS_DIR } from "../helpers/testUtils.js";
 
 const TEST_DIR = join(OUTPUTS_DIR, ".tmp", "test");
@@ -15,11 +15,9 @@ const OUT_DIR = join(TEST_DIR, "dist");
  */
 const runScan = (args = []) => {
 	return new Promise((resolve) => {
-		const proc = spawn(
-			"bun",
-			["src/commands/scan.js", ...args],
-			{ cwd: join(import.meta.dir, "../..") },
-		);
+		const proc = spawn("bun", ["src/commands/scan.js", ...args], {
+			cwd: join(import.meta.dir, "../.."),
+		});
 		let stdout = "";
 		let stderr = "";
 		proc.stdout.on("data", (data) => {
@@ -430,7 +428,9 @@ $spacing-base: 4px;
 
 			expect(base.sources.some((s) => s.includes("variables.scss"))).toBe(true);
 			expect(base.sources.some((s) => s.includes("base.css"))).toBe(true);
-			expect(components.sources.some((s) => s.includes("button.component.scss"))).toBe(true);
+			expect(components.sources.some((s) => s.includes("button.component.scss"))).toBe(
+				true,
+			);
 		});
 
 		test("component files not in base results", async () => {

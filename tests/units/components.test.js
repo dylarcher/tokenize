@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { mkdirSync, writeFileSync, rmSync, readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { spawn } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { OUTPUTS_DIR } from "../helpers/testUtils.js";
 
 const TEST_DIR = join(OUTPUTS_DIR, ".tmp", "components-test");
@@ -14,11 +14,9 @@ const OUT_DIR = join(TEST_DIR, "dist");
  */
 const runComponents = (args = []) => {
 	return new Promise((resolve) => {
-		const proc = spawn(
-			"bun",
-			["src/generators/components.js", ...args],
-			{ cwd: join(import.meta.dir, "../..") },
-		);
+		const proc = spawn("bun", ["src/generators/components.js", ...args], {
+			cwd: join(import.meta.dir, "../.."),
+		});
 		let stdout = "";
 		let stderr = "";
 		proc.stdout.on("data", (data) => {
@@ -68,24 +66,75 @@ describe("components", () => {
 				},
 			},
 			feedback: {
-				success: { bg: "{color.green.100}", border: "{color.green.300}", text: "{color.green.900}" },
-				error: { bg: "{color.red.100}", border: "{color.red.300}", text: "{color.red.900}" },
-				warning: { bg: "{color.yellow.100}", border: "{color.yellow.300}", text: "{color.yellow.900}" },
-				info: { bg: "{color.blue.100}", border: "{color.blue.300}", text: "{color.blue.900}" },
+				success: {
+					bg: "{color.green.100}",
+					border: "{color.green.300}",
+					text: "{color.green.900}",
+				},
+				error: {
+					bg: "{color.red.100}",
+					border: "{color.red.300}",
+					text: "{color.red.900}",
+				},
+				warning: {
+					bg: "{color.yellow.100}",
+					border: "{color.yellow.300}",
+					text: "{color.yellow.900}",
+				},
+				info: {
+					bg: "{color.blue.100}",
+					border: "{color.blue.300}",
+					text: "{color.blue.900}",
+				},
 			},
 			typography: {
-				body: { fontFamily: "{typography.fontFamily.primary}", fontSize: "{typography.fontSize.base}" },
+				body: {
+					fontFamily: "{typography.fontFamily.primary}",
+					fontSize: "{typography.fontSize.base}",
+				},
 				heading: { fontWeight: "{typography.fontWeight.bold}" },
 				caption: { fontSize: "{typography.fontSize.sm}" },
 			},
 			spacing: {
-				inset: { xs: "{spacing.1}", sm: "{spacing.2}", md: "{spacing.4}", lg: "{spacing.6}", xl: "{spacing.8}" },
-				stack: { xs: "{spacing.1}", sm: "{spacing.2}", md: "{spacing.4}", lg: "{spacing.6}" },
-				inline: { xs: "{spacing.1}", sm: "{spacing.2}", md: "{spacing.4}", lg: "{spacing.6}" },
+				inset: {
+					xs: "{spacing.1}",
+					sm: "{spacing.2}",
+					md: "{spacing.4}",
+					lg: "{spacing.6}",
+					xl: "{spacing.8}",
+				},
+				stack: {
+					xs: "{spacing.1}",
+					sm: "{spacing.2}",
+					md: "{spacing.4}",
+					lg: "{spacing.6}",
+				},
+				inline: {
+					xs: "{spacing.1}",
+					sm: "{spacing.2}",
+					md: "{spacing.4}",
+					lg: "{spacing.6}",
+				},
 			},
-			elevation: { none: "none", low: "{shadow.sm}", medium: "{shadow.md}", high: "{shadow.lg}" },
-			radius: { none: "0", small: "{border.radius.sm}", medium: "{border.radius.md}", large: "{border.radius.lg}", pill: "{border.radius.full}" },
-			layer: { base: "{zIndex.base}", dropdown: "{zIndex.dropdown}", modal: "{zIndex.modal}", tooltip: "{zIndex.tooltip}" },
+			elevation: {
+				none: "none",
+				low: "{shadow.sm}",
+				medium: "{shadow.md}",
+				high: "{shadow.lg}",
+			},
+			radius: {
+				none: "0",
+				small: "{border.radius.sm}",
+				medium: "{border.radius.md}",
+				large: "{border.radius.lg}",
+				pill: "{border.radius.full}",
+			},
+			layer: {
+				base: "{zIndex.base}",
+				dropdown: "{zIndex.dropdown}",
+				modal: "{zIndex.modal}",
+				tooltip: "{zIndex.tooltip}",
+			},
 		};
 
 		writeFileSync(join(OUT_DIR, "semantic.json"), JSON.stringify(semantic, null, 2));
@@ -99,7 +148,9 @@ describe("components", () => {
 		test("generates primary button tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.button.primary).toBeDefined();
 			expect(components.button.primary.background).toBe("{interactive.primary.default}");
 			expect(components.button.primary.backgroundHover).toBe("{interactive.primary.hover}");
@@ -109,7 +160,9 @@ describe("components", () => {
 		test("generates secondary button tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.button.secondary).toBeDefined();
 			expect(components.button.secondary.background).toBe("transparent");
 			expect(components.button.secondary.border).toBe("{border.default}");
@@ -118,7 +171,9 @@ describe("components", () => {
 		test("generates ghost button tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.button.ghost).toBeDefined();
 			expect(components.button.ghost.background).toBe("transparent");
 			expect(components.button.ghost.border).toBe("transparent");
@@ -129,7 +184,9 @@ describe("components", () => {
 		test("generates input tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.input).toBeDefined();
 			expect(components.input.background).toBe("{surface.default}");
 			expect(components.input.borderFocus).toBe("{border.focus}");
@@ -141,7 +198,9 @@ describe("components", () => {
 		test("generates card tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.card).toBeDefined();
 			expect(components.card.background).toBe("{surface.default}");
 			expect(components.card.shadow).toBe("{elevation.low}");
@@ -153,7 +212,9 @@ describe("components", () => {
 		test("generates modal tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.modal).toBeDefined();
 			expect(components.modal.overlay).toBe("rgba(0, 0, 0, 0.5)");
 			expect(components.modal.zIndex).toBe("{layer.modal}");
@@ -165,7 +226,9 @@ describe("components", () => {
 		test("generates tooltip tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.tooltip).toBeDefined();
 			expect(components.tooltip.background).toBe("{surface.inverse}");
 			expect(components.tooltip.text).toBe("{text.inverse}");
@@ -177,7 +240,9 @@ describe("components", () => {
 		test("generates badge default variant", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.badge.default).toBeDefined();
 			expect(components.badge.default.background).toBe("{surface.tertiary}");
 		});
@@ -185,7 +250,9 @@ describe("components", () => {
 		test("generates badge feedback variants", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.badge.success).toBeDefined();
 			expect(components.badge.success.background).toBe("{feedback.success.bg}");
 			expect(components.badge.error).toBeDefined();
@@ -196,7 +263,9 @@ describe("components", () => {
 		test("badge has pill border radius", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.badge.borderRadius).toBe("{radius.pill}");
 		});
 	});
@@ -205,7 +274,9 @@ describe("components", () => {
 		test("generates link tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.link).toBeDefined();
 			expect(components.link.text).toBe("{text.link}");
 			expect(components.link.textHover).toBe("{interactive.primary.hover}");
@@ -218,7 +289,9 @@ describe("components", () => {
 		test("generates avatar tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.avatar).toBeDefined();
 			expect(components.avatar.borderRadius).toBe("{radius.pill}");
 			expect(components.avatar.sizes).toBeDefined();
@@ -231,7 +304,9 @@ describe("components", () => {
 		test("generates dropdown tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.dropdown).toBeDefined();
 			expect(components.dropdown.zIndex).toBe("{layer.dropdown}");
 			expect(components.dropdown.shadow).toBe("{elevation.medium}");
@@ -240,7 +315,9 @@ describe("components", () => {
 		test("generates dropdown item tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.dropdown.item).toBeDefined();
 			expect(components.dropdown.item.background).toBe("transparent");
 			expect(components.dropdown.item.backgroundHover).toBe("{surface.secondary}");
@@ -251,7 +328,9 @@ describe("components", () => {
 		test("generates tabs tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.tabs).toBeDefined();
 			expect(components.tabs.border).toBe("{border.subtle}");
 		});
@@ -259,7 +338,9 @@ describe("components", () => {
 		test("generates tab item tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.tabs.tab).toBeDefined();
 			expect(components.tabs.tab.textActive).toBe("{interactive.primary.default}");
 			expect(components.tabs.tab.borderActive).toBe("{interactive.primary.default}");
@@ -268,7 +349,9 @@ describe("components", () => {
 		test("generates tab panel tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.tabs.panel).toBeDefined();
 			expect(components.tabs.panel.padding).toBe("{spacing.inset.lg}");
 		});
@@ -278,7 +361,9 @@ describe("components", () => {
 		test("generates alert feedback variants", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.alert).toBeDefined();
 			expect(components.alert.success).toBeDefined();
 			expect(components.alert.success.background).toBe("{feedback.success.bg}");
@@ -289,7 +374,9 @@ describe("components", () => {
 		test("alert has all feedback variants", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			expect(components.alert.error).toBeDefined();
 			expect(components.alert.warning).toBeDefined();
 			expect(components.alert.info).toBeDefined();
@@ -325,7 +412,9 @@ describe("components", () => {
 		test("generates all component tokens", async () => {
 			await runComponents(["-o", OUT_DIR, "-Q"]);
 
-			const components = JSON.parse(readFileSync(join(OUT_DIR, "components.json"), "utf-8"));
+			const components = JSON.parse(
+				readFileSync(join(OUT_DIR, "components.json"), "utf-8"),
+			);
 			const componentNames = Object.keys(components);
 			expect(componentNames).toContain("button");
 			expect(componentNames).toContain("input");

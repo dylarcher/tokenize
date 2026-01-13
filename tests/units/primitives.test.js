@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { mkdirSync, writeFileSync, rmSync, readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { spawn } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { OUTPUTS_DIR } from "../helpers/testUtils.js";
 
 const TEST_DIR = join(OUTPUTS_DIR, ".tmp", "primitives-test");
@@ -14,11 +14,9 @@ const OUT_DIR = join(TEST_DIR, "dist");
  */
 const runPrimitives = (args = []) => {
 	return new Promise((resolve) => {
-		const proc = spawn(
-			"bun",
-			["src/generators/primitives.js", ...args],
-			{ cwd: join(import.meta.dir, "../..") },
-		);
+		const proc = spawn("bun", ["src/generators/primitives.js", ...args], {
+			cwd: join(import.meta.dir, "../.."),
+		});
 		let stdout = "";
 		let stderr = "";
 		proc.stdout.on("data", (data) => {
@@ -89,7 +87,9 @@ describe("primitives", () => {
 		test("groups colors by hue category", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.color).toBeDefined();
 			expect(primitives.color.blue).toBeDefined();
 			expect(primitives.color.green).toBeDefined();
@@ -100,7 +100,9 @@ describe("primitives", () => {
 		test("maps colors to numeric scale (100-950)", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			const blueKeys = Object.keys(primitives.color.blue).map(Number);
 			expect(blueKeys.every((k) => k >= 100 && k <= 950)).toBe(true);
 		});
@@ -108,7 +110,9 @@ describe("primitives", () => {
 		test("sorts colors by luminance within groups", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			const neutralValues = Object.entries(primitives.color.neutral);
 			for (let i = 0; i < neutralValues.length - 1; i++) {
 				const [key1] = neutralValues[i];
@@ -122,7 +126,9 @@ describe("primitives", () => {
 		test("generates spacing scale from pixel values", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.spacing).toBeDefined();
 			expect(Object.keys(primitives.spacing).length).toBeGreaterThan(0);
 		});
@@ -130,7 +136,9 @@ describe("primitives", () => {
 		test("maps values to base-4 steps", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.spacing["1"]).toBe("4px");
 			expect(primitives.spacing["2"]).toBe("8px");
 			expect(primitives.spacing["4"]).toBe("16px");
@@ -141,14 +149,18 @@ describe("primitives", () => {
 		test("generates font size scale", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.typography.fontSize).toBeDefined();
 		});
 
 		test("uses named sizes (xs, sm, base, md, lg, xl, etc.)", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			const sizes = Object.keys(primitives.typography.fontSize);
 			expect(sizes).toContain("xs");
 			expect(sizes).toContain("base");
@@ -157,7 +169,9 @@ describe("primitives", () => {
 		test("generates font family tokens", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.typography.fontFamily).toBeDefined();
 			expect(primitives.typography.fontFamily.primary).toBeDefined();
 		});
@@ -165,7 +179,9 @@ describe("primitives", () => {
 		test("generates font weight tokens", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.typography.fontWeight).toBeDefined();
 			expect(primitives.typography.fontWeight.normal).toBe("400");
 			expect(primitives.typography.fontWeight.bold).toBe("700");
@@ -174,14 +190,18 @@ describe("primitives", () => {
 		test("generates line height tokens", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.typography.lineHeight).toBeDefined();
 		});
 
 		test("generates letter spacing tokens", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.typography.letterSpacing).toBeDefined();
 		});
 	});
@@ -190,7 +210,9 @@ describe("primitives", () => {
 		test("generates border radius tokens", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.border.radius).toBeDefined();
 		});
 	});
@@ -199,7 +221,9 @@ describe("primitives", () => {
 		test("generates shadow scale", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.shadow).toBeDefined();
 		});
 	});
@@ -208,7 +232,9 @@ describe("primitives", () => {
 		test("generates z-index scale", async () => {
 			await runPrimitives(["-o", OUT_DIR, "-Q"]);
 
-			const primitives = JSON.parse(readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"));
+			const primitives = JSON.parse(
+				readFileSync(join(OUT_DIR, "primitives.json"), "utf-8"),
+			);
 			expect(primitives.zIndex).toBeDefined();
 		});
 	});

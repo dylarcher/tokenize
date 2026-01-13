@@ -114,10 +114,7 @@ export const walkDirectory = (baseDirectory, options = {}) => {
 			}
 
 			if (fileStats.isDirectory()) {
-				if (
-					!ignore.includes(entry) &&
-					!matchesExcludePattern(fullPath, excludePatterns)
-				) {
+				if (!ignore.includes(entry) && !matchesExcludePattern(fullPath, excludePatterns)) {
 					traverseDirectory(fullPath);
 				}
 			} else if (extensions.some((extension) => entry.endsWith(extension))) {

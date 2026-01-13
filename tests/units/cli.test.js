@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { mkdirSync, writeFileSync, rmSync, readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { spawn } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { OUTPUTS_DIR } from "../helpers/testUtils.js";
 
 const TEST_DIR = join(OUTPUTS_DIR, ".tmp", "cli-test");
@@ -13,11 +13,9 @@ const TEST_DIR = join(OUTPUTS_DIR, ".tmp", "cli-test");
  */
 const runCli = (args = []) => {
 	return new Promise((resolve) => {
-		const proc = spawn(
-			"bun",
-			["src/cli.js", ...args],
-			{ cwd: join(import.meta.dir, "../..") },
-		);
+		const proc = spawn("bun", ["src/cli.js", ...args], {
+			cwd: join(import.meta.dir, "../.."),
+		});
 		let stdout = "";
 		let stderr = "";
 		proc.stdout.on("data", (data) => {
@@ -173,7 +171,10 @@ describe("cli", () => {
 
 			writeFileSync(
 				join(statsDir, "primitives.json"),
-				JSON.stringify({ color: { red: "#ff0000", blue: "#0000ff" }, spacing: { 1: "4px" } }),
+				JSON.stringify({
+					color: { red: "#ff0000", blue: "#0000ff" },
+					spacing: { 1: "4px" },
+				}),
 			);
 			writeFileSync(
 				join(statsDir, "semantic.json"),

@@ -1,10 +1,10 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import {
-	flattenCssCustomProperties,
 	cleanCssValue,
 	extractCustomProperties,
-	resolveVarReferences,
+	flattenCssCustomProperties,
 	getColorType,
+	resolveVarReferences,
 } from "../../src/helperUtils/css.js";
 
 describe("css", () => {

@@ -297,9 +297,7 @@ const main = async () => {
 	try {
 		await generateLayers(layersToGenerate, args.force);
 	} catch (error) {
-		console.error(
-			`\n! Error: ${error instanceof Error ? error.message : String(error)}`,
-		);
+		console.error(`\n! Error: ${error instanceof Error ? error.message : String(error)}`);
 		process.exit(1);
 	}
 };

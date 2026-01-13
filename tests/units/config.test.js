@@ -1,12 +1,12 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { writeFileSync, rmSync, mkdirSync } from "node:fs";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-	loadConfiguration,
-	getOutputDirectory,
 	getExcludePatterns,
-	hasFlag,
 	getFlagValue,
+	getOutputDirectory,
+	hasFlag,
+	loadConfiguration,
 } from "../../src/helperUtils/config.js";
 import { OUTPUTS_DIR } from "../helpers/testUtils.js";
 
@@ -92,7 +92,12 @@ describe("config", () => {
 		test("returns empty object when config file has invalid syntax", async () => {
 			const invalidConfigPath = join(TEST_DIR, "invalid.config.js");
 			writeFileSync(invalidConfigPath, "export default { invalid syntax here");
-			const config = await loadConfiguration(["node", "script.js", "-c", invalidConfigPath]);
+			const config = await loadConfiguration([
+				"node",
+				"script.js",
+				"-c",
+				invalidConfigPath,
+			]);
 			expect(config).toEqual({});
 		});
 	});
@@ -263,9 +268,9 @@ describe("config", () => {
 		});
 
 		test("returns correct value with multiple flags", () => {
-			expect(getFlagValue(["--verbose", "--output", "./dist", "--help"], ["--output"])).toBe(
-				"./dist",
-			);
+			expect(
+				getFlagValue(["--verbose", "--output", "./dist", "--help"], ["--output"]),
+			).toBe("./dist");
 		});
 	});
 });

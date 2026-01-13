@@ -1,12 +1,12 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import {
-	convertHexColorToHsl,
-	getHueCategoryFromValue,
 	categorizeHexColor,
-	normalizeColorToHex,
+	convertHexColorToHsl,
 	convertHslToHex,
-	getRelativeLuminance,
 	getContrastRatio,
+	getHueCategoryFromValue,
+	getRelativeLuminance,
+	normalizeColorToHex,
 } from "../../src/helperUtils/colors.js";
 
 describe("colors", () => {

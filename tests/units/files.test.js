@@ -1,16 +1,16 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { mkdirSync, writeFileSync, rmSync, existsSync, symlinkSync } from "node:fs";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { existsSync, mkdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	convertGlobPatternToRegularExpression,
-	matchesExcludePattern,
 	defaultComponentPatterns,
+	ensureDirectory,
+	getComponentName,
+	getFileModTime,
 	isComponentFile,
 	isPartialFile,
+	matchesExcludePattern,
 	walkDirectory,
-	getComponentName,
-	ensureDirectory,
-	getFileModTime,
 } from "../../src/helperUtils/files.js";
 import { OUTPUTS_DIR } from "../helpers/testUtils.js";
 
@@ -95,7 +95,9 @@ describe("files", () => {
 		});
 
 		test("normalizes Windows path separators", () => {
-			expect(matchesExcludePattern("src\\components\\button.js", ["components"])).toBe(true);
+			expect(matchesExcludePattern("src\\components\\button.js", ["components"])).toBe(
+				true,
+			);
 		});
 
 		test("matches multiple patterns", () => {

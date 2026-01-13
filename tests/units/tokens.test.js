@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { mkdirSync, writeFileSync, rmSync, readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { spawn } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { OUTPUTS_DIR } from "../helpers/testUtils.js";
 
 const TEST_DIR = join(OUTPUTS_DIR, ".tmp", "tokens-test");
@@ -14,11 +14,9 @@ const OUT_DIR = join(TEST_DIR, "dist");
  */
 const runTokens = (args = []) => {
 	return new Promise((resolve) => {
-		const proc = spawn(
-			"bun",
-			["src/commands/tokens.js", ...args],
-			{ cwd: join(import.meta.dir, "../..") },
-		);
+		const proc = spawn("bun", ["src/commands/tokens.js", ...args], {
+			cwd: join(import.meta.dir, "../.."),
+		});
 		let stdout = "";
 		let stderr = "";
 		proc.stdout.on("data", (data) => {
@@ -78,12 +76,12 @@ describe("tokens", () => {
 		});
 
 		test("accepts layer as positional argument", async () => {
-			const { stdout, code } = await runTokens(["primitives", "-o", OUT_DIR, "-Q"]);
+			const { code } = await runTokens(["primitives", "-o", OUT_DIR, "-Q"]);
 			expect(code).toBe(0);
 		});
 
 		test("accepts layer with -l flag", async () => {
-			const { stdout, code } = await runTokens(["-l", "primitives", "-o", OUT_DIR, "-Q"]);
+			const { code } = await runTokens(["-l", "primitives", "-o", OUT_DIR, "-Q"]);
 			expect(code).toBe(0);
 		});
 
@@ -121,10 +119,7 @@ describe("tokens", () => {
 		test("generates all layers with --all flag", async () => {
 			const allOut = join(TEST_DIR, "all-out");
 			mkdirSync(allOut, { recursive: true });
-			writeFileSync(
-				join(allOut, "base.json"),
-				readFileSync(join(OUT_DIR, "base.json")),
-			);
+			writeFileSync(join(allOut, "base.json"), readFileSync(join(OUT_DIR, "base.json")));
 
 			const { code } = await runTokens(["--all", "-o", allOut, "-Q"]);
 			expect(code).toBe(0);
@@ -138,22 +133,16 @@ describe("tokens", () => {
 		test("auto-generates dependencies when needed", async () => {
 			const depOut = join(TEST_DIR, "dep-out");
 			mkdirSync(depOut, { recursive: true });
-			writeFileSync(
-				join(depOut, "base.json"),
-				readFileSync(join(OUT_DIR, "base.json")),
-			);
+			writeFileSync(join(depOut, "base.json"), readFileSync(join(OUT_DIR, "base.json")));
 
-			const { code } = await runTokens(["semantic", "-o", depOut, "-Q"]);
+			await runTokens(["semantic", "-o", depOut, "-Q"]);
 			expect(existsSync(join(depOut, "primitives.json"))).toBe(true);
 		});
 
 		test("respects layer order: primitives -> semantic -> components", async () => {
 			const orderOut = join(TEST_DIR, "order-out");
 			mkdirSync(orderOut, { recursive: true });
-			writeFileSync(
-				join(orderOut, "base.json"),
-				readFileSync(join(OUT_DIR, "base.json")),
-			);
+			writeFileSync(join(orderOut, "base.json"), readFileSync(join(OUT_DIR, "base.json")));
 
 			const { code, stdout } = await runTokens(["--all", "-o", orderOut]);
 			expect(code).toBe(0);
@@ -165,10 +154,7 @@ describe("tokens", () => {
 		test("regenerates explicitly requested layers", async () => {
 			const forceOut = join(TEST_DIR, "force-out");
 			mkdirSync(forceOut, { recursive: true });
-			writeFileSync(
-				join(forceOut, "base.json"),
-				readFileSync(join(OUT_DIR, "base.json")),
-			);
+			writeFileSync(join(forceOut, "base.json"), readFileSync(join(OUT_DIR, "base.json")));
 
 			await runTokens(["primitives", "-o", forceOut, "-Q"]);
 
@@ -181,10 +167,7 @@ describe("tokens", () => {
 		test("--force flag works for all layers", async () => {
 			const forceOut = join(TEST_DIR, "force-out2");
 			mkdirSync(forceOut, { recursive: true });
-			writeFileSync(
-				join(forceOut, "base.json"),
-				readFileSync(join(OUT_DIR, "base.json")),
-			);
+			writeFileSync(join(forceOut, "base.json"), readFileSync(join(OUT_DIR, "base.json")));
 
 			await runTokens(["primitives", "-o", forceOut, "-Q"]);
 
@@ -209,10 +192,7 @@ describe("tokens", () => {
 		test("quiet mode suppresses output", async () => {
 			const quietOut = join(TEST_DIR, "quiet-out");
 			mkdirSync(quietOut, { recursive: true });
-			writeFileSync(
-				join(quietOut, "base.json"),
-				readFileSync(join(OUT_DIR, "base.json")),
-			);
+			writeFileSync(join(quietOut, "base.json"), readFileSync(join(OUT_DIR, "base.json")));
 
 			const { stdout } = await runTokens(["primitives", "-o", quietOut, "-Q"]);
 			expect(stdout).toBe("");
@@ -221,10 +201,7 @@ describe("tokens", () => {
 		test("respects -o output directory", async () => {
 			const customOut = join(TEST_DIR, "custom-tokens");
 			mkdirSync(customOut, { recursive: true });
-			writeFileSync(
-				join(customOut, "base.json"),
-				readFileSync(join(OUT_DIR, "base.json")),
-			);
+			writeFileSync(join(customOut, "base.json"), readFileSync(join(OUT_DIR, "base.json")));
 
 			await runTokens(["primitives", "-o", customOut, "-Q"]);
 			expect(existsSync(join(customOut, "primitives.json"))).toBe(true);
@@ -236,7 +213,7 @@ describe("tokens", () => {
 			const errorOut = join(TEST_DIR, "error-out");
 			mkdirSync(errorOut, { recursive: true });
 
-			const { code, stderr } = await runTokens(["components", "-o", errorOut, "-Q"]);
+			const { code } = await runTokens(["components", "-o", errorOut, "-Q"]);
 			expect(code).toBe(1);
 		});
 	});
