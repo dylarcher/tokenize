@@ -181,7 +181,6 @@ const runScriptWithOutput = async (commandName, extraArguments = []) => {
 			reject(error);
 		});
 	});
-<<<<<<< Updated upstream
 };
 
 /**
@@ -289,8 +288,6 @@ const runWatch = async (directory, passArguments) => {
 
 	// Keep process alive
 	process.stdin.resume();
-=======
->>>>>>> Stashed changes
 };
 
 /**
