@@ -15,6 +15,5 @@
 		"verbatimModuleSyntax": false
 	},
 	"exclude": [".tmp", ".claude", "dist", "node_modules", ".vscode"],
-	"extends": "../../tsconfig.json",
 	"include": ["**/*", "!**/*.test.*", "!**/*.spec.*"]
 }

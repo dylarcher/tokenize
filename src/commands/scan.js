@@ -23,7 +23,7 @@ import {
 const config = await loadConfiguration();
 const dirArg = process.argv.slice(2).find((arg) => !arg.startsWith("-"));
 const dir = dirArg || config.scanDir || ".";
-const outDir = getOutputDirectory(process.argv, config, "./tests/mocks/dist/.tmp");
+const outDir = getOutputDirectory(process.argv, config, "./dist//.tmp");
 const excludePatterns = getExcludePatterns(process.argv, config);
 const componentPatterns = config.componentPatterns || defaultComponentPatterns;
 const verbose = hasFlag(process.argv, ["-V", "--verbose"]);
@@ -42,6 +42,26 @@ const patterns = {
 	borders: [/border-radius:\s*([^;]+)/gi, /border-width:\s*([^;]+)/gi],
 	shadows: [/box-shadow:\s*([^;]+)/gi, /text-shadow:\s*([^;]+)/gi],
 	zIndex: [/z-index:\s*(\d+)/gi],
+	// New patterns for previously missed styles
+	gradients: [/linear-gradient\([^;]+\)/gi, /radial-gradient\([^;]+\)/gi],
+	transitions: {
+		transition: /transition:\s*([^;]+)/gi,
+		transitionDuration: /transition-duration:\s*([^;]+)/gi,
+		transitionTimingFunction: /transition-timing-function:\s*([^;]+)/gi,
+		transitionProperty: /transition-property:\s*([^;]+)/gi,
+	},
+	animations: {
+		animation: /animation:\s*([^;]+)/gi,
+		animationName: /animation-name:\s*([^;]+)/gi,
+		animationDuration: /animation-duration:\s*([^;]+)/gi,
+	},
+	keyframes: /@keyframes\s+([\w-]+)\s*\{/gi,
+	transforms: [/transform:\s*([^;]+)/gi],
+	filters: [/filter:\s*([^;]+)/gi, /backdrop-filter:\s*([^;]+)/gi],
+	opacity: [/opacity:\s*([^;]+)/gi],
+	cursors: [/cursor:\s*([\w-]+)/gi],
+	gaps: [/gap:\s*([^;]+)/gi, /row-gap:\s*([^;]+)/gi, /column-gap:\s*([^;]+)/gi],
+	calc: [/calc\([^)]+\)/gi],
 };
 
 /**
@@ -57,6 +77,17 @@ const patterns = {
  * @property {Set<string>} borderWidths
  * @property {Set<string>} shadows
  * @property {Set<string>} zIndices
+ * @property {Set<string>} gradients
+ * @property {Set<string>} transitions
+ * @property {Set<string>} animations
+ * @property {Set<string>} keyframes
+ * @property {Set<string>} transforms
+ * @property {Set<string>} filters
+ * @property {Set<string>} opacities
+ * @property {Set<string>} cursors
+ * @property {Set<string>} gaps
+ * @property {Set<string>} calcExpressions
+ * @property {Set<string>} namespacedVariables
  * @property {Record<string, string>} variables
  * @property {string} source
  */
@@ -81,20 +112,44 @@ function extractValues(content, filepath) {
 		borderWidths: new Set(),
 		shadows: new Set(),
 		zIndices: new Set(),
+		gradients: new Set(),
+		transitions: new Set(),
+		animations: new Set(),
+		keyframes: new Set(),
+		transforms: new Set(),
+		filters: new Set(),
+		opacities: new Set(),
+		cursors: new Set(),
+		gaps: new Set(),
+		calcExpressions: new Set(),
+		namespacedVariables: new Set(),
 		variables: {},
 		source: filepath,
 	};
 
-	for (const m of content.matchAll(/\$([a-zA-Z][\w-]*)\s*:\s*([^;]+)/g)) {
+	// Extract simple SCSS variables (without multiline values)
+	for (const m of content.matchAll(/\$([a-zA-Z][\w-]*)\s*:\s*([^;{]+);/g)) {
 		/** @type {string} */
 		const varName = m[1];
-		results.variables[varName] = m[2].trim();
+		const value = m[2].trim();
+		// Only store if it's a simple value (not a multiline SCSS map or function body)
+		if (!value.includes("\n") && !value.includes("@") && !value.startsWith("(")) {
+			results.variables[varName] = value;
+		}
 	}
 
-	for (const m of content.matchAll(/--([a-zA-Z][\w-]*)\s*:\s*([^;]+)/g)) {
+	// Extract CSS custom properties
+	for (const m of content.matchAll(/--([a-zA-Z][\w-]*)\s*:\s*([^;]+);/g)) {
 		/** @type {string} */
 		const cssVarName = m[1];
 		results.variables[cssVarName] = m[2].trim();
+	}
+
+	// Extract namespaced SCSS module variables (e.g., colors.$c-turquoise-500)
+	for (const m of content.matchAll(/([a-zA-Z][\w-]*)\.\$([a-zA-Z][\w-]*)/g)) {
+		const namespace = m[1];
+		const varName = m[2];
+		results.namespacedVariables.add(`${namespace}.$${varName}`);
 	}
 
 	for (const p of patterns.colors) {
@@ -103,7 +158,7 @@ function extractValues(content, filepath) {
 		}
 	}
 
-	for (const m of content.matchAll(/:\s*(-?\d+(?:\.\d+)?(?:px|rem|em))/g)) {
+	for (const m of content.matchAll(/:\s*(-?\d+(?:\.\d+)?(?:px|rem|em|ch|vw|vh|%))/g)) {
 		results.spacing.add(m[1]);
 	}
 
@@ -146,6 +201,79 @@ function extractValues(content, filepath) {
 		}
 	}
 
+	// Extract gradients
+	for (const p of patterns.gradients) {
+		for (const m of content.matchAll(p)) {
+			results.gradients.add(cleanCssValue(m[0]));
+		}
+	}
+
+	// Extract transitions
+	for (const m of content.matchAll(patterns.transitions.transition)) {
+		results.transitions.add(cleanCssValue(m[1]));
+	}
+	for (const m of content.matchAll(patterns.transitions.transitionDuration)) {
+		results.transitions.add(cleanCssValue(m[1]));
+	}
+
+	// Extract animations
+	for (const m of content.matchAll(patterns.animations.animation)) {
+		results.animations.add(cleanCssValue(m[1]));
+	}
+	for (const m of content.matchAll(patterns.animations.animationName)) {
+		results.animations.add(cleanCssValue(m[1]));
+	}
+	for (const m of content.matchAll(patterns.animations.animationDuration)) {
+		results.animations.add(cleanCssValue(m[1]));
+	}
+
+	// Extract keyframe names
+	for (const m of content.matchAll(patterns.keyframes)) {
+		results.keyframes.add(m[1]);
+	}
+
+	// Extract transforms
+	for (const p of patterns.transforms) {
+		for (const m of content.matchAll(p)) {
+			results.transforms.add(cleanCssValue(m[1]));
+		}
+	}
+
+	// Extract filters
+	for (const p of patterns.filters) {
+		for (const m of content.matchAll(p)) {
+			results.filters.add(cleanCssValue(m[1]));
+		}
+	}
+
+	// Extract opacity values
+	for (const p of patterns.opacity) {
+		for (const m of content.matchAll(p)) {
+			results.opacities.add(cleanCssValue(m[1]));
+		}
+	}
+
+	// Extract cursor values
+	for (const p of patterns.cursors) {
+		for (const m of content.matchAll(p)) {
+			results.cursors.add(m[1]);
+		}
+	}
+
+	// Extract gap values
+	for (const p of patterns.gaps) {
+		for (const m of content.matchAll(p)) {
+			results.gaps.add(cleanCssValue(m[1]));
+		}
+	}
+
+	// Extract calc expressions
+	for (const p of patterns.calc) {
+		for (const m of content.matchAll(p)) {
+			results.calcExpressions.add(m[0]);
+		}
+	}
+
 	return results;
 }
 
@@ -162,6 +290,17 @@ function extractValues(content, filepath) {
  * @property {Set<string>|string[]} borderWidths
  * @property {Set<string>|string[]} shadows
  * @property {Set<string>|string[]} zIndices
+ * @property {Set<string>|string[]} gradients
+ * @property {Set<string>|string[]} transitions
+ * @property {Set<string>|string[]} animations
+ * @property {Set<string>|string[]} keyframes
+ * @property {Set<string>|string[]} transforms
+ * @property {Set<string>|string[]} filters
+ * @property {Set<string>|string[]} opacities
+ * @property {Set<string>|string[]} cursors
+ * @property {Set<string>|string[]} gaps
+ * @property {Set<string>|string[]} calcExpressions
+ * @property {Set<string>|string[]} namespacedVariables
  * @property {Record<string, string>} variables
  * @property {string[]} sources
  */
@@ -185,6 +324,17 @@ const mergeResults = (styles = []) => {
 		borderWidths: new Set(),
 		shadows: new Set(),
 		zIndices: new Set(),
+		gradients: new Set(),
+		transitions: new Set(),
+		animations: new Set(),
+		keyframes: new Set(),
+		transforms: new Set(),
+		filters: new Set(),
+		opacities: new Set(),
+		cursors: new Set(),
+		gaps: new Set(),
+		calcExpressions: new Set(),
+		namespacedVariables: new Set(),
 		variables: {},
 		sources: [],
 	};
@@ -298,6 +448,30 @@ if (!quiet) {
 		`  Font sizes: ${Array.isArray(base.fontSizes) ? base.fontSizes.length : base.fontSizes.size}`,
 	);
 	console.log(`  Variables: ${Object.keys(base.variables).length}`);
+	console.log(
+		`  Namespaced Variables: ${Array.isArray(base.namespacedVariables) ? base.namespacedVariables.length : base.namespacedVariables.size}`,
+	);
+	console.log(
+		`  Gradients: ${Array.isArray(base.gradients) ? base.gradients.length : base.gradients.size}`,
+	);
+	console.log(
+		`  Transitions: ${Array.isArray(base.transitions) ? base.transitions.length : base.transitions.size}`,
+	);
+	console.log(
+		`  Animations: ${Array.isArray(base.animations) ? base.animations.length : base.animations.size}`,
+	);
+	console.log(
+		`  Keyframes: ${Array.isArray(base.keyframes) ? base.keyframes.length : base.keyframes.size}`,
+	);
+	console.log(
+		`  Transforms: ${Array.isArray(base.transforms) ? base.transforms.length : base.transforms.size}`,
+	);
+	console.log(
+		`  Filters: ${Array.isArray(base.filters) ? base.filters.length : base.filters.size}`,
+	);
+	console.log(
+		`  Calc Expressions: ${Array.isArray(base.calcExpressions) ? base.calcExpressions.length : base.calcExpressions.size}`,
+	);
 	console.log(`\nSaved to ${outDir}/`);
 }
 

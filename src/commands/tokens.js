@@ -9,7 +9,7 @@ import { getOutputDirectory, hasFlag, loadConfiguration } from "../index.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const config = await loadConfiguration();
-const outDir = getOutputDirectory(process.argv, config, "./tests/mocks/dist/.tmp");
+const outDir = getOutputDirectory(process.argv, config, "./dist//.tmp");
 const verbose = hasFlag(process.argv, ["-V", "--verbose"]);
 const quiet = hasFlag(process.argv, ["-Q", "--quiet"]);
 const dryRun = hasFlag(process.argv, ["-N", "--dry-run"]);
@@ -175,7 +175,9 @@ const runLayer = async (layer) => {
 			if (quiet) args.push("-Q");
 			if (verbose) args.push("-V");
 
-			const child = spawn("bun", args, {
+			// Use bun if available, otherwise fall back to node
+			const runtime = process.versions.bun ? "bun" : "node";
+			const child = spawn(runtime, args, {
 				stdio: "inherit",
 				cwd: process.cwd(),
 			});

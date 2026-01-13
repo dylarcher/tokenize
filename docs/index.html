@@ -410,12 +410,12 @@
 <p>Compiles SCSS files to flat CSS, separating global and component styles.</p>
 
 <pre><code class="language-sh">tokenize build tests/mocks/src
-tokenize build tests/mocks/src --out tests/mocks/dist
+tokenize build tests/mocks/src --out dist/
 tokenize build tests/mocks/src --exclude \<em>\</em>/\<em>.x.js</code></pre>
 
 <p><strong>Output:</strong></p>
 
-<pre><code class="language-sh">tests/mocks/dist/<strong>/
+<pre><code class="language-sh">dist//<strong>/
 ├── global.css           # Merged non-component styles
 ├── components/
 │   ├── Button.css
@@ -430,12 +430,12 @@ tokenize build tests/mocks/src --exclude \<em>\</em>/\<em>.x.js</code></pre>
 <blockquote>e.g. <code>colors</code>, <code>spacing</code>, <code>typography</code>, etc…</blockquote>
 
 <pre><code class="language-sh">tokenize scan tests/mocks/src                             # Scan SCSS sources
-tokenize scan tests/mocks/dist                            # Scan compiled CSS
-tokenize scan tests/mocks/src --out tests/mocks/dist/.tmp # Outputs directory</code></pre>
+tokenize scan dist/                            # Scan compiled CSS
+tokenize scan tests/mocks/src --out dist//.tmp # Outputs directory</code></pre>
 
 <p></strong>Output:<strong></p>
 
-<pre><code class="language-sh">tests/mocks/dist/.tmp/
+<pre><code class="language-sh">dist//.tmp/
 ├── base.json          # Values from global styles
 └── scoped.json        # Values from component styles</code></pre>
 
@@ -462,7 +462,7 @@ tokenize tokens --layer semantic   # By layer namespace (multi-layer)</code></pr
 <p>Runs the complete workflow (e.g. <code>scan → tokens</code>).</p>
 
 <pre><code class="language-sh">tokenize all tests/mocks/src
-tokenize all tests/mocks/src --out tests/mocks/dist/.tmp --exclude \</em>\<em>/\</em>.y.\<em></code></pre>
+tokenize all tests/mocks/src --out dist//.tmp --exclude \</em>\<em>/\</em>.y.\<em></code></pre>
 
 <h3><code>init</code> - Generate Config</h3>
 
@@ -530,8 +530,8 @@ tokenize debug interactive.primary.default</code></pre>
 
 <pre><code class="language-js">export default {
   scanDir: &quot;tests/mocks/src&quot;, // Directory to scan for styles
-  outDir: &quot;tests/mocks/dist/.tmp&quot;, // Output directory for generated tokens
-  compileOutDir: &quot;tests/mocks/dist&quot;, // Output directory for compiled CSS
+  outDir: &quot;dist//.tmp&quot;, // Output directory for generated tokens
+  compileOutDir: &quot;dist/&quot;, // Output directory for compiled CSS
   ignore: [&quot;node_modules&quot;, &quot;dist&quot;, &quot;build&quot;, &quot;.git&quot;], // Directories to ignore when scanning
   exclude: [&quot;<strong>/legacy/</strong>&quot;, &quot;<strong>/vendor/</strong>&quot;], // Glob patterns to exclude
   componentPatterns: [
@@ -548,10 +548,10 @@ tokenize debug interactive.primary.default</code></pre>
 <h3>Full Token Generation</h3>
 
 <pre><code class="language-sh"># 1. Compile SCSS to flat CSS
-tokenize build tests/mocks/src --out tests/mocks/dist
+tokenize build tests/mocks/src --out dist/
 
 <h1>2. Scan compiled CSS for design values</h1>
-tokenize scan tests/mocks/dist --out tests/mocks/dist/.tmp
+tokenize scan dist/ --out dist//.tmp
 
 <h1>3. Generate all token layers</h1>
 tokenize tokens --all
@@ -600,17 +600,17 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 
 <h3>CSS Import</h3>
 
-<pre><code class="language-css">@import &#039;tests/mocks/dist/.tmp/primitives.css&#039;;
-@import &#039;tests/mocks/dist/.tmp/semantic.css&#039;;
-@import &#039;tests/mocks/dist/.tmp/components.css&#039;;
+<pre><code class="language-css">@import &#039;dist//.tmp/primitives.css&#039;;
+@import &#039;dist//.tmp/semantic.css&#039;;
+@import &#039;dist//.tmp/components.css&#039;;
 
 <p>.btn {<br>  background: var(--button-primary-background);<br>  color: var(--button-primary-text);<br>}</code></pre></p>
 
 <h3>SCSS Import</h3>
 
-<pre><code class="language-scss">@use &#039;tests/mocks/dist/.tmp/primitives&#039; as p;
-@use &#039;tests/mocks/dist/.tmp/semantic&#039; as s;
-@use &#039;tests/mocks/dist/.tmp/components&#039; as c;
+<pre><code class="language-scss">@use &#039;dist//.tmp/primitives&#039; as p;
+@use &#039;dist//.tmp/semantic&#039; as s;
+@use &#039;dist//.tmp/components&#039; as c;
 
 <p>.btn {<br>  background: c.$button-primary-background;<br>  color: c.$button-primary-text;<br>}</code></pre></p>
 
@@ -789,7 +789,7 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 		<h4><code>HueCategory</code></h4>
 		<p class="type-info">Type: <code>&#039;red&#039; | &#039;orange&#039; | &#039;yellow&#039; | &#039;green&#039; | &#039;cyan&#039; | &#039;blue&#039; | &#039;purple&#039; | &#039;pink&#039;</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/helperUtils/colors.js</code></p>
 	</article>
 <article class="typedef-card">
@@ -816,7 +816,7 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 		<h4><code>Layer</code></h4>
 		<p class="type-info">Type: <code>&#039;primitives&#039; | &#039;semantic&#039; | &#039;components&#039;</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/commands/tokens.js</code></p>
 	</article>
 <article class="typedef-card">
@@ -1075,7 +1075,7 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 		<h4><code>Config</code></h4>
 		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/commands/scan.js</code></p>
 	</article>
 <article class="typedef-card">
@@ -1210,14 +1210,14 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 		<h4><code>Config</code></h4>
 		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/commands/compile.js</code></p>
 	</article>
 <article class="typedef-card">
 		<h4><code>Config</code></h4>
 		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
 	</article>
 <article class="typedef-card">
@@ -1244,28 +1244,28 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 		<h4><code>ColorGroups</code></h4>
 		<p class="type-info">Type: <code>Record&lt;string, ColorEntry[]&gt;</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
 	</article>
 <article class="typedef-card">
 		<h4><code>WriteFunction</code></h4>
 		<p class="type-info">Type: <code>(filename: string, content: string) =&gt; void</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
 	</article>
 <article class="typedef-card">
 		<h4><code>OutputFormat</code></h4>
 		<p class="type-info">Type: <code>&#039;json&#039; | &#039;scss&#039; | &#039;css&#039;</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/primitives.js</code></p>
 	</article>
 <article class="typedef-card">
 		<h4><code>Config</code></h4>
 		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/semantic.js</code></p>
 	</article>
 <article class="typedef-card">
@@ -1324,21 +1324,21 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 		<h4><code>WriteFunction</code></h4>
 		<p class="type-info">Type: <code>(filename: string, content: string) =&gt; void</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/semantic.js</code></p>
 	</article>
 <article class="typedef-card">
 		<h4><code>OutputFormat</code></h4>
 		<p class="type-info">Type: <code>&#039;json&#039; | &#039;scss&#039; | &#039;css&#039;</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/semantic.js</code></p>
 	</article>
 <article class="typedef-card">
 		<h4><code>Config</code></h4>
 		<p class="type-info">Type: <code>import(&#039;../helperUtils/config.js&#039;).Config</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
 	</article>
 <article class="typedef-card">
@@ -1389,21 +1389,21 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 		<h4><code>ButtonVariant</code></h4>
 		<p class="type-info">Type: <code>&#039;primary&#039; | &#039;secondary&#039; | &#039;ghost&#039;</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
 	</article>
 <article class="typedef-card">
 		<h4><code>WriteFunction</code></h4>
 		<p class="type-info">Type: <code>(filename: string, content: string) =&gt; void</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
 	</article>
 <article class="typedef-card">
 		<h4><code>OutputFormat</code></h4>
 		<p class="type-info">Type: <code>&#039;json&#039; | &#039;scss&#039; | &#039;css&#039;</code></p>
 		<p></p>
-		
+
 		<p class="file-ref">Defined in: <code>src/generators/components.js</code></p>
 	</article>
 			</div>
@@ -1455,8 +1455,8 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 			<code>defaultComponentPatterns()</code>
 		</h4>
 		<p>Default patterns for identifying component files.</p>
-		
-		
+
+
 		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
 	</article>
 <article class="function-card">
@@ -1543,7 +1543,7 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 			<li><code>dirPath</code> <span class="param-type">{string}</span> - Directory path to ensure exists</li>
 			</ul>
 		</div>
-		
+
 		<p class="file-ref">Defined in: <code>src/helperUtils/files.js</code></p>
 	</article>
 <article class="function-card">
@@ -2000,7 +2000,7 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 <article class="config-card">
 		<h4>bunfig.toml</h4>
 		<p class="format-badge">toml</p>
-		
+
 			<h5>[install]</h5>
 			<table class="config-table">
 				<thead><tr><th>Key</th><th>Value</th></tr></thead>
@@ -2076,12 +2076,12 @@ $interactive-primary-default: $color-blue-500;</code></pre>
 <article class="config-card">
 		<h4>tokenize.config.js</h4>
 		<p class="format-badge">javascript</p>
-		
-			
+
+
 			<table class="config-table">
 				<thead><tr><th>Key</th><th>Value</th></tr></thead>
 				<tbody>
-				<tr><td><code>compileOutDir</code></td><td><code>./tests/mocks/dist</code></td></tr><tr><td><code>componentPatterns</code></td><td><code>[{},{},{},{}]</code></td></tr><tr><td><code>exclude</code></td><td><code>[]</code></td></tr><tr><td><code>ignore</code></td><td><code>[&quot;node_modules&quot;,&quot;dist&quot;,&quot;.git*&quot;,&quot;.tmp&quot;,&quot;bin&quot;,&quot;docs&quot;,&quot;.vscode&quot;,&quot;.claude&quot;,&quot;.editorconfig&quot;,&quot;**/*.md&quot;]</code></td></tr><tr><td><code>outDir</code></td><td><code>./tests/mocks/dist/.tmp</code></td></tr><tr><td><code>outputFormats</code></td><td><code>[&quot;json&quot;,&quot;scss&quot;,&quot;css&quot;]</code></td></tr><tr><td><code>scanDir</code></td><td><code>./tests/mocks/src</code></td></tr><tr><td><code>spacingBase</code></td><td><code>4</code></td></tr>
+				<tr><td><code>compileOutDir</code></td><td><code>./dist/</code></td></tr><tr><td><code>componentPatterns</code></td><td><code>[{},{},{},{}]</code></td></tr><tr><td><code>exclude</code></td><td><code>[]</code></td></tr><tr><td><code>ignore</code></td><td><code>[&quot;node_modules&quot;,&quot;dist&quot;,&quot;.git*&quot;,&quot;.tmp&quot;,&quot;bin&quot;,&quot;docs&quot;,&quot;.vscode&quot;,&quot;.claude&quot;,&quot;.editorconfig&quot;,&quot;**/*.md&quot;]</code></td></tr><tr><td><code>outDir</code></td><td><code>./dist//.tmp</code></td></tr><tr><td><code>outputFormats</code></td><td><code>[&quot;json&quot;,&quot;scss&quot;,&quot;css&quot;]</code></td></tr><tr><td><code>scanDir</code></td><td><code>./tests/mocks/src</code></td></tr><tr><td><code>spacingBase</code></td><td><code>4</code></td></tr>
 				</tbody>
 			</table>
 	</article>

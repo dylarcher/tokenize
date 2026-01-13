@@ -151,6 +151,65 @@ export const getComponentName = (filePath) => {
 };
 
 /**
+ * Generates a unique component name from a relative file path.
+ * Uses the category folder, component name, and subcomponent hierarchy.
+ * Example: "forms/Dropdown/components/Placeholder/styles.module.scss" → "FormsDropdownPlaceholder"
+ * @param {string} relativePath - Relative path to the component file
+ * @returns {string} Unique PascalCase component name
+ */
+export const getUniqueComponentName = (relativePath) => {
+	const parts = relativePath.split(path.sep);
+	const significantParts = [];
+
+	for (let i = 0; i < parts.length; i++) {
+		const part = parts[i];
+		const prevPart = i > 0 ? parts[i - 1] : null;
+		const nextPart = i < parts.length - 1 ? parts[i + 1] : null;
+
+		// Handle "components" and "shared" folders
+		if (part === "components" || part === "shared") {
+			// Include if the next part is directly a file (not another folder with specific name)
+			// This handles cases like "Menu/components/styles.module.scss" where we want "MenuComponents"
+			if (nextPart && (nextPart.endsWith(".scss") || nextPart.endsWith(".css"))) {
+				significantParts.push(part);
+			}
+			// Otherwise skip it to avoid "FormsDropdownComponentsPlaceholder"
+			continue;
+		}
+
+		// For file names, check if they have a meaningful name (not "styles")
+		if (part.endsWith(".scss") || part.endsWith(".css")) {
+			const baseName = part
+				.replace(/\.s?css$/, "")
+				.replace(/\.component$/, "")
+				.replace(/\.module$/, "")
+				.replace(/\.styles$/, "");
+
+			// Only add if meaningful and not duplicate of parent folder
+			if (baseName && baseName.toLowerCase() !== "styles") {
+				// Avoid duplication: skip if filename matches parent folder name (case-insensitive)
+				if (!prevPart || baseName.toLowerCase() !== prevPart.toLowerCase()) {
+					significantParts.push(baseName);
+				}
+			}
+			continue;
+		}
+
+		significantParts.push(part);
+	}
+
+	// Convert each part to PascalCase and join
+	return significantParts
+		.map((part) =>
+			part
+				.split(/[-_]/)
+				.map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+				.join(""),
+		)
+		.join("");
+};
+
+/**
  * Ensures a directory exists, creating it if necessary.
  * @param {string} dirPath - Directory path to ensure exists
  */

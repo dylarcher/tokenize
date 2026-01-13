@@ -8,8 +8,8 @@ import * as sass from "sass";
 import {
 	defaultComponentPatterns,
 	flattenCssCustomProperties,
-	getComponentName,
 	getExcludePatterns,
+	getUniqueComponentName,
 	hasFlag,
 	isComponentFile,
 	isPartialFile,
@@ -31,7 +31,7 @@ const outputFlagIndex = process.argv.findIndex(
 const outDir =
 	outputFlagIndex > -1
 		? process.argv[outputFlagIndex + 1]
-		: config.compileOutDir || "./tests/mocks/dist";
+		: config.compileOutDir || "./dist/";
 const excludePatterns = getExcludePatterns(process.argv, config);
 const componentPatterns = config.componentPatterns || defaultComponentPatterns;
 const verbose = hasFlag(process.argv, ["-V", "--verbose"]);
@@ -87,6 +87,17 @@ function buildLoadPaths(baseDir, files) {
 const loadPaths = buildLoadPaths(dir, allFiles);
 
 /**
+ * Processes :global() selectors in CSS, converting them to static selectors.
+ * @param {string} css - CSS string to process
+ * @returns {string} CSS with :global() wrappers removed
+ */
+function processGlobalSelectors(css) {
+	// Match :global(.class-name) or :global(selector) and unwrap them
+	// Handles nested cases like :global(.foo .bar) and :global(.foo):global(.bar)
+	return css.replace(/:global\(([^)]+)\)/g, "$1");
+}
+
+/**
  * Compiles an SCSS file to CSS.
  * @param {string} filepath - Path to the SCSS file
  * @returns {{ success: true, css: string } | { success: false, error: string }}
@@ -127,8 +138,9 @@ for (const file of globalFiles) {
 
 	if (result.success) {
 		const flat = flattenCssCustomProperties(result.css || "");
-		if (flat.trim()) {
-			globalCSS.push(`/* Source: ${rel} */\n${flat}`);
+		const processed = processGlobalSelectors(flat);
+		if (processed.trim()) {
+			globalCSS.push(`/* Source: ${rel} */\n${processed}`);
 			if (verbose) console.log("OK");
 		} else {
 			if (verbose) console.log("OK (empty)");
@@ -146,27 +158,38 @@ if (!quiet) console.log(`\nWrote global.css (${(globalOutput.length / 1024).toFi
 if (!quiet) console.log("\nCompiling component styles...");
 const componentResults = [];
 const componentErrors = [];
+const usedFilenames = new Map(); // Track used filenames to prevent overwrites
 
 for (const file of componentFiles) {
 	const rel = path.relative(dir, file);
-	const name = getComponentName(file);
-	if (verbose) process.stdout.write(`  ${rel} -> ${name}.css... `);
+	const baseName = getUniqueComponentName(rel);
+
+	// Generate unique filename by adding index if name already used
+	let finalName = baseName;
+	const count = usedFilenames.get(baseName) || 0;
+	if (count > 0) {
+		finalName = `${baseName}-${count}`;
+	}
+	usedFilenames.set(baseName, count + 1);
+
+	if (verbose) process.stdout.write(`  ${rel} -> ${finalName}.css... `);
 
 	const result = compileSCSS(file);
 
 	if (result.success) {
 		const flat = flattenCssCustomProperties(result.css || "");
-		if (flat.trim()) {
-			const outPath = path.join(outDir, "components", `${name}.css`);
-			fs.writeFileSync(outPath, `/* Source: ${rel} */\n${flat}`);
-			componentResults.push({ name, file: rel, size: flat.length });
+		const processed = processGlobalSelectors(flat);
+		if (processed.trim()) {
+			const outPath = path.join(outDir, "components", `${finalName}.css`);
+			fs.writeFileSync(outPath, `/* Source: ${rel} */\n${processed}`);
+			componentResults.push({ name: finalName, file: rel, size: processed.length });
 			if (verbose) console.log("OK");
 		} else {
 			if (verbose) console.log("OK (empty)");
 		}
 	} else {
 		if (verbose) console.log("FAIL");
-		componentErrors.push({ file: rel, name, error: result.error });
+		componentErrors.push({ file: rel, name: finalName, error: result.error });
 	}
 }
 

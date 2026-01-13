@@ -1,5 +1,5 @@
 export default {
-    compileOutDir: "./tests/mocks/dist",
+    compileOutDir: "./dist/",
     componentPatterns: [
         /\.component\.s?css$/i,
         /\.module\.s?css$/i,
@@ -19,7 +19,7 @@ export default {
         ".editorconfig",
         "**/*.md"
     ],
-    outDir: "./tests/mocks/dist/.tmp",
+    outDir: "./dist//.tmp",
     outputFormats: ["json", "scss", "css"],
     scanDir: "./tests/mocks/src",
     spacingBase: 4,

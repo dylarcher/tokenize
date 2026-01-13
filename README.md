@@ -38,14 +38,14 @@ Compiles SCSS files to flat CSS, separating global and component styles.
 
 ```sh
 tokenize build tests/mocks/src
-tokenize build tests/mocks/src --out tests/mocks/dist
+tokenize build tests/mocks/src --out dist/
 tokenize build tests/mocks/src --exclude \*\*/\*.x.js
 ```
 
 **Output:**
 
 ```sh
-tests/mocks/dist/**/
+dist//**/
 ├── global.css           # Merged non-component styles
 ├── components/
 │   ├── Button.css
@@ -62,14 +62,14 @@ Scans CSS/SCSS files and extracts design values.
 
 ```sh
 tokenize scan tests/mocks/src                             # Scan SCSS sources
-tokenize scan tests/mocks/dist                            # Scan compiled CSS
-tokenize scan tests/mocks/src --out tests/mocks/dist/.tmp # Outputs directory
+tokenize scan dist/                            # Scan compiled CSS
+tokenize scan tests/mocks/src --out dist//.tmp # Outputs directory
 ```
 
 **Output:**
 
 ```sh
-tests/mocks/dist/.tmp/
+dist//.tmp/
 ├── base.json          # Values from global styles
 └── scoped.json        # Values from component styles
 ```
@@ -102,7 +102,7 @@ Runs the complete workflow (e.g. `scan → tokens`).
 
 ```sh
 tokenize all tests/mocks/src
-tokenize all tests/mocks/src --out tests/mocks/dist/.tmp --exclude \*\*/\*.y.\*
+tokenize all tests/mocks/src --out dist//.tmp --exclude \*\*/\*.y.\*
 ```
 
 ### `init` - Generate Config
@@ -198,8 +198,8 @@ Create a `tokenize.config.js` file in your project root.
 ```js
 export default {
   scanDir: "tests/mocks/src", // Directory to scan for styles
-  outDir: "tests/mocks/dist/.tmp", // Output directory for generated tokens
-  compileOutDir: "tests/mocks/dist", // Output directory for compiled CSS
+  outDir: "dist//.tmp", // Output directory for generated tokens
+  compileOutDir: "dist/", // Output directory for compiled CSS
   ignore: ["node_modules", "dist", "build", ".git"], // Directories to ignore when scanning
   exclude: ["**/legacy/**", "**/vendor/**"], // Glob patterns to exclude
   componentPatterns: [
@@ -218,10 +218,10 @@ export default {
 
 ```sh
 # 1. Compile SCSS to flat CSS
-tokenize build tests/mocks/src --out tests/mocks/dist
+tokenize build tests/mocks/src --out dist/
 
 # 2. Scan compiled CSS for design values
-tokenize scan tests/mocks/dist --out tests/mocks/dist/.tmp
+tokenize scan dist/ --out dist//.tmp
 
 # 3. Generate all token layers
 tokenize tokens --all
@@ -282,9 +282,9 @@ $interactive-primary-default: $color-blue-500;
 ### CSS Import
 
 ```css
-@import 'tests/mocks/dist/.tmp/primitives.css';
-@import 'tests/mocks/dist/.tmp/semantic.css';
-@import 'tests/mocks/dist/.tmp/components.css';
+@import 'dist//.tmp/primitives.css';
+@import 'dist//.tmp/semantic.css';
+@import 'dist//.tmp/components.css';
 
 .btn {
   background: var(--button-primary-background);
@@ -295,9 +295,9 @@ $interactive-primary-default: $color-blue-500;
 ### SCSS Import
 
 ```scss
-@use 'tests/mocks/dist/.tmp/primitives' as p;
-@use 'tests/mocks/dist/.tmp/semantic' as s;
-@use 'tests/mocks/dist/.tmp/components' as c;
+@use 'dist//.tmp/primitives' as p;
+@use 'dist//.tmp/semantic' as s;
+@use 'dist//.tmp/components' as c;
 
 .btn {
   background: c.$button-primary-background;

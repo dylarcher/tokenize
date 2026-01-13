@@ -17,7 +17,7 @@ import {
 
 /** @type {Config} */
 const config = await loadConfiguration();
-const outDir = getOutputDirectory(process.argv, config, "./tests/mocks/dist/.tmp");
+const outDir = getOutputDirectory(process.argv, config, "./dist//.tmp");
 const scanPath = path.join(outDir, "base.json");
 const quiet = hasFlag(process.argv, ["-Q", "--quiet"]);
 const verbose = hasFlag(process.argv, ["-V", "--verbose"]);

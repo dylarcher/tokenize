@@ -11,7 +11,7 @@ import { getOutputDirectory, hasFlag, loadConfiguration } from "../index.js";
 
 /** @type {Config} */
 const config = await loadConfiguration();
-const outDir = getOutputDirectory(process.argv, config, "./tests/mocks/dist/.tmp");
+const outDir = getOutputDirectory(process.argv, config, "./dist//.tmp");
 const primitivesPath = path.join(outDir, "primitives.json");
 const quiet = hasFlag(process.argv, ["-Q", "--quiet"]);
 const verbose = hasFlag(process.argv, ["-V", "--verbose"]);

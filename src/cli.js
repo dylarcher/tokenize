@@ -243,7 +243,7 @@ const runStats = async (passArgs) => {
 
 	console.log({ passArgs });
     const config = await loadConfiguration();
-    const outDir = getOutputDirectory(process.argv, config, "./tests/mocks/dist/.tmp");
+    const outDir = getOutputDirectory(process.argv, config, "./dist//.tmp");
 
     const files = ["primitives.json", "semantic.json", "components.json"];
 
@@ -311,7 +311,7 @@ const runDebug = async (tokenName, passArgs) => {
     );
 
     const config = await loadConfiguration();
-    const outDir = getOutputDirectory(process.argv, config, "./tests/mocks/dist/.tmp");
+    const outDir = getOutputDirectory(process.argv, config, "./dist//.tmp");
 
     const layers = ["components", "semantic", "primitives"];
 
